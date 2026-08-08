@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>部活Wiki — 紙芝居</title>
+<style>
+:root{
+  --paper:#fdf6e3;
+  --ink:#2c1e0f;
+  --ink2:#6b5a40;
+  --ink3:#a39277;
+  --frame:#6b3a1e;
+  --frame-d:#4a2810;
+  --frame-l:#c5813c;
+  --frame-top:#ead0a0;
+  --card-bg:#fffef5;
+  --line:#d4b87a;
+  --brand:#cc3300;
+  --link:#0066cc;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  --serif:"Hiragino Mincho Pro","Yu Mincho","Times New Roman",serif;
+  --mono:ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.7;min-height:100vh}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;cursor:pointer}
+.hidden{display:none!important}
+
+/* ===== ヘッダー ===== */
+.site-header{
+  background:var(--frame);
+  border-bottom:4px solid var(--frame-d);
+  padding:0;
+}
+.site-header .inner{
+  max-width:1100px;margin:0 auto;padding:0 16px;
+  display:flex;align-items:center;gap:16px;height:52px;
+}
+.site-logo{
+  font-family:var(--serif);font-size:22px;font-weight:700;
+  color:var(--frame-top);letter-spacing:.1em;white-space:nowrap;
+}
+.site-logo span{font-size:11px;display:block;letter-spacing:.25em;color:#d4b87a;font-family:var(--sans);font-weight:400}
+.header-back{
+  background:transparent;border:1px solid rgba(255,255,255,.3);color:#ead0a0;
+  border-radius:3px;padding:4px 12px;font-size:12px;
+}
+.header-back:hover{background:rgba(255,255,255,.1)}
+.header-spacer{flex:1}
+.header-edit-btn{
+  background:var(--brand);border:0;color:#fff;border-radius:3px;
+  padding:6px 16px;font-size:13px;font-weight:700;
+}
+.header-edit-btn:hover{opacity:.85}
+
+/* ===== メインレイアウト ===== */
+.page-wrap{max-width:1100px;margin:0 auto;padding:24px 16px;display:grid;grid-template-columns:220px 1fr;gap:20px}
+
+/* ===== サイドバー（Wiki一覧） ===== */
+.sidebar{
+  position:sticky;top:16px;align-self:start;
+  background:#fff9ee;border:2px solid var(--frame-l);border-radius:6px;
+  overflow:hidden;
+}
+.sidebar-head{
+  background:var(--frame);padding:10px 14px;
+  font-size:13px;font-weight:700;color:var(--frame-top);
+  display:flex;align-items:center;gap:8px;
+}
+.sidebar-head .add-wiki-btn{
+  margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  color:#fff;border-radius:3px;padding:2px 10px;font-size:11px;
+}
+.sidebar-head .add-wiki-btn:hover{background:rgba(255,255,255,.25)}
+.wiki-list{list-style:none;overflow:auto;max-height:calc(100vh - 130px)}
+.wiki-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid #e8ddc0;cursor:pointer;
+}
+.wiki-item:last-child{border-bottom:0}
+.wiki-item:hover{background:#fef5d8}
+.wiki-item.active{background:#fff3cc;border-left:3px solid var(--brand)}
+.wiki-item .wi-icon{
+  width:36px;height:36px;border-radius:50%;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;background:var(--frame-top);
+}
+.wiki-item .wi-name{font-size:13px;font-weight:700;color:var(--ink)}
+.wiki-item .wi-cards{font-size:11px;color:var(--ink3)}
+
+/* ===== 右エリア：紙芝居ビューア ===== */
+.viewer-area{min-height:520px;display:flex;flex-direction:column;gap:16px}
+
+/* ===== 紙芝居フレーム ===== */
+.kami-frame{
+  background:var(--frame-d);
+  border-radius:8px;
+  padding:12px;
+  box-shadow:0 4px 24px rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.15);
+  position:relative;
+}
+.kami-frame::before{
+  content:"";
+  position:absolute;inset:6px;
+  border:2px solid rgba(255,255,255,.12);border-radius:4px;pointer-events:none;z-index:2;
+}
+.kami-inner{
+  border-radius:4px;overflow:hidden;
+  background:var(--card-bg);
+  position:relative;
+}
+
+/* カードエリア */
+.card-stage{
+  position:relative;overflow:hidden;
+  min-height:400px;
+}
+.kcard{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .25s;
+}
+.kcard.enter-right{ transform:translateX(100%);opacity:0; }
+.kcard.enter-left { transform:translateX(-100%);opacity:0; }
+.kcard.active     { transform:translateX(0);opacity:1; }
+.kcard.exit-left  { transform:translateX(-100%);opacity:0; }
+.kcard.exit-right { transform:translateX(100%);opacity:0; }
+
+.kcard-image{
+  width:100%;height:260px;
+  background:var(--frame-top);
+  display:flex;align-items:center;justify-content:center;
+  flex:none;overflow:hidden;position:relative;
+}
+.kcard-image img{width:100%;height:100%;object-fit:cover;display:block}
+.kcard-image .no-img{font-size:52px;opacity:.4}
+.kcard-image .card-num{
+  position:absolute;top:10px;right:10px;
+  background:rgba(0,0,0,.55);color:#fff;
+  font-size:11px;font-family:var(--mono);border-radius:3px;padding:2px 8px;
+}
+.kcard-body{padding:18px 22px 20px;flex:1}
+.kcard-body h2{
+  font-family:var(--serif);font-size:20px;font-weight:700;
+  color:var(--ink);margin-bottom:10px;line-height:1.4;
+  border-bottom:2px solid var(--line);padding-bottom:8px;
+}
+.kcard-body .body-text{font-size:14px;color:var(--ink2);line-height:1.9;white-space:pre-wrap}
+.kcard-body .card-tags{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.kcard-body .tag{background:#f0e4c0;color:var(--ink2);font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--line)}
+
+/* コントロール */
+.kami-controls{
+  background:var(--frame);padding:10px 14px;
+  display:flex;align-items:center;gap:12px;
+}
+.nav-btn{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:var(--frame-top);border-radius:4px;padding:6px 20px;font-size:15px;font-weight:700;
+  min-width:80px;
+}
+.nav-btn:hover:not(:disabled){background:rgba(255,255,255,.22)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.page-indicator{
+  flex:1;text-align:center;font-family:var(--serif);font-size:13px;
+  color:var(--frame-top);letter-spacing:.1em;
+}
+.wiki-title-bar{
+  color:var(--frame-top);font-size:12px;margin-left:auto;
+  font-family:var(--serif);letter-spacing:.05em;
+}
+
+/* ===== 空状態 ===== */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:400px;gap:12px;color:var(--ink3);font-family:var(--serif);
+}
+.empty-state .big-icon{font-size:56px;opacity:.5}
+.empty-state p{font-size:15px}
+
+/* ===== エディタオーバーレイ ===== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(44,30,15,.55);
+  display:none;align-items:center;justify-content:center;
+  padding:24px;z-index:100;overflow:auto;
+}
+.modal-overlay[open]{display:flex}
+.modal-box{
+  background:var(--paper);border:3px solid var(--frame);border-radius:8px;
+  width:100%;max-width:560px;box-shadow:0 12px 40px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.modal-head{
+  background:var(--frame);padding:13px 18px;
+  display:flex;align-items:center;gap:10px;
+}
+.modal-head h3{color:var(--frame-top);font-size:16px;font-weight:700;font-family:var(--serif);flex:1}
+.modal-head .close-btn{background:transparent;border:0;color:rgba(255,255,255,.7);font-size:22px;line-height:1}
+.modal-head .close-btn:hover{color:#fff}
+.modal-body{padding:20px 22px}
+.modal-body label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:14px 0 5px}
+.modal-body label:first-child{margin-top:0}
+.modal-body input,.modal-body textarea,.modal-body select{
+  width:100%;border:1px solid var(--line);border-radius:4px;
+  padding:8px 10px;font:inherit;font-size:14px;background:#fffef7;
+  color:var(--ink);
+}
+.modal-body input:focus,.modal-body textarea:focus,.modal-body select:focus{
+  outline:2px solid var(--frame-l);border-color:var(--frame-l);background:#fff;
+}
+.modal-body textarea{min-height:100px;resize:vertical}
+.modal-foot{
+  padding:12px 22px 18px;display:flex;gap:10px;align-items:center;
+}
+.modal-foot .save-btn{
+  background:var(--frame);border:0;color:var(--frame-top);
+  border-radius:4px;padding:9px 28px;font-weight:700;font-size:14px;
+}
+.modal-foot .save-btn:hover{background:var(--frame-d)}
+.modal-foot .cancel-btn{
+  background:transparent;border:1px solid var(--line);border-radius:4px;
+  padding:9px 20px;color:var(--ink2);
+}
+.modal-foot .del-btn{
+  margin-left:auto;background:transparent;border:1px solid #c00;
+  color:#c00;border-radius:4px;padding:9px 16px;font-size:12px;
+}
+.modal-foot .del-btn:hover{background:#c00;color:#fff}
+
+/* ===== Wiki作成モーダルのアイコン選択 ===== */
+.icon-picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.icon-picker button{
+  width:38px;height:38px;background:#fff;border:2px solid var(--line);
+  border-radius:6px;font-size:20px;
+}
+.icon-picker button.selected{border-color:var(--frame-l);background:var(--frame-top)}
+
+/* ===== 概要パネル（Wikiトップカード） ===== */
+.wiki-info-bar{
+  background:#fff9ee;border:1px solid var(--line);border-radius:6px;
+  padding:12px 16px;display:flex;align-items:center;gap:14px;
+}
+.wiki-info-bar .big-icon{font-size:32px}
+.wiki-info-bar .wi-meta{flex:1}
+.wiki-info-bar .wi-meta h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.wiki-info-bar .wi-meta p{font-size:12px;color:var(--ink3)}
+.wiki-info-bar .add-card-btn{
+  background:var(--frame);border:0;color:var(--frame-top);
+  border-radius:4px;padding:7px 16px;font-size:13px;font-weight:700;flex:none;
+}
+.wiki-info-bar .add-card-btn:hover{background:var(--frame-d)}
+.wiki-info-bar .del-wiki-btn{
+  background:transparent;border:1px solid #c00;color:#c00;
+  border-radius:4px;padding:7px 12px;font-size:12px;flex:none;
+}
+.wiki-info-bar .del-wiki-btn:hover{background:#c00;color:#fff}
+
+/* ===== カード編集フローティングボタン ===== */
+.float-edit{
+  position:absolute;top:10px;left:10px;z-index:5;
+  background:rgba(0,0,0,.5);color:#fff;border:0;border-radius:4px;
+  padding:4px 10px;font-size:11px;backdrop-filter:blur(4px);
+}
+.float-edit:hover{background:rgba(0,0,0,.7)}
+
+/* ===== レスポンシブ ===== */
+@media(max-width:760px){
+  .page-wrap{grid-template-columns:1fr;gap:12px}
+  .sidebar{position:static}
+  .wiki-list{max-height:180px}
+  .kcard-image{height:200px}
+}
+
+/* ===== トースト ===== */
+.toast{
+  position:fixed;left:50%;bottom:24px;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--frame-d);color:var(--frame-top);
+  padding:9px 20px;border-radius:5px;font-size:13px;font-weight:700;
+  opacity:0;pointer-events:none;transition:.25s;z-index:200;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ===== ヘッダー ===== -->
+<header class="site-header">
+  <div class="inner">
+    <div class="site-logo">🎪 部活Wiki<span>SCHOOL KAMISHIBAI WIKI</span></div>
+    <button class="header-back" onclick="location.href='index.html'">← ポータルへ</button>
+    <span class="header-spacer"></span>
+    <button class="header-edit-btn" id="addWikiBtn">＋ 部活・同好会を追加</button>
+  </div>
+</header>
+
+<!-- ===== メインコンテンツ ===== -->
+<div class="page-wrap">
+
+  <!-- サイドバー -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      📚 Wiki 一覧
+    </div>
+    <ul class="wiki-list" id="wikiList">
+      <!-- JS で描画 -->
+    </ul>
+  </aside>
+
+  <!-- 右：紙芝居ビューア -->
+  <div class="viewer-area" id="viewerArea">
+    <!-- 選択中Wiki の情報バー -->
+    <div class="wiki-info-bar hidden" id="wikiInfoBar">
+      <span class="big-icon" id="wiBigIcon">📄</span>
+      <div class="wi-meta">
+        <h3 id="wiName">—</h3>
+        <p id="wiMeta">カード数：0</p>
+      </div>
+      <button class="add-card-btn" id="addCardBtn">＋ カードを追加</button>
+      <button class="del-wiki-btn" id="delWikiBtn">削除</button>
+    </div>
+
+    <!-- 紙芝居フレーム -->
+    <div class="kami-frame hidden" id="kamiFrame">
+      <div class="kami-inner">
+        <!-- 編集ボタン -->
+        <button class="float-edit" id="editCardBtn">✎ 編集</button>
+        <!-- カードステージ -->
+        <div class="card-stage" id="cardStage">
+          <!-- カードはJSで描画 -->
+        </div>
+        <!-- コントロール -->
+        <div class="kami-controls">
+          <button class="nav-btn" id="prevBtn">◀</button>
+          <span class="page-indicator" id="pageIndicator">— / —</span>
+          <button class="nav-btn" id="nextBtn">▶</button>
+          <span class="wiki-title-bar" id="wikiTitleBar"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空のとき -->
+    <div class="empty-state" id="emptyState">
+      <div class="big-icon">🎪</div>
+      <p>左から部活・同好会を選んでください</p>
+      <p style="font-size:12px;color:var(--ink3)">まだWikiがない場合は「＋ 部活・同好会を追加」から作れます</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Wiki作成モーダル ===== -->
+<div class="modal-overlay" id="wikiModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>部活・同好会 Wikiを作成</h3>
+      <button class="close-btn" id="closeWikiModal">×</button>
+    </div>
+    <div class="modal-body">
+      <label>アイコン</label>
+      <div class="icon-picker" id="iconPicker">
+        <!-- JS で描画 -->
+      </div>
+      <label>名前 <span style="color:var(--brand)">*</span></label>
+      <input id="wikiName" type="text" maxlength="30" placeholder="例：サーバー同好会">
+      <label>ひとこと説明</label>
+      <input id="wikiDesc" type="text" maxlength="60" placeholder="例：校内サーバーの設計・運用をやっています">
+    </div>
+    <div class="modal-foot">
+      <button class="save-btn" id="saveWikiBtn">作成する</button>
+      <button class="cancel-btn" id="cancelWikiModal">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== カード編集モーダル ===== -->
+<div class="modal-overlay" id="cardModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="cardModalTitle">カードを追加</h3>
+      <button class="close-btn" id="closeCardModal">×</button>
+    </div>
+    <div class="modal-body">
+      <label>タイトル <span style="color:var(--brand)">*</span></label>
+      <input id="cardTitle" type="text" maxlength="40" placeholder="例：はじめに">
+      <label>画像URL（任意）</label>
+      <input id="cardImage" type="url" placeholder="https://...">
+      <label>本文</label>
+      <textarea id="cardBody" rows="5" placeholder="カードの内容を書く…"></textarea>
+      <label>タグ（スペース区切り）</label>
+      <input id="cardTags" type="text" placeholder="例：部長紹介 活動内容">
+    </div>
+    <div class="modal-foot">
+      <button class="save-btn" id="saveCardBtn">保存する</button>
+      <button class="cancel-btn" id="cancelCardModal">キャンセル</button>
+      <button class="del-btn hidden" id="delCardBtn">このカードを削除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+var STORE = "nhigh_wiki_v1";
+var ICONS = ["📚","🎨","🎸","🎭","🔭","🌿","🏐","🎮","⚙️","🧪","✏️","🎵","📷","🏊","🤖","⚽","🎤","💻","🍵","🌸"];
+
+/* ====================================================
+   状態
+   ==================================================== */
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(STORE));if(s&&s.wikis)return s;}catch(e){}
+  return {wikis:[
+    {id:"w1",icon:"💻",name:"サーバー同好会",desc:"校内サーバーの設計・運用",cards:[
+      {id:"c1",title:"サーバー同好会へようこそ！",image:"",body:"こんにちは！サーバー同好会のWikiへようこそ。\n\nぼくたちは校内のサーバー構築・ネットワーク管理・Webアプリ開発をやっている同好会です。",tags:["はじめに","自己紹介"]},
+      {id:"c2",title:"何をやってるの？",image:"",body:"月2回のオンライン定例（毎週水・金 19:00〜）\n\n■ 校内マインクラフト鯖の運用\n■ N高ポータルの開発\n■ Linuxコマンド入門勉強会\n\n初心者大歓迎！",tags:["活動内容"]},
+      {id:"c3",title:"入会するには",image:"",body:"#times-server にひとこと書くだけで参加できます。\n\nスキルは一切不問。「興味がある」だけで充分です。\n\n↓ 今すぐ話しかけてみよう",tags:["入会方法"]}
+    ]},
+    {id:"w2",icon:"🎨",name:"イラスト部",desc:"絵を描くのが好きな人たちの集まり",cards:[
+      {id:"c4",title:"イラスト部 案内",image:"",body:"週1回の相互講評会・毎月のテーマ投稿企画など活動中。\n\nデジタル・アナログどちらもOK！",tags:["はじめに"]}
+    ]}
+  ]};
+}
+function save(){localStorage.setItem(STORE,JSON.stringify(state));}
+var state = load();
+var curWikiId = null, curCard = 0, editCardId = null, selIcon = ICONS[0];
+
+/* ====================================================
+   ユーティリティ
+   ==================================================== */
+function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+var toastT;
+function toast(msg){
+  var el=document.getElementById("toast");
+  el.textContent=msg;el.classList.add("show");
+  clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove("show");},2000);
+}
+
+/* ====================================================
+   サイドバー描画
+   ==================================================== */
+function renderSidebar(){
+  var ul=document.getElementById("wikiList");
+  if(!state.wikis.length){
+    ul.innerHTML='<li style="padding:16px;color:var(--ink3);font-size:12px;text-align:center">Wikiがまだありません</li>';
+    return;
+  }
+  ul.innerHTML=state.wikis.map(function(w){
+    var act=w.id===curWikiId?"active":"";
+    return '<li class="wiki-item '+act+'" onclick="selectWiki(\''+esc(w.id)+'\')">'
+      +'<span class="wi-icon">'+esc(w.icon)+'</span>'
+      +'<div><div class="wi-name">'+esc(w.name)+'</div>'
+      +'<div class="wi-cards">'+w.cards.length+' カード</div></div>'
+      +'</li>';
+  }).join("");
+}
+
+/* ====================================================
+   Wiki 選択
+   ==================================================== */
+function selectWiki(id){
+  curWikiId=id;curCard=0;
+  renderSidebar();
+  renderViewer();
+}
+
+/* ====================================================
+   紙芝居ビューア描画
+   ==================================================== */
+function renderViewer(){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  document.getElementById("emptyState").classList.toggle("hidden",!!wiki);
+  document.getElementById("kamiFrame").classList.toggle("hidden",!wiki);
+  document.getElementById("wikiInfoBar").classList.toggle("hidden",!wiki);
+  if(!wiki)return;
+
+  /* 情報バー */
+  document.getElementById("wiBigIcon").textContent=wiki.icon;
+  document.getElementById("wiName").textContent=wiki.name;
+  document.getElementById("wiMeta").textContent=wiki.desc||wiki.cards.length+" カード";
+  document.getElementById("wikiTitleBar").textContent=wiki.name;
+
+  /* カード */
+  renderCard("active",null);
+}
+
+var animating=false;
+function renderCard(enterClass,exitClass){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  if(!wiki)return;
+  var cards=wiki.cards;
+  var stage=document.getElementById("cardStage");
+
+  /* 旧カードを退場させる */
+  if(exitClass){
+    var old=stage.querySelector(".kcard.active");
+    if(old){old.className="kcard "+exitClass;}
+  }
+
+  /* 新カードを入場させる */
+  var c=cards[curCard];
+  var div=document.createElement("div");
+  div.className="kcard "+(exitClass?enterClass:"active");
+  div.innerHTML=renderCardHTML(c,curCard,cards.length);
+  stage.appendChild(div);
+  if(exitClass){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        div.className="kcard active";
+        setTimeout(function(){
+          var olds=stage.querySelectorAll(".kcard:not(.active)");
+          olds.forEach(function(el){el.remove();});
+          animating=false;
+        },350);
+      });
+    });
+  }
+
+  /* ページ表示 */
+  document.getElementById("pageIndicator").textContent=
+    cards.length?(curCard+1)+" / "+cards.length:"—";
+  document.getElementById("prevBtn").disabled=curCard<=0;
+  document.getElementById("nextBtn").disabled=curCard>=cards.length-1;
+}
+
+function renderCardHTML(c,idx,total){
+  if(!c){
+    return '<div class="kcard-image"><span class="no-img">📄</span></div>'
+      +'<div class="kcard-body"><h2>カードがありません</h2>'
+      +'<p class="body-text">右上の「＋ カードを追加」からページを作ってください。</p></div>';
+  }
+  var imgHtml;
+  if(c.image){
+    imgHtml='<img src="'+esc(c.image)+'" alt="'+esc(c.title)+'" onerror="this.parentNode.innerHTML=\'<span class=no-img>🖼</span>\'">';
+  } else {
+    imgHtml='<span class="no-img">📄</span>';
+  }
+  var tagsHtml=(c.tags||[]).map(function(t){return'<span class="tag">'+esc(t)+'</span>';}).join("");
+  return '<div class="kcard-image">'
+    +'<span class="card-num">'+(idx+1)+' / '+total+'</span>'
+    +imgHtml
+    +'</div>'
+    +'<div class="kcard-body">'
+    +'<h2>'+esc(c.title)+'</h2>'
+    +'<p class="body-text">'+esc(c.body||"")+'</p>'
+    +(tagsHtml?'<div class="card-tags">'+tagsHtml+'</div>':'')
+    +'</div>';
+}
+
+/* ナビ */
+document.getElementById("prevBtn").addEventListener("click",function(){
+  if(animating||curCard<=0)return;
+  animating=true;
+  curCard--;
+  renderCard("enter-left","exit-right");
+  updateNav();
+});
+document.getElementById("nextBtn").addEventListener("click",function(){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  if(!wiki||animating||curCard>=wiki.cards.length-1)return;
+  animating=true;
+  curCard++;
+  renderCard("enter-right","exit-left");
+  updateNav();
+});
+function updateNav(){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  var len=wiki?wiki.cards.length:0;
+  document.getElementById("prevBtn").disabled=curCard<=0;
+  document.getElementById("nextBtn").disabled=curCard>=len-1;
+  document.getElementById("pageIndicator").textContent=len?(curCard+1)+" / "+len:"—";
+}
+
+/* キーボードナビ */
+document.addEventListener("keydown",function(e){
+  if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")return;
+  if(e.key==="ArrowLeft") document.getElementById("prevBtn").click();
+  if(e.key==="ArrowRight") document.getElementById("nextBtn").click();
+});
+
+/* ====================================================
+   Wiki 作成モーダル
+   ==================================================== */
+var wikiModal=document.getElementById("wikiModal");
+function openWikiModal(){
+  /* アイコン選択 */
+  selIcon=ICONS[0];
+  var picker=document.getElementById("iconPicker");
+  picker.innerHTML=ICONS.map(function(ic,i){
+    return '<button type="button" class="'+(i===0?"selected":"")+'" data-ic="'+ic+'" onclick="pickIcon(\''+ic+'\')">'+ic+'</button>';
+  }).join("");
+  document.getElementById("wikiName").value="";
+  document.getElementById("wikiDesc").value="";
+  wikiModal.setAttribute("open","");
+  document.getElementById("wikiName").focus();
+}
+function closeWikiModal(){wikiModal.removeAttribute("open");}
+function pickIcon(ic){
+  selIcon=ic;
+  document.querySelectorAll("#iconPicker button").forEach(function(b){
+    b.classList.toggle("selected",b.dataset.ic===ic);
+  });
+}
+
+document.getElementById("addWikiBtn").addEventListener("click",openWikiModal);
+document.getElementById("closeWikiModal").addEventListener("click",closeWikiModal);
+document.getElementById("cancelWikiModal").addEventListener("click",closeWikiModal);
+wikiModal.addEventListener("click",function(e){if(e.target===wikiModal)closeWikiModal();});
+
+document.getElementById("saveWikiBtn").addEventListener("click",function(){
+  var name=document.getElementById("wikiName").value.trim();
+  if(!name){toast("名前を入力してください");document.getElementById("wikiName").focus();return;}
+  var desc=document.getElementById("wikiDesc").value.trim();
+  var wiki={id:uid(),icon:selIcon,name:name,desc:desc,cards:[]};
+  state.wikis.push(wiki);
+  save();
+  closeWikiModal();
+  selectWiki(wiki.id);
+  toast("「"+name+"」を作成しました");
+});
+
+/* Wiki削除 */
+document.getElementById("delWikiBtn").addEventListener("click",function(){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  if(!wiki||!confirm("「"+wiki.name+"」を削除しますか？元に戻せません。"))return;
+  state.wikis=state.wikis.filter(function(w){return w.id!==curWikiId;});
+  curWikiId=null;curCard=0;
+  save();
+  renderSidebar();
+  renderViewer();
+  toast("削除しました");
+});
+
+/* ====================================================
+   カード編集モーダル
+   ==================================================== */
+var cardModal=document.getElementById("cardModal");
+function openCardModal(mode){
+  /* mode: "add" | "edit" */
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  var isEdit=mode==="edit";
+  var c=isEdit&&wiki&&wiki.cards[curCard];
+  document.getElementById("cardModalTitle").textContent=isEdit?"カードを編集":"カードを追加";
+  document.getElementById("cardTitle").value=c?c.title:"";
+  document.getElementById("cardImage").value=c&&c.image?c.image:"";
+  document.getElementById("cardBody").value=c?c.body||"":"";
+  document.getElementById("cardTags").value=c&&c.tags?c.tags.join(" "):"";
+  document.getElementById("delCardBtn").classList.toggle("hidden",!isEdit);
+  editCardId=isEdit&&c?c.id:null;
+  cardModal.setAttribute("open","");
+  document.getElementById("cardTitle").focus();
+}
+function closeCardModal(){cardModal.removeAttribute("open");editCardId=null;}
+
+document.getElementById("addCardBtn").addEventListener("click",function(){openCardModal("add");});
+document.getElementById("editCardBtn").addEventListener("click",function(){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  if(wiki&&wiki.cards.length)openCardModal("edit");
+  else openCardModal("add");
+});
+document.getElementById("closeCardModal").addEventListener("click",closeCardModal);
+document.getElementById("cancelCardModal").addEventListener("click",closeCardModal);
+cardModal.addEventListener("click",function(e){if(e.target===cardModal)closeCardModal();});
+
+document.getElementById("saveCardBtn").addEventListener("click",function(){
+  var title=document.getElementById("cardTitle").value.trim();
+  if(!title){toast("タイトルを入力してください");document.getElementById("cardTitle").focus();return;}
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  if(!wiki)return;
+  var tags=document.getElementById("cardTags").value.trim().split(/\s+/).filter(Boolean);
+  if(editCardId){
+    /* 既存カードを更新 */
+    var card=wiki.cards.find(function(c){return c.id===editCardId;});
+    if(card){
+      card.title=title;
+      card.image=document.getElementById("cardImage").value.trim();
+      card.body=document.getElementById("cardBody").value.trim();
+      card.tags=tags;
+    }
+    toast("カードを更新しました");
+  } else {
+    /* 新規追加 */
+    wiki.cards.push({
+      id:uid(),
+      title:title,
+      image:document.getElementById("cardImage").value.trim(),
+      body:document.getElementById("cardBody").value.trim(),
+      tags:tags
+    });
+    curCard=wiki.cards.length-1;
+    toast("カードを追加しました");
+  }
+  save();
+  closeCardModal();
+  renderSidebar();
+  /* カードエリアをリセット */
+  document.getElementById("cardStage").innerHTML="";
+  animating=false;
+  renderCard("active",null);
+  updateNav();
+});
+
+/* カード削除 */
+document.getElementById("delCardBtn").addEventListener("click",function(){
+  var wiki=state.wikis.find(function(w){return w.id===curWikiId;});
+  if(!wiki||!editCardId||!confirm("このカードを削除しますか？"))return;
+  wiki.cards=wiki.cards.filter(function(c){return c.id!==editCardId;});
+  curCard=Math.min(curCard,wiki.cards.length-1);
+  if(curCard<0)curCard=0;
+  save();
+  closeCardModal();
+  renderSidebar();
+  document.getElementById("cardStage").innerHTML="";
+  animating=false;
+  renderCard("active",null);
+  updateNav();
+  toast("カードを削除しました");
+});
+
+/* Esc で閉じる */
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"){
+    if(wikiModal.hasAttribute("open"))closeWikiModal();
+    if(cardModal.hasAttribute("open"))closeCardModal();
+  }
+});
+
+/* ====================================================
+   初期化
+   ==================================================== */
+renderSidebar();
+/* 最初のWikiを自動選択 */
+if(state.wikis.length){
+  selectWiki(state.wikis[0].id);
+} else {
+  document.getElementById("emptyState").classList.remove("hidden");
+}
+</script>
+</body>
+</html>
