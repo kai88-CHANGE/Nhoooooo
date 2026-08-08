@@ -106,8 +106,8 @@ img{max-width:100%;display:block}
 /* ===== ヘッダー：ロゴ＋検索 ===== */
 .head{background:#fff;padding:10px 0 0;border-bottom:2px solid #f0f0f0}
 .head .wrap{display:flex;align-items:flex-start;gap:22px}
-.logo{font-size:26px;font-weight:900;color:var(--brand);letter-spacing:-.04em;line-height:1;padding-top:4px;white-space:nowrap;font-style:italic}
-.logo span{color:var(--ink);font-size:11px;font-weight:700;display:block;letter-spacing:.3em;margin-top:4px;font-style:normal}
+.logo{display:flex;align-items:center;gap:0;padding-top:2px;flex:none}
+.logo-mark{width:40px;height:40px;flex:none}
 .sbox{flex:1;max-width:580px}
 .stabs{display:flex;gap:2px;font-size:12px}
 .stabs button{border:1px solid var(--line);border-bottom:0;background:var(--tint);color:var(--ink2);padding:4px 14px;border-radius:5px 5px 0 0}
@@ -355,14 +355,44 @@ img{max-width:100%;display:block}
 .tc small{color:var(--ink3);font-size:11px;font-family:var(--mono);display:block;margin-top:4px}
 
 /* ショップ */
-.shop{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.item{border:1px solid var(--line);border-radius:6px;padding:10px;text-align:center}
-.item .ic{font-size:26px;margin-bottom:4px}
-.item .nm{font-size:12.5px;font-weight:700;line-height:1.4}
-.item .pr{font-family:var(--mono);font-size:12px;color:var(--coin);font-weight:700;margin:4px 0 6px}
-.item .buy{width:100%;border:1px solid var(--coin);background:var(--coin-bg);color:var(--coin);font-weight:700;font-size:12px;padding:5px;border-radius:4px}
-.item .buy:hover{background:#fbe9bd}
-.item .buy:disabled{opacity:.5;cursor:default}
+/* ===== メルカリ風ショップ ===== */
+.mshop{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin:0 -2px}
+.mcard{cursor:pointer;background:#fff;border-radius:4px;overflow:hidden;transition:opacity .15s}
+.mcard:hover{opacity:.85}
+.mcard-img{position:relative;padding-top:100%;background:#f0f0f0;overflow:hidden}
+.mcard-img .ic-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px}
+.mcard-img .sold-badge{position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.08em}
+.mcard-body{padding:5px 4px 6px}
+.mcard-nm{font-size:12px;line-height:1.4;color:#222;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.mcard-pr{font-size:13px;font-weight:800;color:#222;margin-top:3px}
+.mcard-pr span{font-size:10px;font-weight:400;color:#888;margin-left:2px}
+.mcard-likes{font-size:10.5px;color:#888;margin-top:2px}
+/* 商品詳細モーダル */
+.shop-modal{display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.5);overflow-y:auto}
+.shop-modal.open{display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.shop-modal-inner{background:#fff;border-radius:8px;max-width:860px;width:100%;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;position:relative;margin:auto}
+.shop-modal-close{position:absolute;top:10px;right:14px;font-size:22px;background:none;border:0;cursor:pointer;color:#666;z-index:10}
+.shop-modal-gallery{background:#f5f5f5;display:flex;align-items:center;justify-content:center;min-height:340px;font-size:100px;padding:24px}
+.shop-modal-info{padding:24px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:600px}
+.shop-modal-title{font-size:18px;font-weight:700;color:#111;line-height:1.4}
+.shop-modal-price{font-size:26px;font-weight:900;color:#111}
+.shop-modal-price small{font-size:13px;font-weight:400;color:#888;margin-left:4px}
+.shop-modal-actions{display:flex;gap:8px}
+.shop-modal-actions .act-btn{flex:1;border:1px solid #ddd;background:#fff;border-radius:4px;padding:8px 4px;font-size:12px;cursor:pointer;color:#555;display:flex;align-items:center;justify-content:center;gap:4px}
+.shop-modal-actions .act-btn:hover{background:#f5f5f5}
+.shop-buy-btn{background:#cc0000;color:#fff;border:0;border-radius:4px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+.shop-buy-btn:hover{background:#a50000}
+.shop-buy-btn:disabled{background:#ccc;cursor:default}
+.shop-modal-section{border-top:1px solid #eee;padding-top:10px}
+.shop-modal-section h4{font-size:13px;font-weight:700;color:#111;margin-bottom:8px}
+.shop-modal-row{display:flex;gap:8px;font-size:13px;color:#555;margin-bottom:5px}
+.shop-modal-row dt{color:#888;min-width:80px}
+.shop-seller{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #eee;border-radius:6px}
+.shop-seller-av{width:40px;height:40px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.shop-seller-name{font-size:13px;font-weight:700}
+.shop-seller-stars{color:#f5a623;font-size:12px}
+.shop-tags{display:flex;gap:5px;flex-wrap:wrap}
+.shop-tag{background:#f0f0f0;border-radius:12px;padding:2px 10px;font-size:11px;color:#555}
 
 /* 右レール */
 .rail .box{padding:10px 12px}
@@ -403,7 +433,8 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
   .cols{grid-template-columns:1fr}
   .svc .wrap{grid-template-columns:repeat(4,1fr)}
   .grid3,.tg{grid-template-columns:1fr}
-  .shop{grid-template-columns:repeat(2,1fr)}
+  .mshop{grid-template-columns:repeat(2,1fr)}
+  .shop-modal-inner{grid-template-columns:1fr}
   .head .wrap{flex-wrap:wrap}
   .sbox{order:3;flex-basis:100%;max-width:none;padding-bottom:12px}
   .headright{min-width:0}
@@ -460,7 +491,7 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
 <div class="util"><div class="wrap">
   <span class="who">
     <img class="avatar" id="userAvatar" src="" alt="" onerror="this.style.display='none'">
-    ようこそ、<b id="uname">―</b>さん
+    <b id="uname" style="display:none"></b>
   </span>
   <span class="sp"></span>
   <span class="coin">114514コイン：<b id="bal">114,514</b></span>
@@ -470,7 +501,12 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
 
 <!-- ヘッダー -->
 <header class="head"><div class="wrap">
-  <div class="logo">N高ポータル<span>N HIGH</span></div>
+  <div class="logo">
+    <svg class="logo-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-label="N高ポータル">
+      <circle cx="20" cy="20" r="20" fill="#cc0000"/>
+      <text x="20" y="27" text-anchor="middle" font-family="'Helvetica Neue',Arial,sans-serif" font-size="22" font-weight="900" fill="#fff" letter-spacing="-1">N</text>
+    </svg>
+  </div>
   <div class="sbox">
     <div class="stabs" role="tablist" aria-label="検索対象">
       <button role="tab" aria-selected="true"  data-scope="all">すべて</button>
@@ -560,9 +596,9 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
     </section>
 
     <!-- ショップ -->
-    <section class="box" id="shop">
-      <h2>コインショップ<a class="more" href="#">すべての商品</a></h2>
-      <div class="shop" id="shopList"></div>
+    <section class="box" id="shop" style="padding:12px 8px">
+      <h2 style="padding:0 4px 8px">コインショップ<a class="more" href="#">すべての商品</a></h2>
+      <div class="mshop" id="shopList"></div>
     </section>
   </div>
 
@@ -601,6 +637,15 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
     </section>
   </aside>
 </main>
+
+<!-- ===== 商品詳細モーダル ===== -->
+<div class="shop-modal" id="shopDetailModal">
+  <div class="shop-modal-inner">
+    <button class="shop-modal-close" id="shopDetailClose" aria-label="閉じる">✕</button>
+    <div class="shop-modal-gallery" id="shopDetailGallery"></div>
+    <div class="shop-modal-info" id="shopDetailInfo"></div>
+  </div>
+</div>
 
 <footer><div class="wrap">
   <span>N高ポータル（プロトタイプ）</span>
@@ -824,10 +869,14 @@ var TIMES = [
  {n:"#times-juken", d:"受験勉強の記録。同じ志望校の人が集まっています。",s:"203人 / 今日61投稿"}
 ];
 var SHOP = [
- {ic:"👕",nm:"磁石祭 公式Tシャツ",price:1200},
- {ic:"🎟",nm:"文化祭 前売りチケット",price:600},
- {ic:"📓",nm:"N高 オリジナルノート",price:300},
- {ic:"☕",nm:"キャンパスカフェ 引換券",price:450}
+ {ic:"👕",nm:"磁石祭2026 公式Tシャツ 白 Lサイズ",desc:"今年の磁石祭の公式グッズです。未開封・新品。Lサイズのみ残り1点。ロゴプリントあり。",price:1200,cat:"ファッション",area:"東京",seller:"山田 快",sellerIc:"🧑",cond:"新品・未使用",likes:8,sold:false,tags:["磁石祭","Tシャツ","公式グッズ"]},
+ {ic:"🎟",nm:"文化祭 前売りチケット 2枚セット",desc:"磁石祭2026の前売りチケット2枚セットです。当日券より200コインお得。有効期限：2026/9/11当日。",price:600,cat:"チケット",area:"全国",seller:"生徒会",sellerIc:"🏫",cond:"新品・未使用",likes:24,sold:false,tags:["磁石祭","チケット","イベント"]},
+ {ic:"📓",nm:"N高 オリジナルノート A5 方眼",desc:"校内限定グッズ。A5サイズ方眼ノート。表紙にN高ロゴ入り。全80ページ。",price:300,cat:"文具",area:"全国",seller:"書店同好会",sellerIc:"📚",cond:"新品・未使用",likes:14,sold:false,tags:["文具","N高","ノート"]},
+ {ic:"☕",nm:"キャンパスカフェ コーヒー引換券",desc:"沖縄本校・東京キャンパスのカフェで使えるコーヒー引換券です。有効期限：2026/12/31。",price:450,cat:"フード・ドリンク",area:"全国",seller:"カフェ部",sellerIc:"☕",cond:"新品・未使用",likes:6,sold:false,tags:["カフェ","コーヒー","引換券"]},
+ {ic:"🎮",nm:"ゲーム部 大会 観戦チケット",desc:"10月開催の校内ゲーム大会の観戦チケット。スマブラ・マリカー・VALORANTの3部門。",price:200,cat:"チケット",area:"東京",seller:"ゲーム部",sellerIc:"🎮",cond:"新品・未使用",likes:33,sold:false,tags:["ゲーム","大会","イベント"]},
+ {ic:"🖼",nm:"イラスト部 オリジナルアクリルキーホルダー",desc:"イラスト部メンバーがデザインした限定アクリルキーホルダー（5×5cm）。デザインは3種からランダム。",price:800,cat:"グッズ",area:"全国",seller:"イラスト部",sellerIc:"🎨",cond:"新品・未使用",likes:41,sold:false,tags:["イラスト","キーホルダー","限定"]},
+ {ic:"📷",nm:"写真部 L版プリント 5枚セット",desc:"写真部が撮影したスクーリング・校内イベントの写真をL版で5枚お届け。内容はランダムです。",price:250,cat:"グッズ",area:"全国",seller:"写真部",sellerIc:"📷",cond:"新品・未使用",likes:9,sold:true,tags:["写真","プリント","スクーリング"]},
+ {ic:"🍱",nm:"沖縄スクーリング 地元弁当クーポン",desc:"沖縄本校スクーリング参加者向け。地元弁当屋のランチクーポン。沖縄スクーリング参加者のみ利用可。",price:380,cat:"フード・ドリンク",area:"沖縄",seller:"生徒会",sellerIc:"🏫",cond:"新品・未使用",likes:17,sold:false,tags:["沖縄","弁当","スクーリング"]}
 ];
 
 function load() {
@@ -1050,17 +1099,100 @@ function renderTimes() {
 function renderShop() {
   var el = document.getElementById("shopList");
   el.innerHTML = SHOP.map(function(x,i){
-    return '<div class="item"><div class="ic">'+x.ic+'</div><div class="nm">'+esc(x.nm)+'</div>'
-      +'<div class="pr">'+money(x.price)+' コイン</div>'
-      +'<button class="buy" data-shop="'+i+'">購入する</button></div>';
+    return '<div class="mcard" data-shop="'+i+'">'
+      +'<div class="mcard-img">'
+      +'<div class="ic-bg">'+x.ic+'</div>'
+      +(x.sold?'<div class="sold-badge">SOLD</div>':'')
+      +'</div>'
+      +'<div class="mcard-body">'
+      +'<div class="mcard-nm">'+esc(x.nm)+'</div>'
+      +'<div class="mcard-pr">'+money(x.price)+'<span>コイン</span></div>'
+      +'<div class="mcard-likes">♡ '+x.likes+'</div>'
+      +'</div></div>';
   }).join("");
-  el.querySelectorAll("button[data-shop]").forEach(function(b){
-    b.addEventListener("click",function(){
-      var x = SHOP[+b.dataset.shop];
-      if(pay(x.price,"ショップ："+x.nm)) toast("「"+x.nm+"」を購入しました");
+  el.querySelectorAll(".mcard").forEach(function(card){
+    card.addEventListener("click",function(){
+      openShopDetail(+card.dataset.shop);
     });
   });
 }
+
+var shopLikes = SHOP.map(function(x){ return x.likes; });
+
+function openShopDetail(i) {
+  var x = SHOP[i];
+  var gallery = document.getElementById("shopDetailGallery");
+  var info    = document.getElementById("shopDetailInfo");
+  gallery.innerHTML = '<span style="font-size:100px">'+x.ic+'</span>';
+  var stars = "★★★★☆";
+  info.innerHTML =
+    '<div class="shop-modal-title">'+esc(x.nm)+'</div>'
+    +'<div class="shop-modal-price">'+money(x.price)+'<small>コイン (税込)</small></div>'
+    +'<div class="shop-modal-actions">'
+    +'  <button class="act-btn" id="sdLikeBtn" data-i="'+i+'">♡ <span id="sdLikeCnt">'+shopLikes[i]+'</span> いいね</button>'
+    +'  <button class="act-btn">💬 コメント</button>'
+    +'  <button class="act-btn">↑ シェア</button>'
+    +'</div>'
+    +(x.sold
+      ?'<button class="shop-buy-btn" disabled>SOLD OUT</button>'
+      :'<button class="shop-buy-btn" id="sdBuyBtn" data-i="'+i+'">コインで購入手続きへ</button>'
+    )
+    +'<div class="shop-modal-section">'
+    +'  <h4>商品の説明</h4>'
+    +'  <p style="font-size:13px;color:#444;line-height:1.7">'+esc(x.desc)+'</p>'
+    +'  <div class="shop-tags">'+x.tags.map(function(t){ return '<span class="shop-tag">#'+esc(t)+'</span>'; }).join("")+'</div>'
+    +'</div>'
+    +'<div class="shop-modal-section">'
+    +'  <h4>商品の情報</h4>'
+    +'  <dl>'
+    +'    <div class="shop-modal-row"><dt>カテゴリ</dt><dd>'+esc(x.cat)+'</dd></div>'
+    +'    <div class="shop-modal-row"><dt>商品の状態</dt><dd>'+esc(x.cond)+'</dd></div>'
+    +'    <div class="shop-modal-row"><dt>受渡し地域</dt><dd>'+esc(x.area)+'</dd></div>'
+    +'  </dl>'
+    +'</div>'
+    +'<div class="shop-modal-section">'
+    +'  <h4>出品者</h4>'
+    +'  <div class="shop-seller">'
+    +'    <div class="shop-seller-av">'+x.sellerIc+'</div>'
+    +'    <div>'
+    +'      <div class="shop-seller-name">'+esc(x.seller)+'</div>'
+    +'      <div class="shop-seller-stars">'+stars+' <span style="color:#333;font-weight:700">4.8</span></div>'
+    +'    </div>'
+    +'  </div>'
+    +'</div>';
+
+  var modal = document.getElementById("shopDetailModal");
+  modal.classList.add("open");
+
+  var likeBtn = document.getElementById("sdLikeBtn");
+  if(likeBtn){
+    likeBtn.addEventListener("click",function(){
+      shopLikes[i]++;
+      document.getElementById("sdLikeCnt").textContent=shopLikes[i];
+      likeBtn.style.color="var(--brand)";
+      likeBtn.disabled=true;
+    });
+  }
+  var buyBtn = document.getElementById("sdBuyBtn");
+  if(buyBtn){
+    buyBtn.addEventListener("click",function(){
+      if(pay(x.price,"ショップ："+x.nm)){
+        SHOP[i].sold=true;
+        buyBtn.disabled=true;
+        buyBtn.textContent="購入済み";
+        toast("「"+x.nm+"」を購入しました");
+        renderShop();
+      }
+    });
+  }
+}
+
+document.getElementById("shopDetailModal").addEventListener("click",function(e){
+  if(e.target===this) this.classList.remove("open");
+});
+document.getElementById("shopDetailClose").addEventListener("click",function(){
+  document.getElementById("shopDetailModal").classList.remove("open");
+});
 
 function renderAll() { renderCoins(); renderLog(); renderSparkline(); renderWire(); renderEvents(); renderTimes(); renderShop(); renderRail(); }
 
