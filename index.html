@@ -132,13 +132,70 @@ img{max-width:100%;display:block}
 .svc a:hover{background:var(--tint);text-decoration:none;color:var(--brand)}
 .svc i{display:block;font-style:normal;font-size:18px;color:var(--brand);margin-bottom:2px}
 
-/* ===== 本体 2カラム ===== */
-.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;padding:14px 0 36px}
+/* ===== 本体 3カラム ===== */
+.k3col{display:grid;grid-template-columns:160px minmax(0,1fr) 260px;gap:14px;padding:14px 0 36px;align-items:start}
 .box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:11px 13px;margin-bottom:14px}
 .box h2{margin:0 0 9px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;border-left:4px solid var(--brand);padding-left:9px;line-height:1.3}
 .box h2 .more{margin-left:auto;font-size:11.5px;font-weight:400;border-left:0}
 .box h2 .hdr-btn{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--brand);color:#fff;border:0;border-radius:4px;padding:3px 12px;cursor:pointer}
 .box h2 .hdr-btn:hover{background:var(--brand-d)}
+
+/* ===== 左サイドバー（.lnav） ===== */
+.lnav{background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;position:sticky;top:8px}
+.lnav-section{font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px 4px}
+.lnav-item{display:flex;align-items:center;gap:8px;padding:9px 12px;color:var(--ink);font-size:13px;cursor:pointer;border-left:3px solid transparent;text-decoration:none;background:none;border-top:0;border-right:0;border-bottom:0;width:100%;text-align:left}
+.lnav-item:hover{background:var(--tint);text-decoration:none}
+.lnav-item.active{color:var(--brand);border-left-color:var(--brand);background:#fff5f7;font-weight:700}
+.lnav-icon{font-size:16px;width:20px;text-align:center;flex:none;font-style:normal}
+.lnav-label{flex:1;font-size:12.5px}
+.lnav-cnt{font-size:10px;font-family:var(--mono);background:var(--tint2);border-radius:10px;padding:1px 6px;color:var(--ink3);flex:none}
+.lnav-item.active .lnav-cnt{background:var(--brand);color:#fff}
+.lnav-divider{border:0;border-top:1px solid var(--line);margin:4px 0}
+
+/* ===== 紙芝居ステージ ===== */
+.kami-stage{min-height:420px}
+.kami-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px 12px}
+.kami-cat-title{font-size:14px;font-weight:700;color:var(--ink);flex:1}
+.kami-counter{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.kami-nav-btn{border:1px solid var(--line);background:var(--card);border-radius:4px;padding:4px 12px;font-size:15px;color:var(--ink2);line-height:1}
+.kami-nav-btn:hover:not(:disabled){border-color:var(--brand);color:var(--brand)}
+.kami-nav-btn:disabled{opacity:.3;cursor:default}
+.kami-auto-btn{border:1px solid var(--line);background:var(--card);border-radius:4px;padding:4px 10px;font-size:11px;color:var(--ink3)}
+.kami-auto-btn.playing{border-color:var(--brand);color:var(--brand);background:#fff5f7}
+.kami-frame{overflow:hidden;border-radius:6px;position:relative;min-height:380px}
+.kami-card{
+  background:var(--card);border:1px solid var(--line);border-radius:6px;
+  display:flex;flex-direction:column;min-height:380px;
+  position:absolute;inset:0;
+  transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s;
+}
+.kami-card.is-active{position:relative;transform:translateX(0);opacity:1}
+.kami-card.enter-right{transform:translateX(100%);opacity:0}
+.kami-card.enter-left{transform:translateX(-100%);opacity:0}
+.kami-card.exit-left{transform:translateX(-100%);opacity:0;pointer-events:none}
+.kami-card.exit-right{transform:translateX(100%);opacity:0;pointer-events:none}
+.kami-card-top{padding:12px 16px 10px;display:flex;align-items:center;gap:8px;border-radius:6px 6px 0 0;flex:none}
+.kami-cat-badge{font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:5px}
+.kami-new-badge{margin-left:auto;background:rgba(255,255,255,.25);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.kami-card-body{padding:20px 22px;flex:1;display:flex;flex-direction:column;gap:10px}
+.kami-headline{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4;margin:0}
+.kami-sub{font-size:13px;color:var(--ink2);margin:0;line-height:1.7}
+.kami-big-date{font-size:42px;font-weight:900;font-family:var(--mono);color:var(--brand);line-height:1;margin:8px 0 4px}
+.kami-big-ic{font-size:72px;text-align:center;padding:10px 0;flex:1;display:flex;align-items:center;justify-content:center}
+.kami-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.kami-tag{background:var(--tint);border:1px solid var(--line);border-radius:10px;padding:2px 9px;font-size:11px;color:var(--ink2)}
+.kami-card-foot{padding:12px 16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;flex:none;background:var(--tint)}
+.kami-meta{font-size:11.5px;color:var(--ink3);flex:1;font-family:var(--mono)}
+.kami-action-btn{border:0;border-radius:5px;padding:8px 18px;font-weight:700;font-size:13px;cursor:pointer}
+.kami-primary{background:var(--brand);color:#fff}
+.kami-primary:hover{background:var(--brand-d)}
+.kami-primary:disabled{background:#ccc;cursor:default}
+.kami-coin{background:var(--coin-bg);color:var(--coin);border:1px solid var(--coin-line)}
+.kami-coin:hover{background:#fbe9bd}
+.kami-dots{display:flex;gap:5px;justify-content:center;padding:8px 0;flex-wrap:wrap}
+.kami-dot{width:8px;height:8px;border-radius:50%;border:1px solid var(--line);background:var(--tint);padding:0;cursor:pointer;transition:background .15s}
+.kami-dot.active{background:var(--brand);border-color:var(--brand)}
+.kami-post-banner{border:1px dashed var(--brand);border-radius:6px;padding:16px;text-align:center;background:#fff5f7;margin:8px 0}
 
 /* トピックス */
 .area-filter{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px}
@@ -430,7 +487,15 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media(max-width:900px){
-  .cols{grid-template-columns:1fr}
+  .k3col{grid-template-columns:1fr}
+  .lnav{display:flex;overflow-x:auto;border-radius:6px;position:static}
+  .lnav-section{display:none}
+  .lnav-item{flex-direction:column;gap:2px;padding:8px;font-size:11px;border-left:0;border-bottom:3px solid transparent;white-space:nowrap;min-width:60px;text-align:center}
+  .lnav-item.active{border-left-color:transparent;border-bottom-color:var(--brand)}
+  .lnav-icon{font-size:20px}
+  .lnav-divider{display:none}
+  .kami-headline{font-size:17px}
+  .kami-big-date{font-size:32px}
   .svc .wrap{grid-template-columns:repeat(4,1fr)}
   .grid3,.tg{grid-template-columns:1fr}
   .mshop{grid-template-columns:repeat(2,1fr)}
@@ -548,61 +613,40 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
 </div></nav>
 
 <!-- 本体 -->
-<main class="wrap cols">
-  <div>
-    <!-- トピックス -->
-    <section class="box topics" id="wire">
-      <h2>校内トピックス<a class="more" href="#">一覧</a></h2>
-      <div class="tabs" role="tablist" aria-label="カテゴリ">
-        <button class="tab" role="tab" aria-selected="true"  data-f="all">すべて</button>
-        <button class="tab" role="tab" aria-selected="false" data-f="council">生徒会</button>
-        <button class="tab" role="tab" aria-selected="false" data-f="school">学校</button>
-        <button class="tab" role="tab" aria-selected="false" data-f="club">部活</button>
-        <button class="tab" role="tab" aria-selected="false" data-f="times">times</button>
-        <button class="tab" role="tab" aria-selected="false" data-f="user">生徒投稿</button>
-      </div>
-      <!-- 地域フィルタ -->
-      <div class="area-filter" id="areaFilter">
-        <button class="atab" data-area="all" aria-selected="true">全国</button>
-        <button class="atab" data-area="okinawa" aria-selected="false">沖縄</button>
-        <button class="atab" data-area="tokyo" aria-selected="false">東京</button>
-        <button class="atab" data-area="osaka" aria-selected="false">大阪</button>
-        <button class="atab" data-area="tokai" aria-selected="false">東海</button>
-        <button class="atab" data-area="tohoku" aria-selected="false">東北</button>
-        <button class="atab" data-area="hokkaido" aria-selected="false">北海道</button>
-      </div>
-      <!-- 生徒投稿バナー (タブ="user"のときだけ表示) -->
-      <div class="user-post-banner hidden" id="userPostBanner">
-        <span class="icon">📰</span>
-        <div class="txt">
-          <strong>機関誌・記事を作成</strong>
-          <span>見出し・本文・画像・引用を組み合わせてオリジナル記事が作れます</span>
-        </div>
-        <button class="create-btn" id="openMagEditor">＋ 記事を作る</button>
-      </div>
-      <ul class="wire" id="wireList"></ul>
-    </section>
+<main class="wrap k3col">
+  <!-- 左サイドバー -->
+  <aside class="lnav" id="lnav">
+    <div class="lnav-section">コンテンツ</div>
+    <button class="lnav-item active" data-cat="news"><i class="lnav-icon">📢</i><span class="lnav-label">校内ニュース</span><span class="lnav-cnt" id="cnt-news">0</span></button>
+    <button class="lnav-item" data-cat="times"><i class="lnav-icon">#</i><span class="lnav-label">times</span><span class="lnav-cnt" id="cnt-times">3</span></button>
+    <button class="lnav-item" data-cat="club"><i class="lnav-icon">🏃</i><span class="lnav-label">部活・同好会</span><span class="lnav-cnt" id="cnt-club">0</span></button>
+    <button class="lnav-item" data-cat="council"><i class="lnav-icon">🏫</i><span class="lnav-label">生徒会</span><span class="lnav-cnt" id="cnt-council">0</span></button>
+    <hr class="lnav-divider">
+    <div class="lnav-section">イベント・購買</div>
+    <button class="lnav-item" data-cat="event"><i class="lnav-icon">🎉</i><span class="lnav-label">イベント</span><span class="lnav-cnt" id="cnt-event">3</span></button>
+    <button class="lnav-item" data-cat="shop"><i class="lnav-icon">🛒</i><span class="lnav-label">ショップ</span><span class="lnav-cnt" id="cnt-shop">8</span></button>
+    <hr class="lnav-divider">
+    <div class="lnav-section">生徒発信</div>
+    <button class="lnav-item" data-cat="user"><i class="lnav-icon">✎</i><span class="lnav-label">生徒投稿</span><span class="lnav-cnt" id="cnt-user">0</span></button>
+    <button class="lnav-item" data-cat="school"><i class="lnav-icon">📣</i><span class="lnav-label">学校お知らせ</span><span class="lnav-cnt" id="cnt-school">0</span></button>
+  </aside>
 
-    <!-- イベント -->
-    <section class="box" id="events">
-      <h2>近いイベント<a class="more" href="#">カレンダー</a></h2>
-      <div class="grid3" id="evList"></div>
-    </section>
-
-    <!-- おすすめtimes -->
-    <section class="box">
-      <h2>おすすめのtimes<a class="more" href="#">もっと見る</a></h2>
-      <div class="tg" id="timesList"></div>
-    </section>
-
-    <!-- ショップ -->
-    <section class="box" id="shop" style="padding:12px 8px">
-      <h2 style="padding:0 4px 8px">コインショップ<a class="more" href="#">すべての商品</a></h2>
-      <div class="mshop" id="shopList"></div>
-    </section>
+  <!-- 紙芝居ステージ -->
+  <div class="kami-stage">
+    <div class="kami-header">
+      <button class="kami-nav-btn" id="kamiPrev" aria-label="前へ">&#8592;</button>
+      <span class="kami-cat-title" id="kamiCatTitle">校内ニュース</span>
+      <span class="kami-counter" id="kamiCounter">1 / 1</span>
+      <button class="kami-auto-btn" id="kamiAuto">▶ 自動</button>
+      <button class="kami-nav-btn" id="kamiNext" aria-label="次へ">&#8594;</button>
+    </div>
+    <div class="kami-frame" id="kamiFrame">
+      <!-- カードはJSで生成 -->
+    </div>
+    <div class="kami-dots" id="kamiDots"></div>
   </div>
 
-  <!-- 右レール -->
+  <!-- 右レール（既存のまま） -->
   <aside class="rail">
     <section class="box wallet">
       <h2>114514ウォレット</h2>
@@ -615,22 +659,18 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
       <h2>入出金の履歴</h2>
       <ul class="log" id="logList"><li><span>まだ取引はありません</span></li></ul>
     </section>
-    <!-- 天気：キャンパス別 -->
     <section class="box">
       <h2>スクーリング先の天気<a class="more" href="#">詳細</a></h2>
       <div id="campusWeather"></div>
     </section>
-    <!-- カレンダー連携：今日の予定 -->
     <section class="box">
       <h2>今日の予定<a class="more" href="calendar.html">カレンダー</a></h2>
       <ul class="mini" id="todayEvents"></ul>
     </section>
-    <!-- 提出期限 -->
     <section class="box">
       <h2>提出期限<a class="more" href="calendar.html">全件</a></h2>
       <ul class="mini" id="deadlineList"></ul>
     </section>
-    <!-- 急上昇ワード -->
     <section class="box">
       <h2>急上昇ワード<a class="more" href="trending.html">詳しく→</a></h2>
       <ul class="rank" id="trendingRank"></ul>
@@ -827,13 +867,8 @@ document.getElementById("logoutLink").addEventListener("click", function(e) {
 
 document.getElementById("navUserPost").addEventListener("click", function(e) {
   e.preventDefault();
-  document.getElementById("wire").scrollIntoView({behavior:"smooth"});
-  document.querySelectorAll(".tab").forEach(function(t, i) {
-    t.setAttribute("aria-selected", t.dataset.f === "user" ? "true" : "false");
-  });
-  tab = "user";
-  renderWire();
-  document.getElementById("userPostBanner").classList.remove("hidden");
+  renderKami("user", 0);
+  document.querySelector(".kami-stage").scrollIntoView({behavior:"smooth"});
 });
 
 /* ====================================================
@@ -879,6 +914,17 @@ var SHOP = [
  {ic:"🍱",nm:"沖縄スクーリング 地元弁当クーポン",desc:"沖縄本校スクーリング参加者向け。地元弁当屋のランチクーポン。沖縄スクーリング参加者のみ利用可。",price:380,cat:"フード・ドリンク",area:"沖縄",seller:"生徒会",sellerIc:"🏫",cond:"新品・未使用",likes:17,sold:false,tags:["沖縄","弁当","スクーリング"]}
 ];
 
+var KAMI_CATS = [
+  {id:"news",    icon:"📢", label:"校内ニュース", color:"#cc0000"},
+  {id:"times",   icon:"#",  label:"times",       color:"#a81f5b"},
+  {id:"club",    icon:"🏃", label:"部活・同好会", color:"#0a6b57"},
+  {id:"council", icon:"🏫", label:"生徒会",       color:"#173f9b"},
+  {id:"event",   icon:"🎉", label:"イベント",     color:"#e07000"},
+  {id:"shop",    icon:"🛒", label:"ショップ",     color:"#b8860b"},
+  {id:"user",    icon:"✎",  label:"生徒投稿",     color:"#5b5f66"},
+  {id:"school",  icon:"📣", label:"学校お知らせ", color:"#555"},
+];
+
 function load() {
   try {
     var s = JSON.parse(localStorage.getItem(STORE));
@@ -907,6 +953,28 @@ window.addEventListener("DOMContentLoaded", function() {
   renderAll();
   tick();
   setInterval(tick, 30000);
+
+  // 左サイドバー
+  document.querySelectorAll(".lnav-item[data-cat]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      renderKami(btn.dataset.cat, 0);
+    });
+  });
+  // 前へ・次へ
+  document.getElementById("kamiPrev").addEventListener("click",function(){
+    if(kamiIdx > 0) renderKami(kamiCat, kamiIdx-1, "prev");
+  });
+  document.getElementById("kamiNext").addEventListener("click",function(){
+    if(kamiIdx < kamiCards.length-1) renderKami(kamiCat, kamiIdx+1, "next");
+  });
+  // 自動再生
+  document.getElementById("kamiAuto").addEventListener("click",function(){
+    kamiPlaying = !kamiPlaying;
+    this.textContent = kamiPlaying ? "⏸ 停止" : "▶ 自動";
+    this.classList.toggle("playing", kamiPlaying);
+    if(kamiPlaying) startKamiAuto();
+    else clearInterval(kamiAutoTimer);
+  });
 });
 
 var scope = "all", tab = "all", q = "", area = "all";
@@ -996,6 +1064,229 @@ function renderSparkline() {
   svg.setAttribute("preserveAspectRatio","none");
   svg.innerHTML = '<path d="'+fill+'" fill="rgba(180,140,0,0.15)"/>'
     +'<path d="'+line+'" fill="none" stroke="#c8960c" stroke-width="1.5"/>';
+}
+
+/* ====================================================
+   紙芝居
+   ==================================================== */
+var kamiCat = "news";
+var kamiIdx = 0;
+var kamiCards = [];
+var kamiAutoTimer = null;
+var kamiPlaying = false;
+
+function buildKamiCards(cat) {
+  var cards = [];
+  if (cat === "times") {
+    TIMES.forEach(function(x) {
+      cards.push({type:"times", data:x});
+    });
+  } else if (cat === "event") {
+    EVENTS.forEach(function(x) {
+      cards.push({type:"event", data:x});
+    });
+  } else if (cat === "shop") {
+    SHOP.forEach(function(x, i) {
+      cards.push({type:"shop", data:x, idx:i});
+    });
+  } else {
+    var filter = (cat === "news") ? null : cat;
+    state.items.forEach(function(x) {
+      if (!filter || x.c === filter) {
+        if (match(x.h + " " + (x.m||""))) {
+          cards.push({type:"news", data:x});
+        }
+      }
+    });
+    if (!cards.length) cards.push({type:"empty", cat:cat});
+  }
+  return cards;
+}
+
+function kamiCardHTML(card) {
+  var catInfo = KAMI_CATS.find(function(c){ return c.id === kamiCat; }) || KAMI_CATS[0];
+  var color = catInfo.color;
+
+  if (card.type === "times") {
+    var x = card.data;
+    return '<div class="kami-card is-active">'
+      + '<div class="kami-card-top" style="background:'+color+'">'
+      + '  <span class="kami-cat-badge"><i style="font-style:normal">'+catInfo.icon+'</i> '+esc(catInfo.label)+'</span>'
+      + '</div>'
+      + '<div class="kami-card-body">'
+      + '  <div class="kami-big-ic"><span style="font-size:48px">💬</span></div>'
+      + '  <h2 class="kami-headline">'+esc(x.n)+'</h2>'
+      + '  <p class="kami-sub">'+esc(x.d)+'</p>'
+      + '  <div class="kami-tags"><span class="kami-tag">'+esc(x.s)+'</span></div>'
+      + '</div>'
+      + '<div class="kami-card-foot">'
+      + '  <span class="kami-meta">'+esc(x.s)+'</span>'
+      + '  <a href="#wire" class="kami-action-btn kami-primary" style="text-decoration:none">チャンネルを見る →</a>'
+      + '</div></div>';
+  }
+
+  if (card.type === "event") {
+    var x = card.data;
+    var priceLabel = x.price > 0 ? money(x.price)+"コインで申込" : "無料で申込";
+    return '<div class="kami-card is-active">'
+      + '<div class="kami-card-top" style="background:'+color+'">'
+      + '  <span class="kami-cat-badge"><i style="font-style:normal">'+catInfo.icon+'</i> '+esc(catInfo.label)+'</span>'
+      + '</div>'
+      + '<div class="kami-card-body">'
+      + '  <div class="kami-big-date">'+esc(x.d)+'</div>'
+      + '  <h2 class="kami-headline">'+esc(x.h)+'</h2>'
+      + '  <p class="kami-sub">'+esc(x.s)+'</p>'
+      + '</div>'
+      + '<div class="kami-card-foot">'
+      + '  <span class="kami-meta">'+money(x.price)+'コイン</span>'
+      + '  <button class="kami-action-btn kami-coin" data-ev-price="'+x.price+'" data-ev-nm="'+esc(x.h)+'">'+priceLabel+'</button>'
+      + '</div></div>';
+  }
+
+  if (card.type === "shop") {
+    var x = card.data; var i = card.idx;
+    return '<div class="kami-card is-active">'
+      + '<div class="kami-card-top" style="background:'+color+'">'
+      + '  <span class="kami-cat-badge"><i style="font-style:normal">'+catInfo.icon+'</i> '+esc(catInfo.label)+'</span>'
+      + (x.sold?'<span class="kami-new-badge">SOLD</span>':'')
+      + '</div>'
+      + '<div class="kami-card-body">'
+      + '  <div class="kami-big-ic">'+x.ic+'</div>'
+      + '  <h2 class="kami-headline">'+esc(x.nm)+'</h2>'
+      + '  <p class="kami-sub">'+esc(x.desc.slice(0,80))+(x.desc.length>80?"…":"")+'</p>'
+      + '  <div class="kami-tags">'+x.tags.map(function(t){return '<span class="kami-tag">#'+esc(t)+'</span>';}).join("")+'</div>'
+      + '</div>'
+      + '<div class="kami-card-foot">'
+      + '  <span class="kami-meta">♡ '+x.likes+' · '+esc(x.area)+'</span>'
+      + '  <button class="kami-action-btn '+(x.sold?'kami-primary':'kami-coin')+'" '+(x.sold?'disabled':'')+' data-shop-open="'+i+'">'+(x.sold?'SOLD OUT':money(x.price)+'コイン')+'</button>'
+      + '</div></div>';
+  }
+
+  if (card.type === "empty") {
+    return '<div class="kami-card is-active">'
+      + '<div class="kami-card-top" style="background:'+color+'">'
+      + '  <span class="kami-cat-badge"><i style="font-style:normal">'+catInfo.icon+'</i> '+esc(catInfo.label)+'</span>'
+      + '</div>'
+      + '<div class="kami-card-body" style="align-items:center;justify-content:center">'
+      + '  <div class="kami-big-ic">📭</div>'
+      + '  <p class="kami-sub" style="text-align:center">まだ投稿がありません</p>'
+      + '</div>'
+      + '<div class="kami-card-foot"></div></div>';
+  }
+
+  // news / club / council / user / school
+  var x = card.data;
+  var isMag = !!x.magazine;
+  var LABEL_MAP = {council:["生徒会","p-council"],school:["学校","p-school"],club:["部活","p-club"],times:["times","p-times"],user:["生徒投稿","p-user"]};
+  var lbl = LABEL_MAP[x.c] || ["ニュース","p-school"];
+  return '<div class="kami-card is-active">'
+    + '<div class="kami-card-top" style="background:'+color+'">'
+    + '  <span class="kami-cat-badge"><i style="font-style:normal">'+catInfo.icon+'</i> '+esc(catInfo.label)+'</span>'
+    + (x.n?'<span class="kami-new-badge">NEW</span>':'')
+    + (x.b?'<span class="kami-new-badge" style="background:rgba(184,134,11,.5)">固定</span>':'')
+    + '</div>'
+    + '<div class="kami-card-body">'
+    + (isMag?'<div class="kami-big-ic">📰</div>':'')
+    + '  <h2 class="kami-headline">'+esc(x.h)+'</h2>'
+    + (x.m?'<p class="kami-sub">'+esc(x.m)+'</p>':'')
+    + '  <div class="kami-tags"><span class="kami-tag '+lbl[1]+'">'+lbl[0]+'</span></div>'
+    + '</div>'
+    + '<div class="kami-card-foot">'
+    + '  <span class="kami-meta">'+esc(x.t)+'</span>'
+    + (isMag?'<button class="kami-action-btn kami-primary" data-magid="'+esc(x.magId||"")+'">読む →</button>':'')
+    + (!isMag && !x.b?'<button class="kami-action-btn kami-coin" data-boost-kami="'+state.items.indexOf(x)+'">500コインで固定</button>':'')
+    + '</div></div>';
+}
+
+function renderKami(cat, idx, dir) {
+  kamiCat = cat || kamiCat;
+  kamiCards = buildKamiCards(kamiCat);
+  if (idx === undefined) idx = 0;
+  kamiIdx = Math.max(0, Math.min(idx, kamiCards.length - 1));
+
+  var frame = document.getElementById("kamiFrame");
+  var dots  = document.getElementById("kamiDots");
+  var catInfo = KAMI_CATS.find(function(c){ return c.id === kamiCat; }) || KAMI_CATS[0];
+
+  document.getElementById("kamiCatTitle").textContent = catInfo.label;
+  document.getElementById("kamiCounter").textContent = (kamiIdx+1) + " / " + kamiCards.length;
+  document.getElementById("kamiPrev").disabled = (kamiIdx === 0);
+  document.getElementById("kamiNext").disabled = (kamiIdx >= kamiCards.length - 1);
+
+  var html = kamiCardHTML(kamiCards[kamiIdx]);
+  if (!dir) {
+    frame.innerHTML = html;
+  } else {
+    var old = frame.querySelector(".kami-card");
+    var enterClass = dir === "next" ? "enter-right" : "enter-left";
+    var exitClass  = dir === "next" ? "exit-left"   : "exit-right";
+    frame.insertAdjacentHTML("beforeend", html.replace("is-active", enterClass));
+    var newCard = frame.lastElementChild;
+    if (old) old.classList.replace("is-active", exitClass);
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        newCard.classList.replace(enterClass, "is-active");
+        setTimeout(function(){
+          if (old && old.parentNode) old.parentNode.removeChild(old);
+        }, 350);
+      });
+    });
+  }
+
+  setTimeout(function(){
+    frame.querySelectorAll("[data-ev-price]").forEach(function(b){
+      b.addEventListener("click",function(){
+        var price=+b.dataset.evPrice, nm=b.dataset.evNm;
+        if(price===0){toast("「"+nm+"」に申し込みました");b.disabled=true;b.textContent="申込済み";return;}
+        if(pay(price,"イベント："+nm)){b.disabled=true;b.textContent="申込済み";toast("「"+nm+"」に申し込みました");}
+      });
+    });
+    frame.querySelectorAll("[data-shop-open]").forEach(function(b){
+      b.addEventListener("click",function(){ openShopDetail(+b.dataset.shopOpen); });
+    });
+    frame.querySelectorAll("[data-magid]").forEach(function(b){
+      b.addEventListener("click",function(){ openViewer(b.dataset.magid); });
+    });
+    frame.querySelectorAll("[data-boost-kami]").forEach(function(b){
+      b.addEventListener("click",function(){
+        var x=state.items[+b.dataset.boostKami];
+        if(!x||x.b)return;
+        if(pay(BOOST_FEE,"記事をトップ固定")){x.b=true;save();toast("トップに固定しました");renderKami(kamiCat,kamiIdx);}
+      });
+    });
+  }, 10);
+
+  dots.innerHTML = kamiCards.map(function(_,i){
+    return '<button class="kami-dot'+(i===kamiIdx?" active":"")+'" data-di="'+i+'"></button>';
+  }).join("");
+  dots.querySelectorAll(".kami-dot").forEach(function(d){
+    d.addEventListener("click",function(){
+      var dir2 = +d.dataset.di > kamiIdx ? "next" : "prev";
+      renderKami(kamiCat, +d.dataset.di, dir2);
+    });
+  });
+
+  document.querySelectorAll(".lnav-item").forEach(function(el){
+    el.classList.toggle("active", el.dataset.cat === kamiCat);
+  });
+
+  updateNavCounts();
+}
+
+function updateNavCounts() {
+  var countMap = {};
+  KAMI_CATS.forEach(function(c){ countMap[c.id] = 0; });
+  countMap["news"] = state.items.length;
+  countMap["event"] = EVENTS.length;
+  countMap["times"] = TIMES.length;
+  countMap["shop"]  = SHOP.length;
+  state.items.forEach(function(x){
+    if(x.c && countMap[x.c] !== undefined) countMap[x.c]++;
+  });
+  Object.keys(countMap).forEach(function(k){
+    var el = document.getElementById("cnt-"+k);
+    if(el) el.textContent = countMap[k];
+  });
 }
 
 /* ====================================================
@@ -1194,7 +1485,7 @@ document.getElementById("shopDetailClose").addEventListener("click",function(){
   document.getElementById("shopDetailModal").classList.remove("open");
 });
 
-function renderAll() { renderCoins(); renderLog(); renderSparkline(); renderWire(); renderEvents(); renderTimes(); renderShop(); renderRail(); }
+function renderAll() { renderCoins(); renderLog(); renderSparkline(); renderKami(); renderRail(); }
 
 /* ====================================================
    右レール：天気 / 予定 / 期限 / 急上昇
@@ -1321,7 +1612,7 @@ document.querySelectorAll(".sugg a").forEach(function(a){
   a.addEventListener("click",function(e){
     e.preventDefault(); var kw=a.dataset.kw;
     document.getElementById("q").value=kw; doSearch(kw);
-    document.getElementById("wire").scrollIntoView();
+    document.querySelector(".kami-stage").scrollIntoView();
   });
 });
 
@@ -1347,7 +1638,18 @@ document.addEventListener("keydown",function(e){
     if(magModal.hasAttribute("open")) closeMagEditor();
     if(viewerModal.hasAttribute("open")) closeViewer();
   }
+  if(e.key==="ArrowLeft"  && !e.target.matches("input,textarea")) { if(kamiIdx>0) renderKami(kamiCat,kamiIdx-1,"prev"); }
+  if(e.key==="ArrowRight" && !e.target.matches("input,textarea")) { if(kamiIdx<kamiCards.length-1) renderKami(kamiCat,kamiIdx+1,"next"); }
 });
+
+function startKamiAuto(){
+  clearInterval(kamiAutoTimer);
+  kamiAutoTimer = setInterval(function(){
+    if(!kamiPlaying) return;
+    var next = (kamiIdx+1) % kamiCards.length;
+    renderKami(kamiCat, next, "next");
+  }, 4000);
+}
 
 document.getElementById("composeForm").addEventListener("submit",function(e){
   e.preventDefault();
@@ -1364,11 +1666,10 @@ document.getElementById("composeForm").addEventListener("submit",function(e){
   save();
   document.getElementById("ct").value=""; document.getElementById("cb").value=""; document.getElementById("cboost").checked=false;
   closeModal();
-  tab="all"; scope="all"; q=""; document.getElementById("q").value="";
-  document.querySelectorAll(".tab").forEach(function(x,i){ x.setAttribute("aria-selected",i===0?"true":"false"); });
+  scope="all"; q=""; document.getElementById("q").value="";
   document.querySelectorAll(".stabs button").forEach(function(x,i){ x.setAttribute("aria-selected",i===0?"true":"false"); });
   renderAll();
-  document.getElementById("wire").scrollIntoView();
+  document.querySelector(".kami-stage").scrollIntoView();
   toast(boost?"投稿してトップに固定しました":"投稿しました");
 });
 
@@ -1516,10 +1817,9 @@ document.getElementById("publishMag").addEventListener("click", function(){
   save();
 
   closeMagEditor();
-  tab="user"; scope="all"; q="";
-  document.querySelectorAll(".tab").forEach(function(x){ x.setAttribute("aria-selected", x.dataset.f==="user"?"true":"false"); });
-  renderWire();
-  document.getElementById("wire").scrollIntoView();
+  scope="all"; q="";
+  renderKami("user", 0);
+  document.querySelector(".kami-stage").scrollIntoView();
   toast("記事を公開しました！");
 });
 
