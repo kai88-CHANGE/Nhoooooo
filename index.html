@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N高ポータル</title>
+<style>
+:root{
+  --ink:#1a1a1c; --ink2:#5b5f66; --ink3:#999;
+  --link:#0066cc; --visited:#551a8b;
+  --brand:#cc0000;
+  --brand-d:#a50000;
+  --srch:#ff6600; --srch-d:#e05500;   /* 検索ボタン（Yahoo!オレンジ） */
+  --paper:#f0f0f0; --card:#fff; --line:#d3d3d3;
+  --tint:#f5f5f5; --tint2:#eeeeee;
+  --coin:#b8860b; --coin-bg:#fdf3d8; --coin-line:#f0dda6;
+  --ok:#0a6b57; --due:#b3002a;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--brand);outline-offset:1px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 12px}
+button{font:inherit;cursor:pointer}
+img{max-width:100%;display:block}
+.hidden{display:none!important}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto}}
+
+/* ===== ログイン画面 ===== */
+#loginScreen{
+  position:fixed;inset:0;z-index:999;
+  background:#f0f0f0;
+  display:flex;align-items:center;justify-content:center;
+}
+.login-wrap{
+  width:100%;max-width:960px;padding:0 16px;
+  display:flex;align-items:flex-start;gap:24px;
+}
+.login-card{
+  background:var(--card);border:1px solid var(--line);
+  padding:24px 20px;flex:1;max-width:500px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+.login-logo{
+  font-size:32px;font-weight:800;color:var(--brand);
+  letter-spacing:-.02em;line-height:1;margin-bottom:2px;
+}
+.login-logo span{color:var(--ink);font-size:11px;font-weight:700;display:block;letter-spacing:.28em;margin-top:4px}
+.login-subtitle{font-size:12px;color:var(--ink2);margin:12px 0 16px;
+  padding:8px 10px;background:#fff0f0;border:1px solid #f5c6c6;
+  border-radius:3px;line-height:1.7;
+}
+.login-subtitle strong{color:var(--brand)}
+#g_id_onload{display:none}
+.g-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;border:1px solid #dadce0;border-radius:3px;
+  background:#fff;padding:10px 14px;font-size:14px;font-weight:700;color:#3c4043;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);transition:box-shadow .15s;
+}
+.g-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.18);text-decoration:none}
+.g-btn svg{flex:none}
+.login-domain{
+  display:flex;align-items:center;gap:8px;
+  margin-top:14px;padding:8px 10px;background:#f8f8ff;
+  border:1px solid #aac;border-radius:3px;font-size:12px;
+}
+.login-domain .lock{font-size:14px}
+.login-domain b{color:var(--brand);font-family:var(--mono)}
+.login-domain .extra{color:var(--ink3);font-size:11px;margin-left:auto}
+.login-dev{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.login-dev button{background:var(--tint);border:1px solid var(--line);color:var(--ink2);font-size:12px;padding:6px 14px;border-radius:3px;width:100%}
+.login-dev button:hover{background:#e8e8e8}
+.login-dev p{font-size:11px;color:var(--ink3);margin:5px 0 0;text-align:center}
+/* ログイン右カラム（Yahoo スタイル広告スペース風） */
+.login-aside{
+  width:180px;flex:none;
+  background:var(--card);border:1px solid var(--line);
+  padding:12px;font-size:12px;color:var(--ink2);text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+}
+.login-aside .aside-title{font-weight:700;color:var(--ink);margin-bottom:8px;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.login-aside ul{list-style:none;padding:0;margin:0;text-align:left}
+.login-aside ul li{padding:5px 0;border-top:1px solid #eee;display:flex;align-items:center;gap:6px}
+.login-aside ul li:first-child{border-top:0}
+.login-aside ul li .li-icon{font-size:16px}
+@media(max-width:600px){
+  .login-wrap{flex-direction:column}
+  .login-aside{width:100%;display:none}
+}
+
+/* ===== 最上部ユーティリティ ===== */
+.util{background:#fff;border-bottom:1px solid #d3d3d3;font-size:12px}
+.util .wrap{display:flex;gap:14px;height:30px;align-items:center}
+.util .who{color:var(--ink2)}
+.util .who b{color:var(--ink)}
+.util .sp{margin-left:auto}
+.util .coin{background:var(--coin-bg);color:var(--coin);font-weight:700;padding:3px 10px;border-radius:3px;font-family:var(--mono);border:1px solid var(--coin-line)}
+.util a{color:var(--ink2)}
+.util .avatar{width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid var(--line);flex:none}
+
+/* ===== ヘッダー：ロゴ＋検索 ===== */
+.head{background:#fff;padding:10px 0 0;border-bottom:2px solid #f0f0f0}
+.head .wrap{display:flex;align-items:flex-start;gap:22px}
+.logo{font-size:26px;font-weight:900;color:var(--brand);letter-spacing:-.04em;line-height:1;padding-top:4px;white-space:nowrap;font-style:italic}
+.logo span{color:var(--ink);font-size:11px;font-weight:700;display:block;letter-spacing:.3em;margin-top:4px;font-style:normal}
+.sbox{flex:1;max-width:580px}
+.stabs{display:flex;gap:2px;font-size:12px}
+.stabs button{border:1px solid var(--line);border-bottom:0;background:var(--tint);color:var(--ink2);padding:4px 14px;border-radius:5px 5px 0 0}
+.stabs button[aria-selected="true"]{background:var(--card);color:var(--ink);font-weight:700;position:relative;top:1px}
+.sform{display:flex;border:2px solid var(--srch);border-radius:0 0 3px 0;overflow:hidden}
+.sform input{flex:1;border:0;padding:9px 11px;font:inherit;background:transparent}
+.sform input:focus{outline:none}
+.sform button{border:0;background:var(--srch);color:#fff;padding:0 26px;font-weight:700}
+.sform button:hover{background:var(--srch-d)}
+.sugg{margin:6px 0 0;font-size:12px;color:var(--ink3);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sugg a{background:var(--tint);border:1px solid var(--line);border-radius:11px;padding:1px 10px;color:var(--ink2)}
+.sugg a:hover{border-color:var(--brand);color:var(--brand);text-decoration:none}
+.headright{margin-left:auto;text-align:right;font-size:12px;color:var(--ink2);padding-top:2px;min-width:150px}
+.headright .cd{font-family:var(--mono);color:var(--ink3)}
+.postbtn{display:block;margin-top:8px;background:var(--brand);border:0;color:#fff;font-weight:700;padding:8px 16px;border-radius:5px;width:100%}
+.postbtn:hover{background:var(--brand-d)}
+
+/* ===== サービスアイコン列 ===== */
+.svc{background:#fff;border-bottom:1px solid #d3d3d3;margin-top:8px}
+.svc .wrap{display:grid;grid-template-columns:repeat(11,1fr);gap:1px;padding:8px 12px}
+.svc a{text-align:center;font-size:11px;color:var(--ink);padding:6px 1px;border-radius:3px;line-height:1.35}
+.svc a:hover{background:var(--tint);text-decoration:none;color:var(--brand)}
+.svc i{display:block;font-style:normal;font-size:18px;color:var(--brand);margin-bottom:2px}
+
+/* ===== 本体 2カラム ===== */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;padding:14px 0 36px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:11px 13px;margin-bottom:14px}
+.box h2{margin:0 0 9px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;border-left:4px solid var(--brand);padding-left:9px;line-height:1.3}
+.box h2 .more{margin-left:auto;font-size:11.5px;font-weight:400;border-left:0}
+.box h2 .hdr-btn{margin-left:auto;font-size:11.5px;font-weight:700;background:var(--brand);color:#fff;border:0;border-radius:4px;padding:3px 12px;cursor:pointer}
+.box h2 .hdr-btn:hover{background:var(--brand-d)}
+
+/* トピックス */
+.topics .tabs{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px}
+.tab{border:1px solid var(--line);background:var(--tint);border-radius:4px;padding:3px 12px;font-size:12px;color:var(--ink2)}
+.tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:700}
+.wire{list-style:none;margin:0;padding:0}
+.wire li{display:flex;gap:9px;align-items:baseline;padding:8px 0;border-bottom:1px dotted var(--line);flex-wrap:wrap}
+.wire li:last-child{border-bottom:0}
+.wire .t{font-family:var(--mono);font-size:11px;color:var(--ink3);width:40px;flex:none}
+.wire .h{font-size:15px;font-weight:500;color:var(--link)}
+.wire .h:visited{color:var(--visited)}
+.wire .m{font-size:11.5px;color:var(--ink3);flex-basis:100%;margin-left:49px}
+.pill{font-size:10.5px;padding:1px 7px;border-radius:3px;font-weight:700;white-space:nowrap}
+.p-council{background:#e7edfb;color:#173f9b}
+.p-school{background:#fdf0d8;color:#8a5a00}
+.p-club{background:#e2f3ee;color:#0a6b57}
+.p-times{background:#fce9f1;color:#a81f5b}
+.p-user{background:#eee;color:#4b4b4b}
+.new{color:var(--brand);font-size:10.5px;font-weight:700}
+.boosted{background:var(--coin-bg);color:var(--coin);font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:3px;border:1px solid var(--coin-line)}
+.act{margin-left:auto;display:flex;gap:6px}
+.act button{border:1px solid var(--line);background:var(--card);font-size:11px;padding:2px 9px;border-radius:3px;color:var(--ink2)}
+.act button:hover{border-color:var(--coin);color:var(--coin)}
+.act button:disabled{opacity:.5;cursor:default;border-color:var(--line);color:var(--ink3)}
+.act .read-btn{border-color:var(--brand);color:var(--brand)}
+.act .read-btn:hover{background:var(--brand);color:#fff}
+
+/* 生徒投稿バナー */
+.user-post-banner{
+  border:1px solid var(--brand);border-radius:7px;padding:14px 16px;margin-bottom:10px;
+  background:linear-gradient(135deg,#fff5f7 0%,#fff 100%);
+  display:flex;align-items:center;gap:14px;
+}
+.user-post-banner .icon{font-size:28px;flex:none}
+.user-post-banner .txt strong{display:block;font-size:14px;font-weight:700;color:var(--ink)}
+.user-post-banner .txt span{font-size:12px;color:var(--ink2)}
+.user-post-banner .create-btn{
+  margin-left:auto;flex:none;
+  background:var(--brand);color:#fff;border:0;border-radius:6px;
+  padding:9px 18px;font-weight:700;font-size:13px;
+}
+.user-post-banner .create-btn:hover{background:var(--brand-d)}
+
+/* 機関誌カード (wire内) */
+.mag-card{
+  border:1px solid var(--line);border-radius:6px;overflow:hidden;
+  flex-basis:100%;background:var(--card);display:flex;gap:0;
+}
+.mag-card .mag-cover{
+  width:90px;flex:none;background:var(--tint2);display:flex;align-items:center;justify-content:center;
+  font-size:32px;color:var(--ink3);
+}
+.mag-card .mag-cover img{width:90px;height:74px;object-fit:cover}
+.mag-card .mag-body{padding:10px 12px;flex:1;min-width:0}
+.mag-card .mag-body strong{display:block;font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mag-card .mag-body p{margin:3px 0 6px;font-size:12px;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mag-card .mag-meta{font-size:11px;color:var(--ink3);display:flex;gap:10px;align-items:center}
+.mag-card .mag-meta .read-mag{margin-left:auto;border:1px solid var(--brand);color:var(--brand);background:transparent;border-radius:4px;padding:3px 12px;font-size:12px;font-weight:700}
+.mag-card .mag-meta .read-mag:hover{background:var(--brand);color:#fff}
+
+/* 投稿モーダル (共通) */
+.modal{position:fixed;inset:0;background:rgba(20,22,26,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 12px;z-index:50;overflow:auto}
+.modal[open]{display:flex}
+.compose{width:100%;max-width:520px;background:var(--card);border-radius:8px;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.compose h2{margin:0 0 4px;font-size:17px;font-weight:800;color:var(--brand)}
+.compose .lead{font-size:12px;color:var(--ink3);margin:0 0 8px}
+.compose label{display:block;font-size:12px;font-weight:700;margin:12px 0 3px;color:var(--ink2)}
+.compose input,.compose select,.compose textarea{width:100%;border:1px solid var(--line);border-radius:5px;padding:8px 10px;font:inherit;font-size:14px;background:var(--tint)}
+.compose input:focus,.compose select:focus,.compose textarea:focus{outline:none;border-color:var(--brand);background:#fff}
+.compose textarea{min-height:76px;resize:vertical}
+.chk{display:flex;gap:8px;align-items:flex-start;margin-top:12px;background:var(--coin-bg);border:1px solid var(--coin-line);border-radius:6px;padding:9px 11px}
+.chk input{width:auto;margin-top:3px}
+.chk label{margin:0;font-weight:700;color:var(--coin)}
+.chk small{display:block;font-weight:400;color:#8a6d1a;font-size:11.5px}
+.crow{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.crow .sub{background:var(--brand);color:#fff;border:0;border-radius:5px;padding:10px 26px;font-weight:700}
+.crow .sub:hover{background:var(--brand-d)}
+.crow .cancel{background:transparent;border:1px solid var(--line);border-radius:5px;padding:10px 18px;color:var(--ink2)}
+.crow .fee{font-size:11.5px;color:var(--ink3);margin-left:auto}
+
+/* ===== 機関誌エディタ ===== */
+.mag-modal-inner{
+  width:100%;max-width:700px;background:var(--card);border-radius:8px;
+  box-shadow:0 12px 40px rgba(0,0,0,.3);overflow:hidden;
+  display:flex;flex-direction:column;max-height:90vh;
+}
+.mag-modal-inner .mag-header{
+  background:var(--brand);color:#fff;padding:14px 18px;
+  display:flex;align-items:center;gap:10px;flex:none;
+}
+.mag-modal-inner .mag-header h2{margin:0;font-size:16px;font-weight:800;color:#fff;flex:1}
+.mag-modal-inner .mag-header .preview-toggle{
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);
+  color:#fff;border-radius:5px;padding:5px 14px;font-size:12px;font-weight:700;
+}
+.mag-modal-inner .mag-header .preview-toggle:hover{background:rgba(255,255,255,.35)}
+.mag-modal-inner .mag-header .close-mag{
+  background:transparent;border:0;color:#fff;font-size:20px;line-height:1;opacity:.8;
+}
+.mag-modal-inner .mag-header .close-mag:hover{opacity:1}
+
+.mag-body-scroll{overflow-y:auto;flex:1;padding:18px}
+
+/* エディタ: 基本情報 */
+.mag-meta-fields{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.mag-meta-fields label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:10px 0 3px}
+.mag-meta-fields label:first-child{margin-top:0}
+.mag-meta-fields input{width:100%;border:1px solid var(--line);border-radius:5px;padding:8px 10px;font:inherit;font-size:14px;background:var(--tint)}
+.mag-meta-fields input:focus{outline:none;border-color:var(--brand);background:#fff}
+
+/* セクションリスト */
+.section-list{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.sec-card{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--tint)}
+.sec-card .sec-head{
+  display:flex;align-items:center;gap:8px;padding:6px 10px;
+  background:var(--tint2);border-bottom:1px solid var(--line);font-size:12px;
+}
+.sec-card .sec-head .sec-type-label{font-weight:700;color:var(--ink2);flex:1}
+.sec-card .sec-head button{
+  background:transparent;border:1px solid var(--line);border-radius:3px;
+  padding:2px 8px;font-size:11px;color:var(--ink3);
+}
+.sec-card .sec-head button:hover{border-color:var(--brand);color:var(--brand)}
+.sec-card .sec-head .del-sec{border-color:transparent}
+.sec-card .sec-head .del-sec:hover{border-color:#c00;color:#c00}
+.sec-card .sec-body{padding:10px}
+.sec-card textarea,.sec-card input{
+  width:100%;border:1px solid var(--line);border-radius:4px;
+  padding:7px 9px;font:inherit;font-size:13px;background:#fff;resize:vertical;
+}
+.sec-card textarea:focus,.sec-card input:focus{outline:none;border-color:var(--brand)}
+.sec-card textarea{min-height:80px}
+.sec-card .two-fields{display:flex;gap:8px}
+.sec-card .two-fields input{flex:1}
+
+/* セクション追加ボタン */
+.add-section-bar{
+  display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;
+  padding:10px;background:var(--tint);border:1px dashed var(--line);border-radius:6px;
+}
+.add-section-bar span{font-size:11.5px;color:var(--ink3);align-self:center;margin-right:2px}
+.add-section-bar button{
+  background:#fff;border:1px solid var(--line);border-radius:4px;
+  padding:4px 12px;font-size:12px;color:var(--ink2);
+}
+.add-section-bar button:hover{border-color:var(--brand);color:var(--brand);background:#fff5f7}
+
+/* エディタ フッター */
+.mag-footer{
+  flex:none;border-top:1px solid var(--line);padding:12px 18px;
+  display:flex;gap:10px;align-items:center;background:var(--card);
+}
+.mag-footer .pub-btn{background:var(--brand);color:#fff;border:0;border-radius:6px;padding:10px 28px;font-weight:700;font-size:14px}
+.mag-footer .pub-btn:hover{background:var(--brand-d)}
+.mag-footer .cncl-btn{background:transparent;border:1px solid var(--line);border-radius:6px;padding:10px 18px;color:var(--ink2)}
+.mag-footer .pub-note{font-size:11.5px;color:var(--ink3);margin-left:auto}
+
+/* ===== プレビューモード ===== */
+.mag-preview{font-size:15px;line-height:1.8;max-width:600px;margin:0 auto}
+.mag-preview .pv-cover{
+  width:100%;height:160px;object-fit:cover;border-radius:6px;margin-bottom:18px;display:block;
+}
+.mag-preview .pv-cover-placeholder{
+  width:100%;height:160px;background:var(--tint2);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:18px;
+}
+.mag-preview .pv-title{font-size:24px;font-weight:800;color:var(--ink);line-height:1.3;margin:0 0 6px}
+.mag-preview .pv-sub{font-size:15px;color:var(--ink2);margin:0 0 6px}
+.mag-preview .pv-byline{font-size:12px;color:var(--ink3);margin:0 0 20px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.mag-preview .pv-h3{font-size:17px;font-weight:700;color:var(--ink);margin:20px 0 8px;border-left:3px solid var(--brand);padding-left:9px}
+.mag-preview .pv-p{margin:0 0 14px;color:var(--ink)}
+.mag-preview .pv-img{margin:16px 0}
+.mag-preview .pv-img img{width:100%;border-radius:5px}
+.mag-preview .pv-img figcaption{font-size:12px;color:var(--ink3);text-align:center;margin-top:5px}
+.mag-preview .pv-quote{
+  margin:16px 0;border-left:4px solid var(--brand);padding:10px 16px;
+  background:#fff5f7;color:var(--ink2);font-style:italic;border-radius:0 5px 5px 0;
+}
+
+/* ===== 記事ビューアー ===== */
+.viewer-inner{
+  width:100%;max-width:660px;background:var(--card);border-radius:8px;
+  box-shadow:0 12px 40px rgba(0,0,0,.3);overflow:hidden;
+  display:flex;flex-direction:column;max-height:90vh;
+}
+.viewer-inner .viewer-head{
+  padding:14px 18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;flex:none;
+}
+.viewer-inner .viewer-head h3{margin:0;font-size:13px;color:var(--ink2);flex:1}
+.viewer-inner .viewer-head .close-viewer{background:transparent;border:0;font-size:20px;color:var(--ink3)}
+.viewer-inner .viewer-head .close-viewer:hover{color:var(--ink)}
+.viewer-scroll{overflow-y:auto;flex:1;padding:20px 24px}
+
+/* イベント */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ev{border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;color:var(--ink);background:var(--card)}
+.ev .d{background:var(--tint);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;font-weight:700;color:var(--brand);padding:5px 9px}
+.ev .b{padding:8px 9px;font-size:13px;line-height:1.5;flex:1}
+.ev small{color:var(--ink3);font-size:11px;display:block;margin-top:3px}
+.ev .buy{margin:0;border:0;border-top:1px solid var(--line);background:var(--tint2);color:var(--coin);font-weight:700;font-size:12px;padding:7px}
+.ev .buy:hover{background:var(--coin-bg)}
+.ev .buy:disabled{color:var(--ink3);cursor:default}
+
+/* times */
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tc{border:1px solid var(--line);border-radius:6px;padding:9px 11px;display:block;color:var(--ink)}
+.tc:hover{text-decoration:none;border-color:var(--brand)}
+.tc b{font-family:var(--mono);font-size:13px;color:var(--link)}
+.tc p{margin:3px 0 0;font-size:12px;color:var(--ink2);line-height:1.5}
+.tc small{color:var(--ink3);font-size:11px;font-family:var(--mono);display:block;margin-top:4px}
+
+/* ショップ */
+.shop{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.item{border:1px solid var(--line);border-radius:6px;padding:10px;text-align:center}
+.item .ic{font-size:26px;margin-bottom:4px}
+.item .nm{font-size:12.5px;font-weight:700;line-height:1.4}
+.item .pr{font-family:var(--mono);font-size:12px;color:var(--coin);font-weight:700;margin:4px 0 6px}
+.item .buy{width:100%;border:1px solid var(--coin);background:var(--coin-bg);color:var(--coin);font-weight:700;font-size:12px;padding:5px;border-radius:4px}
+.item .buy:hover{background:#fbe9bd}
+.item .buy:disabled{opacity:.5;cursor:default}
+
+/* 右レール */
+.rail .box{padding:10px 12px}
+.mini{list-style:none;margin:0;padding:0;font-size:13px}
+.mini li{display:flex;gap:8px;padding:5px 0;border-top:1px dotted var(--line);align-items:baseline}
+.mini li:first-child{border-top:0}
+.mini .k{font-family:var(--mono);font-size:11px;color:var(--ink3);white-space:nowrap;flex:none}
+.mini .k.due{background:#fdeaee;color:var(--due);padding:1px 6px;border-radius:3px;font-weight:700}
+.rank{list-style:none;margin:0;padding:0;counter-reset:r;font-size:13px}
+.rank li{counter-increment:r;display:flex;gap:8px;padding:5px 0;align-items:baseline}
+.rank li::before{content:counter(r);font-family:var(--mono);font-size:11px;color:#fff;background:var(--ink3);width:16px;text-align:center;border-radius:2px;flex:none}
+.rank li:nth-child(-n+3)::before{background:var(--brand)}
+.rank span{font-family:var(--mono);font-size:12.5px;color:var(--link)}
+.rank em{font-style:normal;font-size:10.5px;color:var(--ink3);margin-left:auto}
+.wallet{background:var(--coin-bg);border-color:var(--coin-line)}
+.wallet h2{border-left-color:var(--coin)}
+.wallet .bal{font-family:var(--mono);font-size:26px;font-weight:800;color:var(--coin);line-height:1.2}
+.wallet p{margin:3px 0 8px;font-size:11.5px;color:#8a6d1a}
+.wallet .charge{width:100%;border:1px solid var(--coin);background:#fff;color:var(--coin);font-weight:700;padding:6px;border-radius:5px;font-size:12.5px}
+.wallet .charge:hover{background:#fff}
+.wx{display:flex;align-items:center;gap:12px}
+.wx .ic{font-size:34px}
+.wx .tp{font-family:var(--mono);font-size:22px;font-weight:700}
+.wx small{color:var(--ink3);font-size:11px}
+.empty{font-size:12.5px;color:var(--ink3);padding:10px 0;display:block}
+.log{list-style:none;margin:0;padding:0;font-size:11.5px;color:var(--ink2);max-height:120px;overflow:auto}
+.log li{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-top:1px dotted var(--line)}
+.log li:first-child{border-top:0}
+.log .amt{font-family:var(--mono);font-weight:700}
+.log .amt.minus{color:var(--due)}
+.log .amt.plus{color:var(--ok)}
+footer{background:var(--card);border-top:1px solid var(--line);padding:16px 0;font-size:11.5px;color:var(--ink3);margin-top:8px}
+footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:80}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:900px){
+  .cols{grid-template-columns:1fr}
+  .svc .wrap{grid-template-columns:repeat(4,1fr)}
+  .grid3,.tg{grid-template-columns:1fr}
+  .shop{grid-template-columns:repeat(2,1fr)}
+  .head .wrap{flex-wrap:wrap}
+  .sbox{order:3;flex-basis:100%;max-width:none;padding-bottom:12px}
+  .headright{min-width:0}
+  .user-post-banner{flex-wrap:wrap}
+  .user-post-banner .create-btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ログイン画面 ===== -->
+<div id="loginScreen">
+  <div class="login-wrap">
+    <!-- メインカード -->
+    <div class="login-card">
+      <div class="login-logo">N高ポータル<span>SCHOOL PORTAL</span></div>
+      <div class="login-subtitle">
+        <strong>@nnn.ed.jp</strong> のGoogleアカウントのみログインできます。<br>
+        個人アカウントや他ドメインは使用できません。
+      </div>
+      <button class="g-btn" id="loginBtn" onclick="startGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Googleアカウントでログイン
+      </button>
+      <div class="login-domain">
+        <span class="lock">🔒</span>
+        <span>認証ドメイン：<b id="domainHint">@nnn.ed.jp</b></span>
+        <span class="extra">Google Workspace</span>
+      </div>
+      <div class="login-dev" id="devModeSection">
+        <button onclick="devLogin()">▶ 開発用ログイン（テスト用）</button>
+        <p>Google Client IDを未設定の場合のみ使用</p>
+      </div>
+    </div>
+    <!-- 右サイドバー（Yahoo Japan スタイル） -->
+    <div class="login-aside">
+      <div class="aside-title">校内サービス</div>
+      <ul>
+        <li><span class="li-icon">📚</span>レポート提出</li>
+        <li><span class="li-icon">🗓</span>時間割</li>
+        <li><span class="li-icon">🏫</span>スクーリング</li>
+        <li><span class="li-icon">🗣</span>生徒会</li>
+        <li><span class="li-icon">✏️</span>生徒投稿</li>
+        <li><span class="li-icon">🛒</span>ショップ</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ポータル本体（ログイン後に表示） ===== -->
+<div id="portal" class="hidden">
+
+<!-- 最上部ユーティリティ -->
+<div class="util"><div class="wrap">
+  <span class="who">
+    <img class="avatar" id="userAvatar" src="" alt="" onerror="this.style.display='none'">
+    ようこそ、<b id="uname">―</b>さん
+  </span>
+  <span class="sp"></span>
+  <span class="coin">114514コイン：<b id="bal">114,514</b></span>
+  <a href="#">ヘルプ</a><a href="#">設定</a>
+  <a href="#" id="logoutLink">ログアウト</a>
+</div></div>
+
+<!-- ヘッダー -->
+<header class="head"><div class="wrap">
+  <div class="logo">N高ポータル<span>N HIGH</span></div>
+  <div class="sbox">
+    <div class="stabs" role="tablist" aria-label="検索対象">
+      <button role="tab" aria-selected="true"  data-scope="all">すべて</button>
+      <button role="tab" aria-selected="false" data-scope="news">校内</button>
+      <button role="tab" aria-selected="false" data-scope="times">times</button>
+      <button role="tab" aria-selected="false" data-scope="event">イベント</button>
+    </div>
+    <div class="sform">
+      <input id="q" type="search" placeholder="校内をさがす（例：磁石祭、サーバー、受験、レポート）" aria-label="校内をさがす">
+      <button type="button" id="go">検索</button>
+    </div>
+    <p class="sugg">よく検索：
+      <a href="#" data-kw="磁石祭">磁石祭</a>
+      <a href="#" data-kw="受験">受験</a>
+      <a href="#" data-kw="サーバー">サーバー</a>
+      <a href="#" data-kw="スクーリング">スクーリング</a>
+      <a href="#" data-kw="レポート">レポート</a>
+    </p>
+  </div>
+  <div class="headright">
+    <div class="cd" id="clock">--:--</div>
+    <button class="postbtn" id="open">＋ ニュースを書く</button>
+  </div>
+</div></header>
+
+<!-- サービスアイコン列 -->
+<nav class="svc" aria-label="校内サービス"><div class="wrap">
+  <a href="#wire"><i>#</i>times</a>
+  <a href="#" id="navUserPost"><i>✎</i>生徒投稿</a>
+  <a href="#"><i>▲</i>生徒会</a>
+  <a href="#events"><i>▣</i>イベント</a>
+  <a href="#"><i>✎</i>レポート</a>
+  <a href="#"><i>◈</i>スクーリング</a>
+  <a href="#"><i>◇</i>キャンパス</a>
+  <a href="#"><i>≡</i>時間割</a>
+  <a href="#shop"><i>◆</i>ショップ</a>
+  <a href="#"><i>◆</i>コイン</a>
+  <a href="#"><i>⋯</i>すべて</a>
+</div></nav>
+
+<!-- 本体 -->
+<main class="wrap cols">
+  <div>
+    <!-- トピックス -->
+    <section class="box topics" id="wire">
+      <h2>校内トピックス<a class="more" href="#">一覧</a></h2>
+      <div class="tabs" role="tablist" aria-label="カテゴリ">
+        <button class="tab" role="tab" aria-selected="true"  data-f="all">すべて</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="council">生徒会</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="school">学校</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="club">部活</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="times">times</button>
+        <button class="tab" role="tab" aria-selected="false" data-f="user">生徒投稿</button>
+      </div>
+      <!-- 生徒投稿バナー (タブ="user"のときだけ表示) -->
+      <div class="user-post-banner hidden" id="userPostBanner">
+        <span class="icon">📰</span>
+        <div class="txt">
+          <strong>機関誌・記事を作成</strong>
+          <span>見出し・本文・画像・引用を組み合わせてオリジナル記事が作れます</span>
+        </div>
+        <button class="create-btn" id="openMagEditor">＋ 記事を作る</button>
+      </div>
+      <ul class="wire" id="wireList"></ul>
+    </section>
+
+    <!-- イベント -->
+    <section class="box" id="events">
+      <h2>近いイベント<a class="more" href="#">カレンダー</a></h2>
+      <div class="grid3" id="evList"></div>
+    </section>
+
+    <!-- おすすめtimes -->
+    <section class="box">
+      <h2>おすすめのtimes<a class="more" href="#">もっと見る</a></h2>
+      <div class="tg" id="timesList"></div>
+    </section>
+
+    <!-- ショップ -->
+    <section class="box" id="shop">
+      <h2>コインショップ<a class="more" href="#">すべての商品</a></h2>
+      <div class="shop" id="shopList"></div>
+    </section>
+  </div>
+
+  <!-- 右レール -->
+  <aside class="rail">
+    <section class="box wallet">
+      <h2>114514ウォレット</h2>
+      <div class="bal" id="bal2">114,514</div>
+      <p>イベント参加費・グッズ・記事のトップ固定に使えます</p>
+      <button class="charge" id="charge">＋ 10,000コインをチャージ</button>
+    </section>
+    <section class="box">
+      <h2>入出金の履歴</h2>
+      <ul class="log" id="logList"><li><span>まだ取引はありません</span></li></ul>
+    </section>
+    <section class="box">
+      <h2>今日の天気</h2>
+      <div class="wx">
+        <span class="ic">☀</span>
+        <div><span class="tp">31°</span> <small>／ 24°</small><small>仙台・くもりのち晴れ</small></div>
+      </div>
+    </section>
+    <section class="box">
+      <h2>今日の予定</h2>
+      <ul class="mini">
+        <li><span class="k">16:00</span><span>生徒会 基礎研修</span></li>
+        <li><span class="k">19:00</span><span>サーバー同好会 定例</span></li>
+        <li><span class="k">21:00</span><span>数学Ⅱ ライブ授業</span></li>
+      </ul>
+    </section>
+    <section class="box">
+      <h2>提出期限</h2>
+      <ul class="mini">
+        <li><span class="k due">あと1日</span><span>英語コミュⅠ レポート</span></li>
+        <li><span class="k due">あと5日</span><span>公募企画エントリー</span></li>
+        <li><span class="k due">あと9日</span><span>現代の国語 レポート</span></li>
+      </ul>
+    </section>
+    <section class="box">
+      <h2>急上昇のtimes</h2>
+      <ul class="rank">
+        <li><span>#times-juken</span><em>+40</em></li>
+        <li><span>#times-server</span><em>+28</em></li>
+        <li><span>#times-kai</span><em>+21</em></li>
+        <li><span>#times-tohoku</span><em>+13</em></li>
+        <li><span>#times-illust</span><em>+9</em></li>
+      </ul>
+    </section>
+  </aside>
+</main>
+
+<footer><div class="wrap">
+  <span>N高ポータル（プロトタイプ）</span>
+  <a href="#">このサイトについて</a>
+  <a href="#">投稿ルール</a>
+  <a href="#">プライバシー</a>
+  <a href="#">運営：サーバー同好会 × 生徒会</a>
+</div></footer>
+
+</div><!-- /portal -->
+
+<!-- ===== 簡易投稿モーダル ===== -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+  <form class="compose" id="composeForm">
+    <h2 id="cmTitle">学内ニュースを書く</h2>
+    <p class="lead">投稿は全校生徒に公開されます。誰でも投稿できます。</p>
+    <label for="cn">投稿者名</label>
+    <input id="cn" type="text" maxlength="20">
+    <label for="ct">見出し（30字くらいまでが読まれやすい）</label>
+    <input id="ct" type="text" maxlength="60" placeholder="例：サーバー同好会が新サーバーを公開">
+    <label for="cc">カテゴリ</label>
+    <select id="cc">
+      <option value="user">生徒投稿</option>
+      <option value="club">部活・同好会</option>
+      <option value="council">生徒会</option>
+      <option value="times">times</option>
+      <option value="school">学校</option>
+    </select>
+    <label for="cb">ひとこと補足（日時・場所・募集人数など）</label>
+    <textarea id="cb" placeholder="任意"></textarea>
+    <div class="chk">
+      <input id="cboost" type="checkbox">
+      <label for="cboost">トップに固定する（500コイン）
+        <small>トピックスの先頭に「固定」表示されます。投稿自体は無料です。</small>
+      </label>
+    </div>
+    <div class="crow">
+      <button class="sub" type="submit">投稿する</button>
+      <button class="cancel" type="button" id="cancel">やめる</button>
+      <span class="fee">投稿は無料</span>
+    </div>
+  </form>
+</div>
+
+<!-- ===== 機関誌エディタ ===== -->
+<div class="modal" id="magModal" role="dialog" aria-modal="true">
+  <div class="mag-modal-inner">
+    <div class="mag-header">
+      <h2 id="magModalTitle">📰 生徒投稿 — 記事エディタ</h2>
+      <button class="preview-toggle" id="previewToggle">プレビュー</button>
+      <button class="close-mag" id="closeMag" aria-label="閉じる">×</button>
+    </div>
+    <div class="mag-body-scroll" id="magBodyScroll">
+      <!-- エディタ -->
+      <div id="magEditorView">
+        <div class="mag-meta-fields">
+          <label for="magTitle">記事タイトル <span style="color:var(--brand)">*</span></label>
+          <input id="magTitle" type="text" maxlength="60" placeholder="例：N高スクーリングで出会った仲間たちの話">
+          <label for="magSubtitle">サブタイトル（任意）</label>
+          <input id="magSubtitle" type="text" maxlength="80" placeholder="例：沖縄本校での3日間">
+          <label for="magCover">カバー画像URL（任意）</label>
+          <input id="magCover" type="url" placeholder="https://...">
+          <label for="magTag">タグ</label>
+          <input id="magTag" type="text" maxlength="20" placeholder="例：スクーリング、部活、受験...">
+        </div>
+        <div class="section-list" id="sectionList"></div>
+        <div class="add-section-bar">
+          <span>＋ セクション追加：</span>
+          <button type="button" onclick="addSection('heading')">📌 見出し</button>
+          <button type="button" onclick="addSection('body')">📝 本文</button>
+          <button type="button" onclick="addSection('image')">🖼 画像</button>
+          <button type="button" onclick="addSection('quote')">💬 引用</button>
+        </div>
+      </div>
+      <!-- プレビュー -->
+      <div id="magPreviewView" class="mag-preview hidden"></div>
+    </div>
+    <div class="mag-footer">
+      <button class="pub-btn" id="publishMag">公開する</button>
+      <button class="cncl-btn" id="cancelMag">やめる</button>
+      <span class="pub-note">投稿は全校生徒に公開されます</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 記事ビューアー ===== -->
+<div class="modal" id="viewerModal" role="dialog" aria-modal="true">
+  <div class="viewer-inner">
+    <div class="viewer-head">
+      <h3>生徒投稿 — 記事</h3>
+      <button class="close-viewer" id="closeViewer" aria-label="閉じる">×</button>
+    </div>
+    <div class="viewer-scroll mag-preview" id="viewerContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async></script>
+
+<script>
+"use strict";
+
+/* ====================================================
+   設定 — Google Cloud で取得した Client ID を入れる
+   学校のドメインを SCHOOL_DOMAIN に設定
+   ==================================================== */
+var GOOGLE_CLIENT_ID = "YOUR_CLIENT_ID_HERE";  /* Google Cloud Console で取得した Client ID に差し替える */
+var SCHOOL_DOMAIN    = "nnn.ed.jp";            /* このドメインのアカウントのみログイン可 */
+
+/* ====================================================
+   Google Auth
+   ==================================================== */
+function startGoogleLogin() {
+  if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === "YOUR_CLIENT_ID_HERE") {
+    toast("Client IDが未設定です。開発用ログインをお使いください");
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleCredential,
+    hd: SCHOOL_DOMAIN || undefined,
+    auto_select: false,
+    cancel_on_tap_outside: true
+  });
+  google.accounts.id.prompt();
+}
+
+function handleCredential(response) {
+  var payload = parseJwt(response.credential);
+  if (SCHOOL_DOMAIN && !payload.email.endsWith("@" + SCHOOL_DOMAIN)) {
+    toast("⚠️ @" + SCHOOL_DOMAIN + " のアカウントのみ使用できます");
+    return;
+  }
+  completeLogin(payload.name, payload.picture || "", payload.email);
+}
+
+function parseJwt(token) {
+  var b64 = token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");
+  return JSON.parse(decodeURIComponent(
+    atob(b64).split("").map(function(c){
+      return "%"+("00"+c.charCodeAt(0).toString(16)).slice(-2);
+    }).join("")
+  ));
+}
+
+function devLogin() {
+  completeLogin("テストユーザー", "", "test@school.example");
+}
+
+function completeLogin(name, picture, email) {
+  state.name  = name;
+  state.email = email;
+  state.picture = picture;
+  save();
+  applyUser();
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("portal").classList.remove("hidden");
+}
+
+function applyUser() {
+  var n = state.name || "生徒";
+  document.getElementById("uname").textContent = n;
+  document.getElementById("cn").value = n;
+  var av = document.getElementById("userAvatar");
+  if (state.picture) { av.src = state.picture; av.style.display = ""; }
+  else { av.style.display = "none"; }
+}
+
+document.getElementById("logoutLink").addEventListener("click", function(e) {
+  e.preventDefault();
+  if (!confirm("ログアウトしますか？")) return;
+  state.name = ""; state.email = ""; state.picture = "";
+  save();
+  document.getElementById("portal").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+});
+
+document.getElementById("navUserPost").addEventListener("click", function(e) {
+  e.preventDefault();
+  document.getElementById("wire").scrollIntoView({behavior:"smooth"});
+  document.querySelectorAll(".tab").forEach(function(t, i) {
+    t.setAttribute("aria-selected", t.dataset.f === "user" ? "true" : "false");
+  });
+  tab = "user";
+  renderWire();
+  document.getElementById("userPostBanner").classList.remove("hidden");
+});
+
+/* ====================================================
+   状態の読み書き
+   ==================================================== */
+var STORE = "nhigh_portal_v2";
+var LABEL = {
+  council:["生徒会","p-council"],
+  school: ["学校","p-school"],
+  club:   ["部活","p-club"],
+  times:  ["times","p-times"],
+  user:   ["生徒投稿","p-user"]
+};
+var BOOST_FEE = 500;
+
+var DEFAULT_ITEMS = [
+ {t:"14:20",c:"council",h:"第5期生徒会の発足合宿、8/24から4日間",m:"役員25名が参加予定",n:true,b:false},
+ {t:"13:05",c:"school", h:"磁石祭2026、出展エントリーの受付がスタート",m:"締切 9/12",n:true,b:false},
+ {t:"11:40",c:"council",h:"公募企画のエントリーは今週金曜まで",m:"予算上限50万円",n:false,b:false},
+ {t:"10:15",c:"club",   h:"サーバー同好会が校内マインクラフト鯖を公開",m:"参加者募集中",n:false,b:false},
+ {t:"09:30",c:"school", h:"単位認定テストの時間割が公開されました",m:"10/6〜10/10",n:false,b:false},
+ {t:"08:55",c:"times",  h:"#times-juken が3日で40人増、受験クラスタが集まる",m:"急上昇1位",n:false,b:false},
+ {t:"08:10",c:"club",   h:"東北地区の交流会、8/18に仙台で開催",m:"残り12席",n:false,b:false}
+];
+var EVENTS = [
+ {d:"08 / 18",h:"東北地区 交流会",s:"仙台・現地 / 残り12席",price:800},
+ {d:"08 / 24",h:"生徒会 発足合宿",s:"大田区・4日間",price:2000},
+ {d:"09 / 11",h:"任命式",s:"歌舞伎座タワー",price:0}
+];
+var TIMES = [
+ {n:"#times-server",d:"サーバー構築の作業ログを毎日流しています。質問歓迎。",s:"128人 / 今日42投稿"},
+ {n:"#times-illust",d:"絵の練習と進捗。日曜に相互講評会をやっています。",s:"96人 / 今日17投稿"},
+ {n:"#times-juken", d:"受験勉強の記録。同じ志望校の人が集まっています。",s:"203人 / 今日61投稿"}
+];
+var SHOP = [
+ {ic:"👕",nm:"磁石祭 公式Tシャツ",price:1200},
+ {ic:"🎟",nm:"文化祭 前売りチケット",price:600},
+ {ic:"📓",nm:"N高 オリジナルノート",price:300},
+ {ic:"☕",nm:"キャンパスカフェ 引換券",price:450}
+];
+
+function load() {
+  try {
+    var s = JSON.parse(localStorage.getItem(STORE));
+    if (s && s.items) return s;
+  } catch(e) {}
+  return {coins:114514, items:DEFAULT_ITEMS.slice(), name:"", email:"", picture:"", log:[], magazines:[]};
+}
+function save() { localStorage.setItem(STORE, JSON.stringify(state)); }
+var state = load();
+
+/* セッション復元 */
+window.addEventListener("DOMContentLoaded", function() {
+  if (state.name && state.email) {
+    applyUser();
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("portal").classList.remove("hidden");
+  }
+  if (SCHOOL_DOMAIN) {
+    document.getElementById("domainHint").textContent = "@" + SCHOOL_DOMAIN;
+  }
+  if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === "YOUR_CLIENT_ID_HERE") {
+    document.getElementById("devModeSection").style.display = "";
+  } else {
+    document.getElementById("devModeSection").style.display = "none";
+  }
+  renderAll();
+  tick();
+  setInterval(tick, 30000);
+});
+
+var scope = "all", tab = "all", q = "";
+
+/* ====================================================
+   ユーティリティ
+   ==================================================== */
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, function(c) {
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+function money(n) { return n.toLocaleString("ja-JP"); }
+function match(text) { return !q || text.toLowerCase().indexOf(q) >= 0; }
+function nowTime() {
+  var d = new Date();
+  return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+}
+
+var toastT;
+function toast(msg) {
+  var el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastT);
+  toastT = setTimeout(function() { el.classList.remove("show"); }, 2000);
+}
+
+/* ====================================================
+   コイン
+   ==================================================== */
+function pay(amount, label) {
+  if (state.coins < amount) { toast("コインが足りません（不足 "+money(amount-state.coins)+"）"); return false; }
+  state.coins -= amount;
+  state.log.unshift({t:nowTime(), label:label, amt:-amount});
+  afterCoin(); return true;
+}
+function charge(amount, label) {
+  state.coins += amount;
+  state.log.unshift({t:nowTime(), label:label, amt:amount});
+  afterCoin();
+}
+function afterCoin() { save(); renderCoins(); renderLog(); }
+
+function renderCoins() {
+  document.getElementById("bal").textContent  = money(state.coins);
+  document.getElementById("bal2").textContent = money(state.coins);
+}
+function renderLog() {
+  var el = document.getElementById("logList");
+  if (!state.log.length) { el.innerHTML = '<li><span>まだ取引はありません</span></li>'; return; }
+  el.innerHTML = state.log.slice(0,20).map(function(x) {
+    var cls = x.amt < 0 ? "minus" : "plus";
+    var sign = x.amt < 0 ? "" : "+";
+    return '<li><span>'+esc(x.t)+' '+esc(x.label)+'</span><span class="amt '+cls+'">'+sign+money(x.amt)+'</span></li>';
+  }).join("");
+}
+
+/* ====================================================
+   トピックス描画
+   ==================================================== */
+function renderWire() {
+  var scopeOk = (scope === "all" || scope === "news");
+  var list = state.items.filter(function(x) {
+    var okTab   = (tab === "all" || x.c === tab);
+    var okScope = scopeOk || (scope === "times" && x.c === "times");
+    var okQ     = match(x.h + " " + (x.m||"") + " " + LABEL[x.c][0]);
+    return okTab && okScope && okQ;
+  });
+  list.sort(function(a,b) { return (b.b?1:0)-(a.b?1:0); });
+
+  var banner = document.getElementById("userPostBanner");
+  banner.classList.toggle("hidden", tab !== "user");
+
+  var w = document.getElementById("wireList");
+  if (!list.length) { w.innerHTML = '<li><span class="empty">該当するニュースはありません</span></li>'; return; }
+  w.innerHTML = list.map(function(x) {
+    var idx = state.items.indexOf(x);
+    if (x.magazine) {
+      var mag = (state.magazines||[]).find(function(m) { return m.id === x.magId; });
+      var coverHtml = (mag && mag.cover)
+        ? '<img src="'+esc(mag.cover)+'" alt="">'
+        : '<span>📰</span>';
+      var preview = mag ? (mag.sections||[]).map(function(s){return s.content||"";}).join(" ").slice(0,80) : "";
+      return '<li style="flex-wrap:wrap;width:100%">'
+        +'<div class="mag-card" style="margin-top:4px;width:100%">'
+        +'<div class="mag-cover">'+coverHtml+'</div>'
+        +'<div class="mag-body">'
+        +'<strong>'+esc(x.h)+'</strong>'
+        +'<p>'+esc(preview)+(preview.length>=80?"…":"")+'</p>'
+        +'<div class="mag-meta">'
+        +'<span class="pill p-user">生徒投稿</span>'
+        +(x.n?' <span class="new">NEW</span>':'')
+        +'<span>'+esc(x.t)+'</span>'
+        +(x.m?'<span>'+esc(x.m)+'</span>':'')
+        +'<button class="read-mag" data-magid="'+esc(x.magId||"")+'">読む →</button>'
+        +'</div></div></div></li>';
+    }
+    return '<li>'
+      +'<span class="t">'+esc(x.t)+'</span>'
+      +'<a class="h" href="#">'+esc(x.h)+'</a>'
+      +(x.n?' <span class="new">NEW</span>':'')
+      +(x.b?' <span class="boosted">固定</span>':'')
+      +'<span class="pill '+LABEL[x.c][1]+'">'+LABEL[x.c][0]+'</span>'
+      +'<span class="act"><button data-boost="'+idx+'"'+(x.b?' disabled':'')+'>'+(x.b?'固定中':'500コインで固定')+'</button></span>'
+      +(x.m?'<span class="m">'+esc(x.m)+'</span>':'')
+      +'</li>';
+  }).join("");
+
+  w.querySelectorAll("button[data-boost]").forEach(function(b) {
+    b.addEventListener("click", function() {
+      var x = state.items[+b.dataset.boost];
+      if (x.b) return;
+      if (pay(BOOST_FEE, "記事をトップ固定")) { x.b=true; save(); toast("トップに固定しました"); renderWire(); }
+    });
+  });
+  w.querySelectorAll("button[data-magid]").forEach(function(b) {
+    b.addEventListener("click", function() { openViewer(b.dataset.magid); });
+  });
+}
+
+/* ====================================================
+   イベント / times / ショップ
+   ==================================================== */
+function renderEvents() {
+  var el = document.getElementById("evList");
+  var scopeOk = (scope==="all"||scope==="event");
+  var list = EVENTS.filter(function(x){ return scopeOk && match(x.h+" "+x.s); });
+  if (!list.length) { el.innerHTML='<span class="empty">該当するイベントはありません</span>'; return; }
+  el.innerHTML = list.map(function(x,i) {
+    var label = x.price>0 ? money(x.price)+"コインで申込" : "無料で申込";
+    return '<div class="ev"><div class="d">'+esc(x.d)+'</div>'
+      +'<div class="b">'+esc(x.h)+'<small>'+esc(x.s)+'</small></div>'
+      +'<button class="buy" data-ev="'+i+'" data-price="'+x.price+'" data-nm="'+esc(x.h)+'">'+label+'</button></div>';
+  }).join("");
+  el.querySelectorAll("button[data-ev]").forEach(function(b) {
+    b.addEventListener("click", function() {
+      var price=+b.dataset.price, nm=b.dataset.nm;
+      if(price===0){toast("「"+nm+"」に申し込みました");b.disabled=true;b.textContent="申込済み";return;}
+      if(pay(price,"イベント："+nm)){b.disabled=true;b.textContent="申込済み";toast("「"+nm+"」に申し込みました");}
+    });
+  });
+}
+
+function renderTimes() {
+  var el = document.getElementById("timesList");
+  var scopeOk = (scope==="all"||scope==="times");
+  var list = TIMES.filter(function(x){ return scopeOk && match(x.n+" "+x.d); });
+  el.innerHTML = list.length ? list.map(function(x){
+    return '<a class="tc" href="#"><b>'+esc(x.n)+'</b><p>'+esc(x.d)+'</p><small>'+esc(x.s)+'</small></a>';
+  }).join("") : '<span class="empty">該当するtimesはありません</span>';
+}
+
+function renderShop() {
+  var el = document.getElementById("shopList");
+  el.innerHTML = SHOP.map(function(x,i){
+    return '<div class="item"><div class="ic">'+x.ic+'</div><div class="nm">'+esc(x.nm)+'</div>'
+      +'<div class="pr">'+money(x.price)+' コイン</div>'
+      +'<button class="buy" data-shop="'+i+'">購入する</button></div>';
+  }).join("");
+  el.querySelectorAll("button[data-shop]").forEach(function(b){
+    b.addEventListener("click",function(){
+      var x = SHOP[+b.dataset.shop];
+      if(pay(x.price,"ショップ："+x.nm)) toast("「"+x.nm+"」を購入しました");
+    });
+  });
+}
+
+function renderAll() { renderCoins(); renderLog(); renderWire(); renderEvents(); renderTimes(); renderShop(); }
+
+/* ====================================================
+   検索 / タブ
+   ==================================================== */
+document.querySelectorAll(".stabs button").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".stabs button").forEach(function(x){x.setAttribute("aria-selected","false");});
+    t.setAttribute("aria-selected","true"); scope=t.dataset.scope; renderAll();
+  });
+});
+document.querySelectorAll(".tab").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(x){x.setAttribute("aria-selected","false");});
+    t.setAttribute("aria-selected","true"); tab=t.dataset.f; renderWire();
+  });
+});
+function doSearch(v){ q=(v||"").trim().toLowerCase(); renderAll(); }
+document.getElementById("q").addEventListener("input",function(e){ doSearch(e.target.value); });
+document.getElementById("go").addEventListener("click",function(){ doSearch(document.getElementById("q").value); });
+document.querySelectorAll(".sugg a").forEach(function(a){
+  a.addEventListener("click",function(e){
+    e.preventDefault(); var kw=a.dataset.kw;
+    document.getElementById("q").value=kw; doSearch(kw);
+    document.getElementById("wire").scrollIntoView();
+  });
+});
+
+/* ====================================================
+   チャージ
+   ==================================================== */
+document.getElementById("charge").addEventListener("click",function(){
+  charge(10000,"コインチャージ"); toast("10,000コインをチャージしました");
+});
+
+/* ====================================================
+   簡易投稿モーダル
+   ==================================================== */
+var modal = document.getElementById("modal");
+function openModal(){ modal.setAttribute("open",""); document.getElementById("cn").value=state.name; document.getElementById("ct").focus(); }
+function closeModal(){ modal.removeAttribute("open"); }
+document.getElementById("open").addEventListener("click", openModal);
+document.getElementById("cancel").addEventListener("click", closeModal);
+modal.addEventListener("click",function(e){ if(e.target===modal) closeModal(); });
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"){
+    if(modal.hasAttribute("open")) closeModal();
+    if(magModal.hasAttribute("open")) closeMagEditor();
+    if(viewerModal.hasAttribute("open")) closeViewer();
+  }
+});
+
+document.getElementById("composeForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var name  = document.getElementById("cn").value.trim()||"匿名";
+  var title = document.getElementById("ct").value.trim();
+  var cat   = document.getElementById("cc").value;
+  var body  = document.getElementById("cb").value.trim();
+  var boost = document.getElementById("cboost").checked;
+  if(!title){ toast("見出しを入力してください"); document.getElementById("ct").focus(); return; }
+  if(boost && state.coins<BOOST_FEE){ toast("固定には"+money(BOOST_FEE)+"コインが必要です"); return; }
+  var post = {t:nowTime(),c:cat,h:title,m:body||("投稿者："+name),n:true,b:false};
+  state.items.unshift(post); state.name=name;
+  if(boost){ post.b=true; pay(BOOST_FEE,"投稿をトップ固定"); }
+  save();
+  document.getElementById("ct").value=""; document.getElementById("cb").value=""; document.getElementById("cboost").checked=false;
+  closeModal();
+  tab="all"; scope="all"; q=""; document.getElementById("q").value="";
+  document.querySelectorAll(".tab").forEach(function(x,i){ x.setAttribute("aria-selected",i===0?"true":"false"); });
+  document.querySelectorAll(".stabs button").forEach(function(x,i){ x.setAttribute("aria-selected",i===0?"true":"false"); });
+  renderAll();
+  document.getElementById("wire").scrollIntoView();
+  toast(boost?"投稿してトップに固定しました":"投稿しました");
+});
+
+/* ====================================================
+   機関誌エディタ
+   ==================================================== */
+var magModal     = document.getElementById("magModal");
+var viewerModal  = document.getElementById("viewerModal");
+var sections     = [];
+var isPreviewing = false;
+
+document.getElementById("openMagEditor").addEventListener("click", openMagEditor);
+document.getElementById("closeMag").addEventListener("click", closeMagEditor);
+document.getElementById("cancelMag").addEventListener("click", closeMagEditor);
+magModal.addEventListener("click", function(e){ if(e.target===magModal) closeMagEditor(); });
+
+document.getElementById("previewToggle").addEventListener("click", function(){
+  isPreviewing = !isPreviewing;
+  this.textContent = isPreviewing ? "編集に戻る" : "プレビュー";
+  document.getElementById("magEditorView").classList.toggle("hidden", isPreviewing);
+  document.getElementById("magPreviewView").classList.toggle("hidden", !isPreviewing);
+  if(isPreviewing) renderMagPreview();
+});
+
+function openMagEditor() {
+  sections = [];
+  isPreviewing = false;
+  document.getElementById("magTitle").value    = "";
+  document.getElementById("magSubtitle").value = "";
+  document.getElementById("magCover").value    = "";
+  document.getElementById("magTag").value      = "";
+  document.getElementById("magEditorView").classList.remove("hidden");
+  document.getElementById("magPreviewView").classList.add("hidden");
+  document.getElementById("previewToggle").textContent = "プレビュー";
+  renderSectionList();
+  magModal.setAttribute("open","");
+  document.getElementById("magTitle").focus();
+}
+function closeMagEditor() {
+  magModal.removeAttribute("open");
+  isPreviewing = false;
+}
+
+function addSection(type) {
+  var sec = {type:type, content:"", url:"", caption:""};
+  sections.push(sec);
+  renderSectionList();
+  /* 新セクションにスクロール */
+  var list = document.getElementById("sectionList");
+  list.lastElementChild && list.lastElementChild.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function deleteSection(i) { sections.splice(i,1); renderSectionList(); }
+function moveSection(i, dir) {
+  var j = i + dir;
+  if(j<0||j>=sections.length) return;
+  var tmp = sections[i]; sections[i]=sections[j]; sections[j]=tmp;
+  renderSectionList();
+}
+
+function renderSectionList() {
+  var list = document.getElementById("sectionList");
+  if(!sections.length){
+    list.innerHTML = '<p style="color:var(--ink3);font-size:13px;text-align:center;padding:20px 0">下のボタンからセクションを追加してください</p>';
+    return;
+  }
+  list.innerHTML = sections.map(function(s,i){
+    var typeLabel = {heading:"📌 見出し",body:"📝 本文",image:"🖼 画像",quote:"💬 引用"}[s.type]||s.type;
+    var fields = "";
+    if(s.type==="heading"||s.type==="body"||s.type==="quote"){
+      var ph = {heading:"小見出しテキスト",body:"本文を入力…",quote:"引用文を入力…"}[s.type];
+      var rows = s.type==="body"?5:2;
+      fields = '<textarea rows="'+rows+'" data-i="'+i+'" data-field="content" placeholder="'+ph+'">'+esc(s.content)+'</textarea>';
+    } else if(s.type==="image"){
+      fields = '<div class="two-fields">'
+        +'<input type="url" data-i="'+i+'" data-field="url" placeholder="画像URL (https://...)" value="'+esc(s.url)+'">'
+        +'<input type="text" data-i="'+i+'" data-field="caption" placeholder="キャプション（任意）" value="'+esc(s.caption)+'">'
+        +'</div>';
+    }
+    return '<div class="sec-card" data-sec="'+i+'">'
+      +'<div class="sec-head">'
+      +'<span class="sec-type-label">'+typeLabel+'</span>'
+      +'<button onclick="moveSection('+i+',-1)" title="上へ">↑</button>'
+      +'<button onclick="moveSection('+i+',1)" title="下へ">↓</button>'
+      +'<button class="del-sec" onclick="deleteSection('+i+')" title="削除">✕</button>'
+      +'</div>'
+      +'<div class="sec-body">'+fields+'</div>'
+      +'</div>';
+  }).join("");
+
+  list.querySelectorAll("textarea[data-i],input[data-i]").forEach(function(el){
+    el.addEventListener("input",function(){
+      sections[+el.dataset.i][el.dataset.field] = el.value;
+    });
+  });
+}
+
+function renderMagPreview() {
+  var title    = document.getElementById("magTitle").value.trim() || "（タイトル未入力）";
+  var subtitle = document.getElementById("magSubtitle").value.trim();
+  var cover    = document.getElementById("magCover").value.trim();
+  var author   = state.name || "匿名";
+  var now      = new Date().toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit"});
+  var html = "";
+  if(cover) html += '<img class="pv-cover" src="'+esc(cover)+'" alt="カバー">';
+  else       html += '<div class="pv-cover-placeholder">📰</div>';
+  html += '<h1 class="pv-title">'+esc(title)+'</h1>';
+  if(subtitle) html += '<p class="pv-sub">'+esc(subtitle)+'</p>';
+  html += '<p class="pv-byline">著者：'+esc(author)+'　'+esc(now)+'</p>';
+  sections.forEach(function(s){
+    if(s.type==="heading") html+='<h3 class="pv-h3">'+esc(s.content)+'</h3>';
+    else if(s.type==="body") html+='<p class="pv-p">'+esc(s.content).replace(/\n/g,"<br>")+'</p>';
+    else if(s.type==="image"&&s.url) html+='<figure class="pv-img"><img src="'+esc(s.url)+'" alt="'+esc(s.caption)+'"><figcaption>'+esc(s.caption)+'</figcaption></figure>';
+    else if(s.type==="quote"&&s.content) html+='<blockquote class="pv-quote">'+esc(s.content)+'</blockquote>';
+  });
+  document.getElementById("magPreviewView").innerHTML = html;
+}
+
+document.getElementById("publishMag").addEventListener("click", function(){
+  var title = document.getElementById("magTitle").value.trim();
+  if(!title){ toast("タイトルを入力してください"); document.getElementById("magTitle").focus(); return; }
+  if(!sections.length){ toast("セクションを1つ以上追加してください"); return; }
+
+  var mag = {
+    id:       Date.now().toString(36),
+    title:    title,
+    subtitle: document.getElementById("magSubtitle").value.trim(),
+    cover:    document.getElementById("magCover").value.trim(),
+    tag:      document.getElementById("magTag").value.trim(),
+    author:   state.name || "匿名",
+    sections: JSON.parse(JSON.stringify(sections)),
+    published: new Date().toISOString()
+  };
+  if(!state.magazines) state.magazines=[];
+  state.magazines.unshift(mag);
+
+  var preview = sections.map(function(s){return s.content||"";}).join(" ").slice(0,40);
+  state.items.unshift({
+    t: nowTime(), c:"user",
+    h: title,
+    m: (mag.author)+(mag.tag?" #"+mag.tag:"")+(preview?" — "+preview:""),
+    n: true, b: false,
+    magazine: true, magId: mag.id
+  });
+  save();
+
+  closeMagEditor();
+  tab="user"; scope="all"; q="";
+  document.querySelectorAll(".tab").forEach(function(x){ x.setAttribute("aria-selected", x.dataset.f==="user"?"true":"false"); });
+  renderWire();
+  document.getElementById("wire").scrollIntoView();
+  toast("記事を公開しました！");
+});
+
+/* ====================================================
+   記事ビューアー
+   ==================================================== */
+function openViewer(magId) {
+  var mag = (state.magazines||[]).find(function(m){ return m.id===magId; });
+  if(!mag){ toast("記事が見つかりません"); return; }
+  var now = new Date(mag.published).toLocaleDateString("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit"});
+  var html="";
+  if(mag.cover) html+='<img class="pv-cover" src="'+esc(mag.cover)+'" alt="カバー">';
+  else           html+='<div class="pv-cover-placeholder">📰</div>';
+  html+='<h1 class="pv-title">'+esc(mag.title)+'</h1>';
+  if(mag.subtitle) html+='<p class="pv-sub">'+esc(mag.subtitle)+'</p>';
+  html+='<p class="pv-byline">著者：'+esc(mag.author)+'　'+esc(now)+(mag.tag?' #'+esc(mag.tag):'')+'</p>';
+  mag.sections.forEach(function(s){
+    if(s.type==="heading") html+='<h3 class="pv-h3">'+esc(s.content)+'</h3>';
+    else if(s.type==="body") html+='<p class="pv-p">'+esc(s.content).replace(/\n/g,"<br>")+'</p>';
+    else if(s.type==="image"&&s.url) html+='<figure class="pv-img"><img src="'+esc(s.url)+'" alt="'+esc(s.caption)+'"><figcaption>'+esc(s.caption)+'</figcaption></figure>';
+    else if(s.type==="quote"&&s.content) html+='<blockquote class="pv-quote">'+esc(s.content)+'</blockquote>';
+  });
+  document.getElementById("viewerContent").innerHTML = html;
+  viewerModal.setAttribute("open","");
+}
+function closeViewer(){ viewerModal.removeAttribute("open"); }
+document.getElementById("closeViewer").addEventListener("click", closeViewer);
+viewerModal.addEventListener("click",function(e){ if(e.target===viewerModal) closeViewer(); });
+
+/* ====================================================
+   時計
+   ==================================================== */
+function tick(){
+  document.getElementById("clock").textContent = new Date().toLocaleString("ja-JP",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+}
+</script>
+</body>
+</html>

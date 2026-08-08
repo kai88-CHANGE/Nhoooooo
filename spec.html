@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N高ポータル — 技術仕様書</title>
+<style>
+:root{
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
+  --border:#30363d; --text:#e6edf3; --text2:#8b949e; --text3:#6e7681;
+  --brand:#ff0033; --blue:#58a6ff; --green:#3fb950; --orange:#f0883e;
+  --purple:#d2a8ff; --yellow:#e3b341; --cyan:#79c0ff; --pink:#f778ba;
+  --red:#ff7b72;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.7}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ===== レイアウト ===== */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+
+/* ===== サイドバー ===== */
+aside{
+  background:var(--bg2);border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  padding:0 0 40px;
+}
+.sidebar-brand{
+  padding:18px 16px 14px;border-bottom:1px solid var(--border);
+  font-weight:700;font-size:15px;
+}
+.sidebar-brand .logo{color:var(--brand);font-size:18px}
+.sidebar-brand .sub{color:var(--text2);font-size:11px;margin-top:2px}
+nav ul{list-style:none;padding:8px 0}
+nav ul li a{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 16px;font-size:13px;color:var(--text2);
+  border-left:2px solid transparent;
+}
+nav ul li a:hover{color:var(--text);text-decoration:none;background:rgba(255,255,255,.04)}
+nav ul li a.active{color:var(--blue);border-left-color:var(--blue);background:rgba(88,166,255,.08)}
+nav .nav-section{
+  font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.08em;
+  padding:14px 16px 4px;text-transform:uppercase;
+}
+nav ul li a .badge{
+  margin-left:auto;font-size:10px;font-family:var(--mono);
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:1px 7px;color:var(--text3);
+}
+
+/* ===== メインコンテンツ ===== */
+main{padding:40px 48px;max-width:900px}
+h1{font-size:28px;font-weight:700;color:var(--text);margin-bottom:8px}
+h1 .version{font-size:13px;font-weight:400;color:var(--text3);margin-left:10px;font-family:var(--mono)}
+.tagline{color:var(--text2);font-size:15px;margin-bottom:28px}
+h2{font-size:20px;font-weight:700;color:var(--text);margin:44px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+h2:first-of-type{margin-top:24px}
+h3{font-size:15px;font-weight:700;color:var(--text);margin:24px 0 10px}
+h4{font-size:13px;font-weight:700;color:var(--text2);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+p{color:var(--text2);margin-bottom:12px;line-height:1.75}
+strong{color:var(--text);font-weight:600}
+ul,ol{padding-left:22px;color:var(--text2);margin-bottom:12px}
+ul li,ol li{margin-bottom:4px;line-height:1.65}
+hr{border:0;border-top:1px solid var(--border);margin:32px 0}
+
+/* ===== バッジ・ピル ===== */
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:4px;font-size:12px;font-weight:600;padding:3px 10px;font-family:var(--mono)}
+.pill.html{background:#2d1a00;color:var(--orange);border:1px solid #5a3700}
+.pill.css{background:#001a2d;color:var(--blue);border:1px solid #00365a}
+.pill.js{background:#2d2a00;color:var(--yellow);border:1px solid #5a5200}
+.pill.python{background:#001a0d;color:var(--green);border:1px solid #004d1a}
+.pill.sql{background:#1a002d;color:var(--purple);border:1px solid #3d0059}
+.pill.json{background:#2d0020;color:var(--pink);border:1px solid #5a0040}
+.pill.yaml{background:#001a1a;color:var(--cyan);border:1px solid #004d4d}
+.pill.bash{background:#1a1a1a;color:#aaa;border:1px solid #444}
+.pill.ts{background:#001128;color:#4fc3f7;border:1px solid #003060}
+
+/* ===== コードブロック ===== */
+.code-wrap{margin:14px 0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.code-header{
+  display:flex;align-items:center;gap:10px;padding:8px 14px;
+  background:var(--bg3);border-bottom:1px solid var(--border);
+  font-size:12px;color:var(--text2);font-family:var(--mono);
+}
+.code-header .lang-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.code-header .lang-dot.html{background:var(--orange)}
+.code-header .lang-dot.css{background:var(--blue)}
+.code-header .lang-dot.js{background:var(--yellow)}
+.code-header .lang-dot.python{background:var(--green)}
+.code-header .lang-dot.sql{background:var(--purple)}
+.code-header .lang-dot.json{background:var(--pink)}
+.code-header .lang-dot.yaml{background:var(--cyan)}
+.code-header .lang-dot.bash{background:#aaa}
+.code-header .lang-dot.ts{background:#4fc3f7}
+.code-header .file{flex:1}
+.code-header .copy-btn{
+  background:var(--bg);border:1px solid var(--border);color:var(--text3);
+  border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:var(--mono);
+}
+.code-header .copy-btn:hover{color:var(--text);border-color:var(--text3)}
+pre{
+  background:var(--bg2);overflow-x:auto;
+  padding:18px 20px;font-family:var(--mono);font-size:13px;line-height:1.65;
+}
+/* シンタックスカラー */
+.kw{color:var(--red)}        /* keyword */
+.fn{color:var(--blue)}       /* function */
+.str{color:var(--green)}     /* string */
+.num{color:var(--orange)}    /* number */
+.cm{color:var(--text3)}      /* comment */
+.prop{color:var(--cyan)}     /* property/attr */
+.cls{color:var(--yellow)}    /* class/selector */
+.tag{color:var(--red)}       /* html tag */
+.at{color:var(--purple)}     /* at-rule / decorator */
+.val{color:var(--orange)}    /* value */
+.op{color:var(--pink)}       /* operator */
+.sel{color:var(--purple)}    /* css selector */
+.punc{color:var(--text2)}    /* punctuation */
+
+/* ===== テーブル ===== */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{background:var(--bg3);color:var(--text);font-weight:700;text-align:left;padding:9px 13px;border:1px solid var(--border)}
+td{padding:8px 13px;border:1px solid var(--border);color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+td code,th code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;color:var(--cyan)}
+
+/* ===== インラインコード ===== */
+code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--cyan);border:1px solid var(--border)}
+
+/* ===== コールアウト ===== */
+.callout{border-radius:6px;padding:12px 16px;margin:16px 0;border-left:3px solid;font-size:13px}
+.callout.info{background:#0d1f38;border-color:var(--blue);color:var(--cyan)}
+.callout.warn{background:#2d1a00;border-color:var(--orange);color:#f0a862}
+.callout.tip{background:#0a1f0d;border-color:var(--green);color:#7ee787}
+.callout .label{font-weight:700;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+
+/* ===== アーキテクチャ図 ===== */
+.arch{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:24px;margin:16px 0;font-family:var(--mono);font-size:13px;
+  color:var(--text2);line-height:2;
+}
+.arch .box-node{display:inline-block;border:1px solid var(--border);border-radius:5px;padding:4px 14px;background:var(--bg3);color:var(--text)}
+.arch .arrow{color:var(--text3)}
+.arch .layer{margin:6px 0}
+.arch .layer-label{font-size:11px;color:var(--text3);margin-bottom:4px}
+
+/* ===== フロー図 ===== */
+.flow{display:flex;flex-direction:column;gap:0;margin:16px 0}
+.flow-step{
+  display:flex;align-items:flex-start;gap:16px;padding:12px 0;
+  border-left:2px solid var(--border);margin-left:20px;padding-left:20px;position:relative;
+}
+.flow-step::before{
+  content:attr(data-n);
+  position:absolute;left:-13px;top:14px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--brand);color:#fff;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+}
+.flow-step:last-child{border-left-color:transparent}
+.flow-step .title{font-weight:700;color:var(--text);font-size:13px}
+.flow-step .desc{color:var(--text2);font-size:12px;margin-top:3px}
+
+/* ===== データ構造カード ===== */
+.schema-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:16px 0}
+.schema-card{background:var(--bg2);border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.schema-card .sc-head{background:var(--bg3);padding:8px 13px;font-weight:700;font-size:12px;color:var(--purple);border-bottom:1px solid var(--border);font-family:var(--mono)}
+.schema-card .sc-body{padding:10px 13px}
+.schema-card .field{display:flex;gap:10px;padding:4px 0;border-top:1px solid var(--border);font-size:12px;font-family:var(--mono)}
+.schema-card .field:first-child{border-top:0}
+.schema-card .field .fname{color:var(--cyan);flex:1}
+.schema-card .field .ftype{color:var(--orange)}
+.schema-card .field .fdesc{color:var(--text3);font-family:var(--sans);font-size:11px;flex:2}
+
+/* ===== レスポンシブ ===== */
+@media(max-width:760px){
+  .layout{grid-template-columns:1fr}
+  aside{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}
+  main{padding:24px 20px}
+  .schema-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ===== サイドバー ===== -->
+<aside>
+  <div class="sidebar-brand">
+    <div class="logo">N高ポータル</div>
+    <div class="sub">技術仕様書 v1.0</div>
+  </div>
+  <nav>
+    <div class="nav-section">概要</div>
+    <ul>
+      <li><a href="#overview">プロジェクト概要</a></li>
+      <li><a href="#stack">技術スタック</a></li>
+      <li><a href="#arch">アーキテクチャ</a></li>
+    </ul>
+    <div class="nav-section">フロントエンド</div>
+    <ul>
+      <li><a href="#html">HTML <span class="badge">構造</span></a></li>
+      <li><a href="#css">CSS <span class="badge">スタイル</span></a></li>
+      <li><a href="#js">JavaScript <span class="badge">ロジック</span></a></li>
+      <li><a href="#ts">TypeScript <span class="badge">型定義</span></a></li>
+    </ul>
+    <div class="nav-section">バックエンド</div>
+    <ul>
+      <li><a href="#python">Python / Flask</a></li>
+      <li><a href="#api">REST API 仕様</a></li>
+      <li><a href="#sql">SQL スキーマ</a></li>
+    </ul>
+    <div class="nav-section">インフラ・設定</div>
+    <ul>
+      <li><a href="#json">JSON データ形式</a></li>
+      <li><a href="#yaml">YAML 設定</a></li>
+      <li><a href="#bash">Bash セットアップ</a></li>
+    </ul>
+    <div class="nav-section">機能仕様</div>
+    <ul>
+      <li><a href="#auth">Google 認証</a></li>
+      <li><a href="#editor">機関誌エディタ</a></li>
+      <li><a href="#coins">コインシステム</a></li>
+      <li><a href="#security">セキュリティ</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- ===== メイン ===== -->
+<main>
+
+<!-- ===== 概要 ===== -->
+<section id="overview">
+  <h1>N高ポータル — 技術仕様書 <span class="version">v1.0.0</span></h1>
+  <p class="tagline">学内情報ポータル・生徒投稿機関誌プラットフォーム</p>
+
+  <div class="badge-row">
+    <span class="pill html">HTML5</span>
+    <span class="pill css">CSS3</span>
+    <span class="pill js">JavaScript ES2020</span>
+    <span class="pill ts">TypeScript 5</span>
+    <span class="pill python">Python 3.12</span>
+    <span class="pill sql">SQL / SQLite</span>
+    <span class="pill json">JSON</span>
+    <span class="pill yaml">YAML</span>
+    <span class="pill bash">Bash</span>
+  </div>
+
+  <h3>プロジェクト目的</h3>
+  <p>N高等学校・S高等学校の生徒が、校内ニュース・イベント・部活動・生徒投稿機関誌を一元管理できる学内ポータルサイト。学校発行の Google Workspace アカウントでのみアクセス可能。</p>
+
+  <h3>主要機能</h3>
+  <ul>
+    <li><strong>Google OAuth 2.0 ログイン</strong> — 学校ドメイン限定（<code>hd</code> パラメータで制御）</li>
+    <li><strong>校内トピックス</strong> — カテゴリ別フィルタリング・全文検索・コインによるトップ固定</li>
+    <li><strong>生徒投稿 機関誌エディタ</strong> — セクションベースのリッチ記事作成（見出し/本文/画像/引用）</li>
+    <li><strong>114514ウォレット</strong> — 仮想コインによるイベント申込・グッズ購入・記事固定</li>
+    <li><strong>イベント / times / ショップ</strong> — 各種校内サービスへのアクセス</li>
+  </ul>
+</section>
+
+<!-- ===== 技術スタック ===== -->
+<section id="stack">
+  <h2>技術スタック</h2>
+  <table>
+    <tr>
+      <th>レイヤー</th><th>技術</th><th>言語</th><th>用途</th>
+    </tr>
+    <tr>
+      <td>マークアップ</td><td>HTML5</td><td><code>HTML</code></td><td>ページ構造・セマンティクス・アクセシビリティ</td>
+    </tr>
+    <tr>
+      <td>スタイリング</td><td>CSS3 (Vanilla)</td><td><code>CSS</code></td><td>レスポンシブレイアウト・CSS変数・アニメーション</td>
+    </tr>
+    <tr>
+      <td>フロントエンド</td><td>Vanilla JavaScript</td><td><code>JS</code></td><td>DOM操作・状態管理・Google OAuth・localStorage</td>
+    </tr>
+    <tr>
+      <td>型定義</td><td>TypeScript 5</td><td><code>TS</code></td><td>型安全な開発（拡張時）</td>
+    </tr>
+    <tr>
+      <td>バックエンド（拡張）</td><td>Python 3.12 / Flask 3</td><td><code>Python</code></td><td>API サーバー・認証検証・データ永続化</td>
+    </tr>
+    <tr>
+      <td>データベース</td><td>SQLite → PostgreSQL</td><td><code>SQL</code></td><td>ユーザー・記事・コイン残高の永続化</td>
+    </tr>
+    <tr>
+      <td>データ形式</td><td>JSON</td><td><code>JSON</code></td><td>API レスポンス・localStorage 保存形式</td>
+    </tr>
+    <tr>
+      <td>設定管理</td><td>YAML</td><td><code>YAML</code></td><td>環境設定・デプロイ設定（Docker Compose等）</td>
+    </tr>
+    <tr>
+      <td>セットアップ</td><td>Bash Shell</td><td><code>Bash</code></td><td>開発環境構築スクリプト</td>
+    </tr>
+    <tr>
+      <td>認証</td><td>Google Identity Services</td><td><code>JS</code></td><td>OAuth 2.0 / OpenID Connect</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ===== アーキテクチャ ===== -->
+<section id="arch">
+  <h2>アーキテクチャ</h2>
+  <h3>現在構成（フロントエンドのみ）</h3>
+  <div class="arch">
+    <div class="layer"><span class="box-node">ブラウザ</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">│</span></div>
+    <div class="layer"><span class="box-node">index.html</span> <span style="color:var(--text3)">← HTML + CSS + JavaScript (1ファイル)</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">│</span></div>
+    <div class="layer"><span class="box-node">Google Identity Services</span> <span style="color:var(--text3)">← OAuth 2.0 (CDN)</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">│</span></div>
+    <div class="layer"><span class="box-node">localStorage</span> <span style="color:var(--text3)">← 状態の永続化（JSON）</span></div>
+  </div>
+
+  <h3>拡張構成（バックエンド追加時）</h3>
+  <div class="arch">
+    <div class="layer"><span class="box-node">ブラウザ (HTML/CSS/JS)</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">│  REST API / JSON</span></div>
+    <div class="layer"><span class="box-node">Python Flask API サーバー</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">├──</span> <span class="box-node">Google OAuth 検証</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">├──</span> <span class="box-node">SQLite / PostgreSQL</span></div>
+    <div class="layer" style="margin-left:20px"><span class="arrow">└──</span> <span class="box-node">静的ファイル配信</span></div>
+  </div>
+
+  <h3>Google 認証フロー</h3>
+  <div class="flow">
+    <div class="flow-step" data-n="1">
+      <div><div class="title">ログイン画面を表示</div><div class="desc">未認証ユーザーには全画面ログインオーバーレイを表示。学校アカウントのみ受け付け可能であることをUI上で明示。</div></div>
+    </div>
+    <div class="flow-step" data-n="2">
+      <div><div class="title">Google ボタンクリック</div><div class="desc"><code>google.accounts.id.initialize({ hd: SCHOOL_DOMAIN })</code> を呼び出し、Google のホスト型UIを表示。</div></div>
+    </div>
+    <div class="flow-step" data-n="3">
+      <div><div class="title">JWT クレデンシャル受信</div><div class="desc">Google からコールバックで <code>credential</code>（JWT）が渡される。クライアント側で Base64 デコードし name / email / picture を取得。</div></div>
+    </div>
+    <div class="flow-step" data-n="4">
+      <div><div class="title">ドメイン検証</div><div class="desc"><code>email.endsWith("@" + SCHOOL_DOMAIN)</code> で学校アカウントかチェック。不一致ならログイン拒否。</div></div>
+    </div>
+    <div class="flow-step" data-n="5">
+      <div><div class="title">セッション保存 → ポータル表示</div><div class="desc">name / email / picture を localStorage に保存。次回以降は自動ログイン。ポータル本体を表示。</div></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ===== HTML ===== -->
+<section id="html">
+  <h2>HTML — マークアップ仕様</h2>
+  <p>セマンティックHTMLを採用。スクリーンリーダー対応のために <code>role</code>・<code>aria-*</code> 属性を付与。</p>
+
+  <h3>ページ構成（DOM ツリー）</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot html"></span>
+      <span class="file">index.html — DOM構造</span>
+      <span class="pill html" style="font-size:10px">HTML</span>
+    </div>
+<pre><span class="cm">&lt;!-- ログイン画面（未認証時フルスクリーン） --&gt;</span>
+<span class="tag">&lt;div</span> <span class="prop">id</span>=<span class="str">"loginScreen"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="prop">class</span>=<span class="str">"login-card"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;button</span> <span class="prop">onclick</span>=<span class="str">"startGoogleLogin()"</span><span class="tag">&gt;</span>Googleでログイン<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- ポータル本体（ログイン後に表示） --&gt;</span>
+<span class="tag">&lt;div</span> <span class="prop">id</span>=<span class="str">"portal"</span> <span class="prop">class</span>=<span class="str">"hidden"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;header</span> <span class="prop">class</span>=<span class="str">"head"</span><span class="tag">&gt;</span><span class="cm">...ロゴ・検索バー...</span><span class="tag">&lt;/header&gt;</span>
+  <span class="tag">&lt;nav</span> <span class="prop">class</span>=<span class="str">"svc"</span> <span class="prop">aria-label</span>=<span class="str">"校内サービス"</span><span class="tag">&gt;</span><span class="cm">...サービス一覧...</span><span class="tag">&lt;/nav&gt;</span>
+  <span class="tag">&lt;main</span> <span class="prop">class</span>=<span class="str">"wrap cols"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;section</span> <span class="prop">id</span>=<span class="str">"wire"</span><span class="tag">&gt;</span><span class="cm">...校内トピックス...</span><span class="tag">&lt;/section&gt;</span>
+    <span class="tag">&lt;aside</span> <span class="prop">class</span>=<span class="str">"rail"</span><span class="tag">&gt;</span><span class="cm">...ウォレット・天気・予定...</span><span class="tag">&lt;/aside&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- モーダル群 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="prop">class</span>=<span class="str">"modal"</span> <span class="prop">id</span>=<span class="str">"magModal"</span>
+     <span class="prop">role</span>=<span class="str">"dialog"</span> <span class="prop">aria-modal</span>=<span class="str">"true"</span><span class="tag">&gt;</span>
+  <span class="cm">&lt;!-- 機関誌エディタ --&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+  </div>
+
+  <h3>アクセシビリティ属性</h3>
+  <table>
+    <tr><th>要素</th><th>属性</th><th>目的</th></tr>
+    <tr><td>検索タブ</td><td><code>role="tablist"</code> / <code>role="tab"</code></td><td>タブUI としてスクリーンリーダーに認識させる</td></tr>
+    <tr><td>モーダル</td><td><code>role="dialog"</code> <code>aria-modal="true"</code></td><td>モーダルダイアログとして認識</td></tr>
+    <tr><td>タブ選択状態</td><td><code>aria-selected="true/false"</code></td><td>選択中タブの状態を通知</td></tr>
+    <tr><td>ナビゲーション</td><td><code>aria-label="校内サービス"</code></td><td>ランドマークの説明</td></tr>
+    <tr><td>ボタン</td><td><code>aria-label="閉じる"</code></td><td>アイコンのみのボタンに説明を付与</td></tr>
+  </table>
+</section>
+
+<!-- ===== CSS ===== -->
+<section id="css">
+  <h2>CSS — スタイル仕様</h2>
+
+  <h3>CSS カスタムプロパティ（デザイントークン）</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot css"></span>
+      <span class="file">style.css — デザイントークン</span>
+      <span class="pill css" style="font-size:10px">CSS</span>
+    </div>
+<pre><span class="sel">:root</span> <span class="punc">{</span>
+  <span class="cm">/* カラーパレット */</span>
+  <span class="prop">--ink</span>:      <span class="val">#1a1a1c</span><span class="punc">;</span>   <span class="cm">/* 本文テキスト */</span>
+  <span class="prop">--ink2</span>:     <span class="val">#5b5f66</span><span class="punc">;</span>   <span class="cm">/* サブテキスト */</span>
+  <span class="prop">--brand</span>:    <span class="val">#ff0033</span><span class="punc">;</span>   <span class="cm">/* アクセントカラー（Yahoo!赤） */</span>
+  <span class="prop">--brand-d</span>:  <span class="val">#d4002b</span><span class="punc">;</span>   <span class="cm">/* ホバー時の濃い赤 */</span>
+  <span class="prop">--link</span>:     <span class="val">#0f47b0</span><span class="punc">;</span>   <span class="cm">/* リンク色 */</span>
+  <span class="prop">--coin</span>:     <span class="val">#b8860b</span><span class="punc">;</span>   <span class="cm">/* コインカラー（ゴールド） */</span>
+  <span class="prop">--paper</span>:    <span class="val">#e9ecf0</span><span class="punc">;</span>   <span class="cm">/* ページ背景 */</span>
+  <span class="prop">--card</span>:     <span class="val">#ffffff</span><span class="punc">;</span>   <span class="cm">/* カード背景 */</span>
+  <span class="prop">--line</span>:     <span class="val">#dbe0e6</span><span class="punc">;</span>   <span class="cm">/* 境界線 */</span>
+
+  <span class="cm">/* タイポグラフィ */</span>
+  <span class="prop">--sans</span>: <span class="str">"Hiragino Kaku Gothic ProN"</span><span class="punc">,</span> <span class="str">"Yu Gothic"</span><span class="punc">,</span> Meiryo<span class="punc">,</span> system-ui<span class="punc">;</span>
+  <span class="prop">--mono</span>: ui-monospace<span class="punc">,</span> <span class="str">"SFMono-Regular"</span><span class="punc">,</span> Consolas<span class="punc">;</span>
+<span class="punc">}</span>
+
+<span class="cm">/* レスポンシブ：グリッドレイアウト */</span>
+<span class="sel">.cols</span> <span class="punc">{</span>
+  <span class="prop">display</span>: <span class="val">grid</span><span class="punc">;</span>
+  <span class="prop">grid-template-columns</span>: <span class="fn">minmax</span>(<span class="val">0</span><span class="punc">,</span> <span class="val">1fr</span>) <span class="val">300px</span><span class="punc">;</span>
+  <span class="prop">gap</span>: <span class="val">14px</span><span class="punc">;</span>
+<span class="punc">}</span>
+<span class="at">@media</span> (<span class="prop">max-width</span>: <span class="val">900px</span>) <span class="punc">{</span>
+  <span class="sel">.cols</span> <span class="punc">{</span> <span class="prop">grid-template-columns</span>: <span class="val">1fr</span><span class="punc">; }</span>
+<span class="punc">}</span></pre>
+  </div>
+
+  <h3>コンポーネント一覧</h3>
+  <table>
+    <tr><th>クラス</th><th>説明</th><th>使用箇所</th></tr>
+    <tr><td><code>.login-card</code></td><td>ログイン画面のカードUI</td><td>未認証時フルスクリーン</td></tr>
+    <tr><td><code>.box</code></td><td>汎用コンテンツカード</td><td>各セクション共通</td></tr>
+    <tr><td><code>.wire li</code></td><td>ニュース一覧の1アイテム</td><td>校内トピックス</td></tr>
+    <tr><td><code>.mag-modal-inner</code></td><td>機関誌エディタのモーダル</td><td>生徒投稿エディタ</td></tr>
+    <tr><td><code>.sec-card</code></td><td>エディタの各セクションカード</td><td>見出し/本文/画像/引用</td></tr>
+    <tr><td><code>.mag-preview</code></td><td>記事プレビュー・閲覧UI</td><td>プレビュー・ビューアー</td></tr>
+    <tr><td><code>.wallet</code></td><td>コインウォレットカード</td><td>右レール</td></tr>
+    <tr><td><code>.pill</code></td><td>カテゴリバッジ</td><td>ニュース一覧</td></tr>
+    <tr><td><code>.toast</code></td><td>フィードバックトースト通知</td><td>全体共通</td></tr>
+  </table>
+</section>
+
+<!-- ===== JavaScript ===== -->
+<section id="js">
+  <h2>JavaScript — ロジック仕様</h2>
+
+  <h3>状態管理（localStorage）</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot js"></span>
+      <span class="file">state-management.js</span>
+      <span class="pill js" style="font-size:10px">JavaScript</span>
+    </div>
+<pre><span class="cm">// アプリ全体の状態オブジェクト</span>
+<span class="kw">var</span> <span class="fn">state</span> = <span class="punc">{</span>
+  coins:     <span class="num">114514</span><span class="punc">,</span>       <span class="cm">// コイン残高</span>
+  items:     <span class="punc">[]</span><span class="punc">,</span>           <span class="cm">// ニュースアイテム配列</span>
+  magazines: <span class="punc">[]</span><span class="punc">,</span>           <span class="cm">// 機関誌データ配列</span>
+  name:      <span class="str">""</span><span class="punc">,</span>           <span class="cm">// ログインユーザー名（Google）</span>
+  email:     <span class="str">""</span><span class="punc">,</span>           <span class="cm">// メールアドレス</span>
+  picture:   <span class="str">""</span><span class="punc">,</span>           <span class="cm">// アイコン画像URL</span>
+  log:       <span class="punc">[]</span>            <span class="cm">// コイン取引履歴</span>
+<span class="punc">};</span>
+
+<span class="cm">// 保存・読み込み（localStorage）</span>
+<span class="kw">function</span> <span class="fn">save</span><span class="punc">()</span> <span class="punc">{</span>
+  localStorage.<span class="fn">setItem</span>(<span class="str">"nhigh_portal_v2"</span><span class="punc">,</span> JSON.<span class="fn">stringify</span>(state)<span class="punc">);</span>
+<span class="punc">}</span>
+<span class="kw">function</span> <span class="fn">load</span><span class="punc">()</span> <span class="punc">{</span>
+  <span class="kw">try</span> <span class="punc">{</span>
+    <span class="kw">var</span> s = JSON.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">"nhigh_portal_v2"</span>)<span class="punc">);</span>
+    <span class="kw">if</span> (s <span class="op">&amp;&amp;</span> s.items) <span class="kw">return</span> s<span class="punc">;</span>
+  <span class="punc">}</span> <span class="kw">catch</span>(e) <span class="punc">{}</span>
+  <span class="kw">return</span> <span class="punc">{</span> coins: <span class="num">114514</span><span class="punc">,</span> items: DEFAULT_ITEMS.<span class="fn">slice</span>()<span class="punc">,</span> magazines: <span class="punc">[]</span><span class="punc">,</span>
+             name: <span class="str">""</span><span class="punc">,</span> email: <span class="str">""</span><span class="punc">,</span> picture: <span class="str">""</span><span class="punc">,</span> log: <span class="punc">[]</span> <span class="punc">};</span>
+<span class="punc">}</span></pre>
+  </div>
+
+  <h3>Google OAuth 統合</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot js"></span>
+      <span class="file">auth.js — Google Identity Services</span>
+      <span class="pill js" style="font-size:10px">JavaScript</span>
+    </div>
+<pre><span class="cm">// 設定（必ずサーバー側でも検証すること）</span>
+<span class="kw">var</span> GOOGLE_CLIENT_ID = <span class="str">"YOUR_CLIENT_ID_HERE"</span><span class="punc">;</span>
+<span class="kw">var</span> SCHOOL_DOMAIN    = <span class="str">"n-high.jp"</span><span class="punc">;</span>
+
+<span class="kw">function</span> <span class="fn">startGoogleLogin</span><span class="punc">() {</span>
+  google.accounts.id.<span class="fn">initialize</span><span class="punc">({</span>
+    client_id: GOOGLE_CLIENT_ID<span class="punc">,</span>
+    callback:  handleCredential<span class="punc">,</span>
+    hd:        SCHOOL_DOMAIN     <span class="cm">// Google 側でドメイン制限</span>
+  <span class="punc">});</span>
+  google.accounts.id.<span class="fn">prompt</span><span class="punc">();</span>
+<span class="punc">}</span>
+
+<span class="kw">function</span> <span class="fn">handleCredential</span>(response<span class="punc">) {</span>
+  <span class="cm">// JWT を Base64 デコードしてユーザー情報を取得</span>
+  <span class="kw">var</span> payload = <span class="fn">parseJwt</span>(response.credential<span class="punc">);</span>
+
+  <span class="cm">// クライアント側でもドメイン検証（二重チェック）</span>
+  <span class="kw">if</span> (<span class="op">!</span>payload.email.<span class="fn">endsWith</span>(<span class="str">"@"</span> <span class="op">+</span> SCHOOL_DOMAIN<span class="punc">)) {</span>
+    <span class="fn">toast</span>(<span class="str">"学校アカウントでログインしてください"</span><span class="punc">);</span>
+    <span class="kw">return</span><span class="punc">;</span>
+  <span class="punc">}</span>
+  <span class="fn">completeLogin</span>(payload.name<span class="punc">,</span> payload.picture<span class="punc">,</span> payload.email<span class="punc">);</span>
+<span class="punc">}</span>
+
+<span class="cm">// JWT の Base64url デコード（表示用・署名検証は行わない）</span>
+<span class="kw">function</span> <span class="fn">parseJwt</span>(token<span class="punc">) {</span>
+  <span class="kw">var</span> b64 = token.<span class="fn">split</span>(<span class="str">"."</span>)[<span class="num">1</span>]
+    .<span class="fn">replace</span>(<span class="str">/-/g</span><span class="punc">,</span> <span class="str">"+"</span><span class="punc">)</span>.<span class="fn">replace</span>(<span class="str">/_/g</span><span class="punc">,</span> <span class="str">"/"</span><span class="punc">);</span>
+  <span class="kw">return</span> JSON.<span class="fn">parse</span>(<span class="fn">decodeURIComponent</span>(
+    <span class="fn">atob</span>(b64).<span class="fn">split</span>(<span class="str">""</span><span class="punc">)</span>.<span class="fn">map</span>(<span class="kw">function</span>(c<span class="punc">) {</span>
+      <span class="kw">return</span> <span class="str">"%"</span> <span class="op">+</span> (<span class="str">"00"</span> <span class="op">+</span> c.<span class="fn">charCodeAt</span>(<span class="num">0</span>).<span class="fn">toString</span>(<span class="num">16</span>)<span class="punc">)</span>.<span class="fn">slice</span>(<span class="op">-</span><span class="num">2</span><span class="punc">);</span>
+    <span class="punc">})</span>.<span class="fn">join</span>(<span class="str">""</span><span class="punc">)</span>
+  <span class="punc">));</span>
+<span class="punc">}</span></pre>
+  </div>
+
+  <h3>機関誌エディタのセクション管理</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot js"></span>
+      <span class="file">magazine-editor.js</span>
+      <span class="pill js" style="font-size:10px">JavaScript</span>
+    </div>
+<pre><span class="cm">// セクション型定義（実装は普通のオブジェクト）</span>
+<span class="cm">// Section = { type, content, url, caption }</span>
+<span class="kw">var</span> sections = <span class="punc">[];</span>
+
+<span class="kw">function</span> <span class="fn">addSection</span>(type<span class="punc">) {</span>
+  sections.<span class="fn">push</span>(<span class="punc">{</span> type: type<span class="punc">,</span> content: <span class="str">""</span><span class="punc">,</span> url: <span class="str">""</span><span class="punc">,</span> caption: <span class="str">""</span> <span class="punc">});</span>
+  <span class="fn">renderSectionList</span><span class="punc">();</span>
+<span class="punc">}</span>
+
+<span class="kw">function</span> <span class="fn">publishMagazine</span><span class="punc">() {</span>
+  <span class="kw">var</span> mag = <span class="punc">{</span>
+    id:        Date.<span class="fn">now</span>().<span class="fn">toString</span>(<span class="num">36</span><span class="punc">),</span>   <span class="cm">// ユニークID</span>
+    title:     <span class="fn">getVal</span>(<span class="str">"magTitle"</span><span class="punc">),</span>
+    subtitle:  <span class="fn">getVal</span>(<span class="str">"magSubtitle"</span><span class="punc">),</span>
+    cover:     <span class="fn">getVal</span>(<span class="str">"magCover"</span><span class="punc">),</span>
+    tag:       <span class="fn">getVal</span>(<span class="str">"magTag"</span><span class="punc">),</span>
+    author:    state.name <span class="op">||</span> <span class="str">"匿名"</span><span class="punc">,</span>
+    sections:  JSON.<span class="fn">parse</span>(JSON.<span class="fn">stringify</span>(sections<span class="punc">)),</span>  <span class="cm">// ディープコピー</span>
+    published: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span><span class="punc">()</span>
+  <span class="punc">};</span>
+  state.magazines.<span class="fn">unshift</span>(mag<span class="punc">);</span>
+  state.items.<span class="fn">unshift</span>(<span class="punc">{</span>
+    t: <span class="fn">nowTime</span>()<span class="punc">,</span> c: <span class="str">"user"</span><span class="punc">,</span> h: mag.title<span class="punc">,</span>
+    n: <span class="kw">true</span><span class="punc">,</span> b: <span class="kw">false</span><span class="punc">,</span> magazine: <span class="kw">true</span><span class="punc">,</span> magId: mag.id
+  <span class="punc">});</span>
+  <span class="fn">save</span><span class="punc">();</span>
+<span class="punc">}</span></pre>
+  </div>
+</section>
+
+<!-- ===== TypeScript ===== -->
+<section id="ts">
+  <h2>TypeScript — 型定義</h2>
+  <p>バックエンド拡張時またはフロントエンドをビルドステップ付きに移行する場合の型定義。</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot ts"></span>
+      <span class="file">types.ts — 型定義</span>
+      <span class="pill ts" style="font-size:10px">TypeScript</span>
+    </div>
+<pre><span class="cm">/** ニュースアイテム */</span>
+<span class="kw">interface</span> <span class="fn">NewsItem</span> <span class="punc">{</span>
+  t:        <span class="kw">string</span><span class="punc">;</span>    <span class="cm">// 時刻 "HH:MM"</span>
+  c:        <span class="fn">Category</span><span class="punc">;</span> <span class="cm">// カテゴリ</span>
+  h:        <span class="kw">string</span><span class="punc">;</span>    <span class="cm">// 見出し</span>
+  m<span class="op">?</span>:       <span class="kw">string</span><span class="punc">;</span>    <span class="cm">// 補足テキスト</span>
+  n:        <span class="kw">boolean</span><span class="punc">;</span>   <span class="cm">// NEW バッジ</span>
+  b:        <span class="kw">boolean</span><span class="punc">;</span>   <span class="cm">// トップ固定</span>
+  magazine<span class="op">?</span>: <span class="kw">boolean</span><span class="punc">;</span> <span class="cm">// 機関誌リンクか</span>
+  magId<span class="op">?</span>:   <span class="kw">string</span><span class="punc">;</span>    <span class="cm">// 機関誌ID</span>
+<span class="punc">}</span>
+
+<span class="kw">type</span> <span class="fn">Category</span> = <span class="str">"council"</span> <span class="op">|</span> <span class="str">"school"</span> <span class="op">|</span> <span class="str">"club"</span> <span class="op">|</span> <span class="str">"times"</span> <span class="op">|</span> <span class="str">"user"</span><span class="punc">;</span>
+<span class="kw">type</span> <span class="fn">SectionType</span> = <span class="str">"heading"</span> <span class="op">|</span> <span class="str">"body"</span> <span class="op">|</span> <span class="str">"image"</span> <span class="op">|</span> <span class="str">"quote"</span><span class="punc">;</span>
+
+<span class="cm">/** 機関誌セクション */</span>
+<span class="kw">interface</span> <span class="fn">Section</span> <span class="punc">{</span>
+  type:     <span class="fn">SectionType</span><span class="punc">;</span>
+  content:  <span class="kw">string</span><span class="punc">;</span>
+  url<span class="op">?</span>:     <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// 画像URL</span>
+  caption<span class="op">?</span>: <span class="kw">string</span><span class="punc">;</span> <span class="cm">// 画像キャプション</span>
+<span class="punc">}</span>
+
+<span class="cm">/** 機関誌記事 */</span>
+<span class="kw">interface</span> <span class="fn">Magazine</span> <span class="punc">{</span>
+  id:        <span class="kw">string</span><span class="punc">;</span>
+  title:     <span class="kw">string</span><span class="punc">;</span>
+  subtitle<span class="op">?</span>: <span class="kw">string</span><span class="punc">;</span>
+  cover<span class="op">?</span>:    <span class="kw">string</span><span class="punc">;</span>
+  tag<span class="op">?</span>:      <span class="kw">string</span><span class="punc">;</span>
+  author:    <span class="kw">string</span><span class="punc">;</span>
+  sections:  <span class="fn">Section</span><span class="punc">[];</span>
+  published: <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// ISO 8601</span>
+<span class="punc">}</span>
+
+<span class="cm">/** アプリ全体の状態 */</span>
+<span class="kw">interface</span> <span class="fn">AppState</span> <span class="punc">{</span>
+  coins:     <span class="kw">number</span><span class="punc">;</span>
+  items:     <span class="fn">NewsItem</span><span class="punc">[];</span>
+  magazines: <span class="fn">Magazine</span><span class="punc">[];</span>
+  name:      <span class="kw">string</span><span class="punc">;</span>
+  email:     <span class="kw">string</span><span class="punc">;</span>
+  picture:   <span class="kw">string</span><span class="punc">;</span>
+  log:       <span class="fn">CoinLog</span><span class="punc">[];</span>
+<span class="punc">}</span>
+
+<span class="kw">interface</span> <span class="fn">CoinLog</span> <span class="punc">{</span>
+  t:     <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// 時刻</span>
+  label: <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// 取引内容</span>
+  amt:   <span class="kw">number</span><span class="punc">;</span>  <span class="cm">// 金額（負 = 支出）</span>
+<span class="punc">}</span></pre>
+  </div>
+</section>
+
+<hr>
+
+<!-- ===== Python ===== -->
+<section id="python">
+  <h2>Python — バックエンド仕様（拡張時）</h2>
+  <p>現在の実装はフロントエンドのみ。将来的にバックエンドを追加する場合の仕様。</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot python"></span>
+      <span class="file">app.py — Flask API サーバー</span>
+      <span class="pill python" style="font-size:10px">Python 3.12</span>
+    </div>
+<pre><span class="kw">from</span> flask <span class="kw">import</span> Flask<span class="punc">,</span> request<span class="punc">,</span> jsonify<span class="punc">,</span> abort
+<span class="kw">from</span> google.oauth2 <span class="kw">import</span> id_token
+<span class="kw">from</span> google.auth.transport <span class="kw">import</span> requests <span class="kw">as</span> google_requests
+<span class="kw">import</span> sqlite3<span class="punc">,</span> os
+
+app = <span class="fn">Flask</span>(__name__)
+
+GOOGLE_CLIENT_ID = os.environ[<span class="str">"GOOGLE_CLIENT_ID"</span>]
+SCHOOL_DOMAIN    = os.environ.<span class="fn">get</span>(<span class="str">"SCHOOL_DOMAIN"</span><span class="punc">,</span> <span class="str">"n-high.jp"</span>)
+
+<span class="kw">def</span> <span class="fn">verify_google_token</span>(credential: <span class="kw">str</span>) <span class="op">-&gt;</span> dict:
+    <span class="str">"""Google JWT を検証してペイロードを返す。不正なら abort(401)。"""</span>
+    <span class="kw">try</span>:
+        info = id_token.<span class="fn">verify_oauth2_token</span>(
+            credential<span class="punc">,</span> google_requests.<span class="fn">Request</span>()<span class="punc">,</span> GOOGLE_CLIENT_ID
+        )
+    <span class="kw">except</span> ValueError:
+        <span class="fn">abort</span>(<span class="num">401</span><span class="punc">,</span> <span class="str">"Invalid token"</span>)
+
+    <span class="cm"># ドメイン検証（サーバー側で必ず行う）</span>
+    <span class="kw">if</span> <span class="op">not</span> info[<span class="str">"email"</span>].<span class="fn">endswith</span>(<span class="str">f"@{SCHOOL_DOMAIN}"</span>):
+        <span class="fn">abort</span>(<span class="num">403</span><span class="punc">,</span> <span class="str">"School account required"</span>)
+    <span class="kw">return</span> info
+
+<span class="at">@app.route</span>(<span class="str">"/api/auth/login"</span><span class="punc">,</span> methods=[<span class="str">"POST"</span>])
+<span class="kw">def</span> <span class="fn">login</span>():
+    credential = request.<span class="fn">json</span>.<span class="fn">get</span>(<span class="str">"credential"</span>)
+    info = <span class="fn">verify_google_token</span>(credential)
+    <span class="cm"># ユーザーをDBに upsert</span>
+    <span class="fn">upsert_user</span>(info[<span class="str">"email"</span>]<span class="punc">,</span> info[<span class="str">"name"</span>]<span class="punc">,</span> info.<span class="fn">get</span>(<span class="str">"picture"</span><span class="punc">,</span> <span class="str">""</span>))
+    <span class="kw">return</span> <span class="fn">jsonify</span>(<span class="punc">{</span><span class="str">"name"</span>: info[<span class="str">"name"</span>]<span class="punc">,</span> <span class="str">"email"</span>: info[<span class="str">"email"</span>]<span class="punc">})</span>
+
+<span class="at">@app.route</span>(<span class="str">"/api/magazines"</span><span class="punc">,</span> methods=[<span class="str">"GET"</span>])
+<span class="kw">def</span> <span class="fn">get_magazines</span>():
+    <span class="kw">with</span> <span class="fn">get_db</span>() <span class="kw">as</span> db:
+        rows = db.<span class="fn">execute</span>(
+            <span class="str">"SELECT * FROM magazines ORDER BY published DESC LIMIT 50"</span>
+        ).<span class="fn">fetchall</span>()
+    <span class="kw">return</span> <span class="fn">jsonify</span>([<span class="fn">dict</span>(r) <span class="kw">for</span> r <span class="kw">in</span> rows])
+
+<span class="at">@app.route</span>(<span class="str">"/api/magazines"</span><span class="punc">,</span> methods=[<span class="str">"POST"</span>])
+<span class="kw">def</span> <span class="fn">create_magazine</span>():
+    credential = request.headers.<span class="fn">get</span>(<span class="str">"X-Google-Credential"</span>)
+    info = <span class="fn">verify_google_token</span>(credential)
+    data = request.<span class="fn">json</span>()
+    <span class="cm"># 必須フィールド検証</span>
+    <span class="kw">if not</span> data.<span class="fn">get</span>(<span class="str">"title"</span>):
+        <span class="fn">abort</span>(<span class="num">400</span><span class="punc">,</span> <span class="str">"title is required"</span>)
+    <span class="kw">return</span> <span class="fn">jsonify</span>(<span class="fn">save_magazine</span>(info[<span class="str">"email"</span>]<span class="punc">,</span> data))<span class="punc">,</span> <span class="num">201</span></pre>
+  </div>
+</section>
+
+<!-- ===== API 仕様 ===== -->
+<section id="api">
+  <h2>REST API 仕様</h2>
+  <table>
+    <tr>
+      <th>メソッド</th><th>パス</th><th>認証</th><th>説明</th>
+    </tr>
+    <tr>
+      <td><code>POST</code></td><td><code>/api/auth/login</code></td><td>Google JWT</td><td>ログイン・ユーザー登録</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td><td><code>/api/news</code></td><td>JWT</td><td>ニュース一覧取得</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td><td><code>/api/news</code></td><td>JWT</td><td>ニュース投稿</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td><td><code>/api/magazines</code></td><td>JWT</td><td>機関誌一覧取得</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td><td><code>/api/magazines</code></td><td>JWT</td><td>機関誌公開</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td><td><code>/api/magazines/:id</code></td><td>JWT</td><td>機関誌詳細取得</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td><td><code>/api/coins/charge</code></td><td>JWT</td><td>コインチャージ</td>
+    </tr>
+    <tr>
+      <td><code>POST</code></td><td><code>/api/coins/pay</code></td><td>JWT</td><td>コイン決済</td>
+    </tr>
+    <tr>
+      <td><code>GET</code></td><td><code>/api/coins/balance</code></td><td>JWT</td><td>残高取得</td>
+    </tr>
+  </table>
+
+  <div class="callout info">
+    <div class="label">認証方式</div>
+    全APIエンドポイントで <code>X-Google-Credential: &lt;JWT&gt;</code> ヘッダーを要求。サーバー側で Google の公開鍵により署名を検証する。
+  </div>
+</section>
+
+<!-- ===== SQL ===== -->
+<section id="sql">
+  <h2>SQL — データベーススキーマ</h2>
+
+  <div class="schema-grid">
+    <div class="schema-card">
+      <div class="sc-head">users</div>
+      <div class="sc-body">
+        <div class="field"><span class="fname">id</span><span class="ftype">INTEGER PK</span></div>
+        <div class="field"><span class="fname">email</span><span class="ftype">TEXT UNIQUE</span><span class="fdesc">学校アカウント</span></div>
+        <div class="field"><span class="fname">name</span><span class="ftype">TEXT</span><span class="fdesc">Google表示名</span></div>
+        <div class="field"><span class="fname">picture</span><span class="ftype">TEXT</span><span class="fdesc">アイコンURL</span></div>
+        <div class="field"><span class="fname">coins</span><span class="ftype">INTEGER</span><span class="fdesc">コイン残高</span></div>
+        <div class="field"><span class="fname">created_at</span><span class="ftype">DATETIME</span></div>
+      </div>
+    </div>
+    <div class="schema-card">
+      <div class="sc-head">magazines</div>
+      <div class="sc-body">
+        <div class="field"><span class="fname">id</span><span class="ftype">TEXT PK</span><span class="fdesc">Base36 ID</span></div>
+        <div class="field"><span class="fname">author_email</span><span class="ftype">TEXT FK</span></div>
+        <div class="field"><span class="fname">title</span><span class="ftype">TEXT</span></div>
+        <div class="field"><span class="fname">subtitle</span><span class="ftype">TEXT</span></div>
+        <div class="field"><span class="fname">cover_url</span><span class="ftype">TEXT</span></div>
+        <div class="field"><span class="fname">sections_json</span><span class="ftype">TEXT</span><span class="fdesc">JSON配列</span></div>
+        <div class="field"><span class="fname">published</span><span class="ftype">DATETIME</span></div>
+      </div>
+    </div>
+    <div class="schema-card">
+      <div class="sc-head">news_items</div>
+      <div class="sc-body">
+        <div class="field"><span class="fname">id</span><span class="ftype">INTEGER PK</span></div>
+        <div class="field"><span class="fname">author_email</span><span class="ftype">TEXT FK</span></div>
+        <div class="field"><span class="fname">category</span><span class="ftype">TEXT</span><span class="fdesc">council/school/club/times/user</span></div>
+        <div class="field"><span class="fname">headline</span><span class="ftype">TEXT</span></div>
+        <div class="field"><span class="fname">body</span><span class="ftype">TEXT</span></div>
+        <div class="field"><span class="fname">boosted</span><span class="ftype">BOOLEAN</span></div>
+        <div class="field"><span class="fname">magazine_id</span><span class="ftype">TEXT FK</span></div>
+        <div class="field"><span class="fname">created_at</span><span class="ftype">DATETIME</span></div>
+      </div>
+    </div>
+    <div class="schema-card">
+      <div class="sc-head">coin_logs</div>
+      <div class="sc-body">
+        <div class="field"><span class="fname">id</span><span class="ftype">INTEGER PK</span></div>
+        <div class="field"><span class="fname">user_email</span><span class="ftype">TEXT FK</span></div>
+        <div class="field"><span class="fname">label</span><span class="ftype">TEXT</span><span class="fdesc">取引内容</span></div>
+        <div class="field"><span class="fname">amount</span><span class="ftype">INTEGER</span><span class="fdesc">負 = 支出</span></div>
+        <div class="field"><span class="fname">created_at</span><span class="ftype">DATETIME</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot sql"></span>
+      <span class="file">schema.sql</span>
+      <span class="pill sql" style="font-size:10px">SQL</span>
+    </div>
+<pre><span class="kw">CREATE TABLE</span> users (
+  id         <span class="kw">INTEGER PRIMARY KEY AUTOINCREMENT</span>,
+  email      <span class="kw">TEXT UNIQUE NOT NULL</span>,
+  name       <span class="kw">TEXT NOT NULL</span>,
+  picture    <span class="kw">TEXT DEFAULT</span> <span class="str">''</span>,
+  coins      <span class="kw">INTEGER NOT NULL DEFAULT</span> <span class="num">0</span>,
+  created_at <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+
+<span class="kw">CREATE TABLE</span> magazines (
+  id            <span class="kw">TEXT PRIMARY KEY</span>,
+  author_email  <span class="kw">TEXT NOT NULL REFERENCES</span> users(email),
+  title         <span class="kw">TEXT NOT NULL</span>,
+  subtitle      <span class="kw">TEXT DEFAULT</span> <span class="str">''</span>,
+  cover_url     <span class="kw">TEXT DEFAULT</span> <span class="str">''</span>,
+  sections_json <span class="kw">TEXT NOT NULL DEFAULT</span> <span class="str">'[]'</span>,
+  published     <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+
+<span class="kw">CREATE TABLE</span> coin_logs (
+  id         <span class="kw">INTEGER PRIMARY KEY AUTOINCREMENT</span>,
+  user_email <span class="kw">TEXT NOT NULL REFERENCES</span> users(email),
+  label      <span class="kw">TEXT NOT NULL</span>,
+  amount     <span class="kw">INTEGER NOT NULL</span>,  <span class="cm">-- 負の値 = 支出</span>
+  created_at <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+
+<span class="cm">-- コイン残高を安全に更新するトランザクション例</span>
+<span class="kw">BEGIN TRANSACTION</span>;
+  <span class="kw">UPDATE</span> users <span class="kw">SET</span> coins = coins <span class="op">-</span> <span class="num">500</span>
+    <span class="kw">WHERE</span> email = <span class="str">'student@n-high.jp'</span> <span class="kw">AND</span> coins <span class="op">&gt;=</span> <span class="num">500</span>;
+  <span class="kw">INSERT INTO</span> coin_logs (user_email<span class="punc">,</span> label<span class="punc">,</span> amount)
+    <span class="kw">VALUES</span> (<span class="str">'student@n-high.jp'</span><span class="punc">,</span> <span class="str">'記事をトップ固定'</span><span class="punc">,</span> <span class="op">-</span><span class="num">500</span>);
+<span class="kw">COMMIT</span>;</pre>
+  </div>
+</section>
+
+<hr>
+
+<!-- ===== JSON ===== -->
+<section id="json">
+  <h2>JSON — データ形式</h2>
+
+  <h3>localStorage 保存形式</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot json"></span>
+      <span class="file">nhigh_portal_v2 (localStorage key)</span>
+      <span class="pill json" style="font-size:10px">JSON</span>
+    </div>
+<pre><span class="punc">{</span>
+  <span class="prop">"coins"</span>: <span class="num">114514</span>,
+  <span class="prop">"name"</span>:  <span class="str">"山田 快"</span>,
+  <span class="prop">"email"</span>: <span class="str">"yamada@n-high.jp"</span>,
+  <span class="prop">"picture"</span>: <span class="str">"https://lh3.googleusercontent.com/..."</span>,
+  <span class="prop">"items"</span>: [
+    <span class="punc">{</span>
+      <span class="prop">"t"</span>: <span class="str">"14:20"</span>, <span class="prop">"c"</span>: <span class="str">"council"</span>,
+      <span class="prop">"h"</span>: <span class="str">"第5期生徒会の発足合宿"</span>,
+      <span class="prop">"m"</span>: <span class="str">"役員25名が参加予定"</span>,
+      <span class="prop">"n"</span>: <span class="kw">true</span>, <span class="prop">"b"</span>: <span class="kw">false</span>
+    <span class="punc">}</span>
+  ],
+  <span class="prop">"magazines"</span>: [
+    <span class="punc">{</span>
+      <span class="prop">"id"</span>: <span class="str">"lz3k7a"</span>,
+      <span class="prop">"title"</span>: <span class="str">"スクーリングで出会った仲間たち"</span>,
+      <span class="prop">"subtitle"</span>: <span class="str">"沖縄本校での3日間"</span>,
+      <span class="prop">"cover"</span>: <span class="str">"https://example.com/cover.jpg"</span>,
+      <span class="prop">"tag"</span>: <span class="str">"スクーリング"</span>,
+      <span class="prop">"author"</span>: <span class="str">"山田 快"</span>,
+      <span class="prop">"published"</span>: <span class="str">"2026-08-09T14:00:00.000Z"</span>,
+      <span class="prop">"sections"</span>: [
+        <span class="punc">{</span> <span class="prop">"type"</span>: <span class="str">"heading"</span>, <span class="prop">"content"</span>: <span class="str">"はじめに"</span> <span class="punc">}</span>,
+        <span class="punc">{</span> <span class="prop">"type"</span>: <span class="str">"body"</span>, <span class="prop">"content"</span>: <span class="str">"8月1日、初めてのスクーリングに参加した。"</span> <span class="punc">}</span>,
+        <span class="punc">{</span> <span class="prop">"type"</span>: <span class="str">"image"</span>, <span class="prop">"url"</span>: <span class="str">"https://..."</span>, <span class="prop">"caption"</span>: <span class="str">"集合写真"</span> <span class="punc">}</span>,
+        <span class="punc">{</span> <span class="prop">"type"</span>: <span class="str">"quote"</span>, <span class="prop">"content"</span>: <span class="str">"ネットで繋がった仲間が、リアルで繋がる瞬間。"</span> <span class="punc">}</span>
+      ]
+    <span class="punc">}</span>
+  ],
+  <span class="prop">"log"</span>: [
+    <span class="punc">{</span> <span class="prop">"t"</span>: <span class="str">"14:22"</span>, <span class="prop">"label"</span>: <span class="str">"記事をトップ固定"</span>, <span class="prop">"amt"</span>: <span class="num">-500</span> <span class="punc">}</span>
+  ]
+<span class="punc">}</span></pre>
+  </div>
+</section>
+
+<!-- ===== YAML ===== -->
+<section id="yaml">
+  <h2>YAML — 設定ファイル</h2>
+
+  <h3>Docker Compose（本番デプロイ用）</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot yaml"></span>
+      <span class="file">docker-compose.yml</span>
+      <span class="pill yaml" style="font-size:10px">YAML</span>
+    </div>
+<pre><span class="prop">version</span>: <span class="str">"3.9"</span>
+
+<span class="prop">services</span>:
+  <span class="prop">web</span>:
+    <span class="prop">build</span>: <span class="str">.</span>
+    <span class="prop">ports</span>:
+      <span class="op">-</span> <span class="str">"8000:8000"</span>
+    <span class="prop">environment</span>:
+      <span class="prop">GOOGLE_CLIENT_ID</span>: <span class="str">${GOOGLE_CLIENT_ID}</span>
+      <span class="prop">SCHOOL_DOMAIN</span>:    <span class="str">"n-high.jp"</span>
+      <span class="prop">DATABASE_URL</span>:     <span class="str">"sqlite:///portal.db"</span>
+      <span class="prop">SECRET_KEY</span>:       <span class="str">${SECRET_KEY}</span>
+    <span class="prop">volumes</span>:
+      <span class="op">-</span> <span class="str">./data:/app/data</span>
+    <span class="prop">restart</span>: <span class="str">unless-stopped</span>
+
+  <span class="prop">nginx</span>:
+    <span class="prop">image</span>: <span class="str">nginx:alpine</span>
+    <span class="prop">ports</span>:
+      <span class="op">-</span> <span class="str">"80:80"</span>
+      <span class="op">-</span> <span class="str">"443:443"</span>
+    <span class="prop">volumes</span>:
+      <span class="op">-</span> <span class="str">./nginx.conf:/etc/nginx/nginx.conf:ro</span>
+      <span class="op">-</span> <span class="str">./certs:/etc/ssl/certs:ro</span>
+    <span class="prop">depends_on</span>:
+      <span class="op">-</span> <span class="str">web</span></pre>
+  </div>
+
+  <h3>環境変数定義（.env）</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot yaml"></span>
+      <span class="file">.env.example</span>
+      <span class="pill yaml" style="font-size:10px">ENV</span>
+    </div>
+<pre><span class="cm"># Google OAuth — Google Cloud Console で取得</span>
+<span class="prop">GOOGLE_CLIENT_ID</span>=<span class="str">123456789-abcdefg.apps.googleusercontent.com</span>
+
+<span class="cm"># 学校ドメイン（このドメインのGoogleアカウントのみログイン可）</span>
+<span class="prop">SCHOOL_DOMAIN</span>=<span class="str">n-high.jp</span>
+
+<span class="cm"># Flask シークレットキー（本番では必ずランダムな長い文字列に）</span>
+<span class="prop">SECRET_KEY</span>=<span class="str">change-me-in-production-use-random-64-chars</span>
+
+<span class="cm"># データベースURL</span>
+<span class="prop">DATABASE_URL</span>=<span class="str">sqlite:///portal.db</span>
+<span class="cm"># PostgreSQL 移行時: postgresql://user:pass@host/nhigh_portal</span></pre>
+  </div>
+</section>
+
+<!-- ===== Bash ===== -->
+<section id="bash">
+  <h2>Bash — セットアップスクリプト</h2>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot bash"></span>
+      <span class="file">setup.sh — 開発環境構築</span>
+      <span class="pill bash" style="font-size:10px">Bash</span>
+    </div>
+<pre><span class="at">#!/usr/bin/env bash</span>
+<span class="kw">set</span> -euo pipefail
+
+<span class="fn">echo</span> <span class="str">"=== N高ポータル 開発環境セットアップ ==="</span>
+
+<span class="cm"># Python バージョン確認</span>
+<span class="kw">if</span> <span class="op">!</span> <span class="fn">command</span> -v python3 <span class="op">&amp;&gt;</span> /dev/null; <span class="kw">then</span>
+  <span class="fn">echo</span> <span class="str">"ERROR: Python3 が見つかりません"</span> &gt;&amp;2
+  <span class="fn">exit</span> <span class="num">1</span>
+<span class="kw">fi</span>
+
+<span class="cm"># 仮想環境作成</span>
+<span class="fn">echo</span> <span class="str">"[1/4] 仮想環境を作成..."</span>
+python3 -m venv .venv
+<span class="kw">source</span> .venv/bin/activate
+
+<span class="cm"># 依存パッケージインストール</span>
+<span class="fn">echo</span> <span class="str">"[2/4] 依存パッケージをインストール..."</span>
+pip install -q flask google-auth flask-cors
+
+<span class="cm"># 環境変数ファイルのコピー</span>
+<span class="fn">echo</span> <span class="str">"[3/4] .env ファイルを設定..."</span>
+<span class="kw">if</span> [ <span class="op">!</span> -f .env ]; <span class="kw">then</span>
+  <span class="fn">cp</span> .env.example .env
+  <span class="fn">echo</span> <span class="str">"  .env を作成しました。GOOGLE_CLIENT_ID を設定してください。"</span>
+<span class="kw">fi</span>
+
+<span class="cm"># データベース初期化</span>
+<span class="fn">echo</span> <span class="str">"[4/4] データベースを初期化..."</span>
+python3 -c <span class="str">"
+import sqlite3
+db = sqlite3.connect('portal.db')
+with open('schema.sql') as f:
+    db.executescript(f.read())
+db.close()
+print('  portal.db を作成しました')
+"</span>
+
+<span class="fn">echo</span> <span class="str">""</span>
+<span class="fn">echo</span> <span class="str">"セットアップ完了！次のコマンドで起動:"</span>
+<span class="fn">echo</span> <span class="str">"  source .venv/bin/activate"</span>
+<span class="fn">echo</span> <span class="str">"  python3 app.py"</span>
+<span class="fn">echo</span> <span class="str">"  open http://localhost:8000"</span></pre>
+  </div>
+</section>
+
+<hr>
+
+<!-- ===== 機能仕様 ===== -->
+<section id="auth">
+  <h2>Google 認証 — 詳細仕様</h2>
+
+  <h3>必要な Google Cloud 設定</h3>
+  <ol>
+    <li>Google Cloud Console (<code>console.cloud.google.com</code>) でプロジェクト作成</li>
+    <li>「APIとサービス」→「認証情報」→「OAuth 2.0 クライアントID」を作成</li>
+    <li>「承認済みの JavaScript 生成元」に <code>https://your-school-domain.jp</code> を追加</li>
+    <li>「承認済みのリダイレクト URI」を設定（SPAの場合は不要）</li>
+    <li>取得した <strong>クライアントID</strong> を <code>GOOGLE_CLIENT_ID</code> に設定</li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="label">セキュリティ注意</div>
+    JWT のデコードはクライアント側でも行っていますが、<strong>署名の検証はサーバー側でのみ実施</strong>してください。クライアント側検証は表示用途のみです。
+  </div>
+
+  <table>
+    <tr><th>設定値</th><th>説明</th><th>例</th></tr>
+    <tr><td><code>GOOGLE_CLIENT_ID</code></td><td>OAuth クライアントID</td><td><code>123...apps.googleusercontent.com</code></td></tr>
+    <tr><td><code>SCHOOL_DOMAIN</code></td><td>許可するメールドメイン</td><td><code>n-high.jp</code></td></tr>
+    <tr><td><code>hd</code> パラメータ</td><td>Google側のドメイン制限</td><td>SCHOOL_DOMAIN と同一値を設定</td></tr>
+  </table>
+</section>
+
+<section id="editor">
+  <h2>機関誌エディタ — 詳細仕様</h2>
+
+  <h3>セクションタイプ</h3>
+  <table>
+    <tr><th>type</th><th>表示</th><th>フィールド</th><th>プレビュー</th></tr>
+    <tr><td><code>"heading"</code></td><td>📌 見出し</td><td><code>content</code>: テキスト</td><td><code>&lt;h3&gt;</code> 要素</td></tr>
+    <tr><td><code>"body"</code></td><td>📝 本文</td><td><code>content</code>: テキスト（改行対応）</td><td><code>&lt;p&gt;</code> 要素</td></tr>
+    <tr><td><code>"image"</code></td><td>🖼 画像</td><td><code>url</code>: 画像URL / <code>caption</code>: キャプション</td><td><code>&lt;figure&gt;</code> 要素</td></tr>
+    <tr><td><code>"quote"</code></td><td>💬 引用</td><td><code>content</code>: 引用文</td><td><code>&lt;blockquote&gt;</code> 要素</td></tr>
+  </table>
+
+  <h3>公開フロー</h3>
+  <div class="flow">
+    <div class="flow-step" data-n="1">
+      <div><div class="title">入力バリデーション</div><div class="desc">タイトル必須・セクション1件以上チェック</div></div>
+    </div>
+    <div class="flow-step" data-n="2">
+      <div><div class="title">magazine オブジェクト生成</div><div class="desc"><code>Date.now().toString(36)</code> でユニークID生成。sections のディープコピーを保存。</div></div>
+    </div>
+    <div class="flow-step" data-n="3">
+      <div><div class="title">state.magazines に追加</div><div class="desc">配列の先頭に unshift して最新表示</div></div>
+    </div>
+    <div class="flow-step" data-n="4">
+      <div><div class="title">news_item として追加</div><div class="desc"><code>magazine: true</code> / <code>magId</code> フラグ付きで校内トピックスに表示</div></div>
+    </div>
+    <div class="flow-step" data-n="5">
+      <div><div class="title">localStorage に保存</div><div class="desc"><code>save()</code> で即時永続化</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="coins">
+  <h2>コインシステム — 詳細仕様</h2>
+  <table>
+    <tr><th>操作</th><th>金額</th><th>関数</th></tr>
+    <tr><td>チャージ</td><td>+10,000</td><td><code>charge(10000, "コインチャージ")</code></td></tr>
+    <tr><td>記事トップ固定</td><td>-500</td><td><code>pay(500, "記事をトップ固定")</code></td></tr>
+    <tr><td>イベント申込</td><td>-price</td><td><code>pay(price, "イベント：" + name)</code></td></tr>
+    <tr><td>ショップ購入</td><td>-price</td><td><code>pay(price, "ショップ：" + name)</code></td></tr>
+  </table>
+
+  <div class="callout tip">
+    <div class="label">実装メモ</div>
+    <code>pay()</code> は残高不足時にトーストを表示して <code>false</code> を返す。呼び出し元は戻り値を確認してから後続処理を実行する。
+  </div>
+</section>
+
+<section id="security">
+  <h2>セキュリティ仕様</h2>
+
+  <h3>XSS 対策</h3>
+  <p>全てのユーザー入力は <code>esc()</code> 関数で HTML エスケープしてから DOM に挿入。</p>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot js"></span>
+      <span class="file">escape.js</span>
+      <span class="pill js" style="font-size:10px">JavaScript</span>
+    </div>
+<pre><span class="kw">function</span> <span class="fn">esc</span>(s) <span class="punc">{</span>
+  <span class="kw">return</span> <span class="fn">String</span>(s).<span class="fn">replace</span>(
+    <span class="str">/[&amp;&lt;&gt;"]/g</span>,
+    <span class="kw">function</span>(c) <span class="punc">{</span>
+      <span class="kw">return</span> <span class="punc">{</span>
+        <span class="str">"&amp;"</span>: <span class="str">"&amp;amp;"</span>, <span class="str">"&lt;"</span>: <span class="str">"&amp;lt;"</span>,
+        <span class="str">"&gt;"</span>: <span class="str">"&amp;gt;"</span>, <span class="str">'"'</span>: <span class="str">"&amp;quot;"</span>
+      <span class="punc">}[c];</span>
+    <span class="punc">}</span>
+  <span class="punc">);</span>
+<span class="punc">}</span>
+<span class="cm">// innerHTML への代入はすべて esc() でラップすること</span></pre>
+  </div>
+
+  <h3>セキュリティチェックリスト</h3>
+  <table>
+    <tr><th>項目</th><th>対策</th><th>状態</th></tr>
+    <tr><td>XSS</td><td>全ユーザー入力を <code>esc()</code> でサニタイズ</td><td>✅ 実装済み</td></tr>
+    <tr><td>ドメイン制限</td><td>Google <code>hd</code> パラメータ + クライアント検証</td><td>✅ 実装済み</td></tr>
+    <tr><td>JWT 署名検証</td><td>サーバー側で google-auth ライブラリを使用</td><td>⚠ 拡張時に必要</td></tr>
+    <tr><td>CSRF</td><td>SameSite Cookie / CSRF トークン</td><td>⚠ 拡張時に必要</td></tr>
+    <tr><td>HTTPS</td><td>本番は必ず HTTPS 必須（OAuth要件）</td><td>⚠ デプロイ時に必要</td></tr>
+    <tr><td>Client ID 管理</td><td>環境変数 / .gitignore で管理</td><td>✅ .env で管理</td></tr>
+  </table>
+</section>
+
+<hr>
+
+<p style="color:var(--text3);font-size:12px;margin-top:32px">
+  N高ポータル 技術仕様書 v1.0.0 — 2026-08-09<br>
+  作成：サーバー同好会 × 生徒会
+</p>
+
+</main>
+</div>
+
+<script>
+/* サイドバーのアクティブリンク */
+var links = document.querySelectorAll("nav a[href^='#']");
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      links.forEach(function(l) { l.classList.remove("active"); });
+      var id = e.target.id;
+      var active = document.querySelector("nav a[href='#" + id + "']");
+      if (active) active.classList.add("active");
+    }
+  });
+}, { rootMargin: "-20% 0px -70% 0px" });
+
+document.querySelectorAll("main section[id]").forEach(function(s) {
+  observer.observe(s);
+});
+</script>
+</body>
+</html>
