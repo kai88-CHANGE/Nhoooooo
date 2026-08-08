@@ -195,7 +195,7 @@ code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6p
 <aside>
   <div class="sidebar-brand">
     <div class="logo">N高ポータル</div>
-    <div class="sub">技術仕様書 v1.0</div>
+    <div class="sub">技術仕様書 v2.0</div>
   </div>
   <nav>
     <div class="nav-section">概要</div>
@@ -210,6 +210,14 @@ code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6p
       <li><a href="#css">CSS <span class="badge">スタイル</span></a></li>
       <li><a href="#js">JavaScript <span class="badge">ロジック</span></a></li>
       <li><a href="#ts">TypeScript <span class="badge">型定義</span></a></li>
+    </ul>
+    <div class="nav-section">サブページ</div>
+    <ul>
+      <li><a href="#wiki">部活Wiki</a></li>
+      <li><a href="#trending">急上昇ワード</a></li>
+      <li><a href="#qa">知恵袋</a></li>
+      <li><a href="#flea">フリマ</a></li>
+      <li><a href="#calendar">カレンダー</a></li>
     </ul>
     <div class="nav-section">バックエンド</div>
     <ul>
@@ -238,8 +246,8 @@ code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6p
 
 <!-- ===== 概要 ===== -->
 <section id="overview">
-  <h1>N高ポータル — 技術仕様書 <span class="version">v1.0.0</span></h1>
-  <p class="tagline">学内情報ポータル・生徒投稿機関誌プラットフォーム</p>
+  <h1>N高ポータル — 技術仕様書 <span class="version">v2.0.0</span></h1>
+  <p class="tagline">学内情報ポータル・生徒投稿機関誌・コミュニティプラットフォーム</p>
 
   <div class="badge-row">
     <span class="pill html">HTML5</span>
@@ -259,11 +267,28 @@ code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6p
   <h3>主要機能</h3>
   <ul>
     <li><strong>Google OAuth 2.0 ログイン</strong> — 学校ドメイン限定（<code>hd</code> パラメータで制御）</li>
-    <li><strong>校内トピックス</strong> — カテゴリ別フィルタリング・全文検索・コインによるトップ固定</li>
+    <li><strong>校内トピックス</strong> — カテゴリ別フィルタリング・地域フィルタ・全文検索・コインによるトップ固定</li>
     <li><strong>生徒投稿 機関誌エディタ</strong> — セクションベースのリッチ記事作成（見出し/本文/画像/引用）</li>
-    <li><strong>114514ウォレット</strong> — 仮想コインによるイベント申込・グッズ購入・記事固定</li>
-    <li><strong>イベント / times / ショップ</strong> — 各種校内サービスへのアクセス</li>
+    <li><strong>114514ウォレット</strong> — 仮想コインによるイベント申込・グッズ購入・記事固定・SVGスパークライン</li>
+    <li><strong>右レール</strong> — キャンパス別天気・カレンダー連携予定・急上昇ワードをリアルタイム表示</li>
+    <li><strong>部活Wiki</strong> (<code>wiki.html</code>) — 紙芝居スライド方式のクラブ情報ページ</li>
+    <li><strong>急上昇ワード</strong> (<code>trending.html</code>) — 検索ログ集計・紙芝居スライド・SVGスパークライン</li>
+    <li><strong>知恵袋</strong> (<code>qa.html</code>) — コインバウンティ付きQ&amp;Aボード</li>
+    <li><strong>フリマ</strong> (<code>flea.html</code>) — コインのみ・対面受け渡し限定の校内フリーマーケット</li>
+    <li><strong>カレンダー</strong> (<code>calendar.html</code>) — 個人カレンダー・締切管理・index.html連携</li>
   </ul>
+
+  <h3>ページ一覧</h3>
+  <table>
+    <tr><th>ファイル</th><th>機能</th><th>localStorage キー</th><th>コイン連携</th></tr>
+    <tr><td><code>index.html</code></td><td>メインポータル（ログイン・トピックス・ウォレット）</td><td><code>nhigh_portal_v2</code></td><td>元帳</td></tr>
+    <tr><td><code>wiki.html</code></td><td>部活Wiki（紙芝居スライド）</td><td><code>nhigh_wiki_v1</code></td><td>なし</td></tr>
+    <tr><td><code>trending.html</code></td><td>急上昇ワード（紙芝居・SVGチャート）</td><td><code>nhigh_trending_v1</code></td><td>読取のみ</td></tr>
+    <tr><td><code>qa.html</code></td><td>知恵袋（Q&amp;A・バウンティ）</td><td><code>nhigh_qa_v1</code></td><td>読書き</td></tr>
+    <tr><td><code>flea.html</code></td><td>フリマ（出品・購入）</td><td><code>nhigh_flea_v1</code></td><td>読書き</td></tr>
+    <tr><td><code>calendar.html</code></td><td>個人カレンダー（月表示・締切）</td><td><code>nhigh_cal_v1</code></td><td>なし</td></tr>
+    <tr><td><code>spec.html</code></td><td>技術仕様書（本ドキュメント）</td><td>—</td><td>なし</td></tr>
+  </table>
 </section>
 
 <!-- ===== 技術スタック ===== -->
@@ -631,8 +656,198 @@ code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6p
   t:     <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// 時刻</span>
   label: <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// 取引内容</span>
   amt:   <span class="kw">number</span><span class="punc">;</span>  <span class="cm">// 金額（負 = 支出）</span>
+<span class="punc">}</span>
+
+<span class="cm">/** 検索ログ（急上昇ワード集計用） */</span>
+<span class="kw">interface</span> <span class="fn">SearchLog</span> <span class="punc">{</span>
+  q: <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// 検索キーワード</span>
+  t: <span class="kw">number</span><span class="punc">;</span>  <span class="cm">// Unix timestamp (ms)</span>
+<span class="punc">}</span>
+
+<span class="cm">/** 知恵袋 Q&amp;A */</span>
+<span class="kw">interface</span> <span class="fn">QAQuestion</span> <span class="punc">{</span>
+  id:      <span class="kw">string</span><span class="punc">;</span>
+  title:   <span class="kw">string</span><span class="punc">;</span>
+  body:    <span class="kw">string</span><span class="punc">;</span>
+  cat:     <span class="kw">string</span><span class="punc">;</span>    <span class="cm">// カテゴリ</span>
+  bounty:  <span class="kw">number</span><span class="punc">;</span>   <span class="cm">// コインバウンティ</span>
+  solved:  <span class="kw">boolean</span><span class="punc">;</span>
+  author:  <span class="kw">string</span><span class="punc">;</span>
+  date:    <span class="kw">string</span><span class="punc">;</span>
+  answers: <span class="fn">QAAnswer</span><span class="punc">[];</span>
+<span class="punc">}</span>
+<span class="kw">interface</span> <span class="fn">QAAnswer</span> <span class="punc">{</span>
+  id:     <span class="kw">string</span><span class="punc">;</span>
+  body:   <span class="kw">string</span><span class="punc">;</span>
+  author: <span class="kw">string</span><span class="punc">;</span>
+  date:   <span class="kw">string</span><span class="punc">;</span>
+  thanks: <span class="kw">number</span><span class="punc">;</span>  <span class="cm">// いいね数</span>
+  best:   <span class="kw">boolean</span><span class="punc">;</span> <span class="cm">// ベストアンサー</span>
+<span class="punc">}</span>
+
+<span class="cm">/** フリマ出品アイテム */</span>
+<span class="kw">interface</span> <span class="fn">FleaItem</span> <span class="punc">{</span>
+  id:     <span class="kw">string</span><span class="punc">;</span>
+  name:   <span class="kw">string</span><span class="punc">;</span>
+  cat:    <span class="kw">string</span><span class="punc">;</span>
+  desc:   <span class="kw">string</span><span class="punc">;</span>
+  img:    <span class="kw">string</span><span class="punc">;</span>   <span class="cm">// 画像URL</span>
+  price:  <span class="kw">number</span><span class="punc">;</span>  <span class="cm">// コイン価格</span>
+  area:   <span class="kw">string</span><span class="punc">;</span>   <span class="cm">// 受け渡し地域</span>
+  seller: <span class="kw">string</span><span class="punc">;</span>
+  sold:   <span class="kw">boolean</span><span class="punc">;</span>
+<span class="punc">}</span>
+
+<span class="cm">/** カレンダーイベント */</span>
+<span class="kw">type</span> <span class="fn">EventType</span> = <span class="str">"deadline"</span> <span class="op">|</span> <span class="str">"school"</span> <span class="op">|</span> <span class="str">"club"</span> <span class="op">|</span> <span class="str">"personal"</span> <span class="op">|</span> <span class="str">"holiday"</span><span class="punc">;</span>
+<span class="kw">interface</span> <span class="fn">CalEvent</span> <span class="punc">{</span>
+  id:    <span class="kw">string</span><span class="punc">;</span>
+  title: <span class="kw">string</span><span class="punc">;</span>
+  date:  <span class="kw">string</span><span class="punc">;</span>  <span class="cm">// "YYYY-MM-DD"</span>
+  type:  <span class="fn">EventType</span><span class="punc">;</span>
+  note:  <span class="kw">string</span><span class="punc">;</span>
+<span class="punc">}</span>
+
+<span class="cm">/** 部活Wikiカード */</span>
+<span class="kw">interface</span> <span class="fn">WikiCard</span> <span class="punc">{</span>
+  id:    <span class="kw">string</span><span class="punc">;</span>
+  title: <span class="kw">string</span><span class="punc">;</span>
+  image: <span class="kw">string</span><span class="punc">;</span>
+  body:  <span class="kw">string</span><span class="punc">;</span>
+  tags:  <span class="kw">string</span><span class="punc">[];</span>
+<span class="punc">}</span>
+<span class="kw">interface</span> <span class="fn">WikiClub</span> <span class="punc">{</span>
+  id:    <span class="kw">string</span><span class="punc">;</span>
+  icon:  <span class="kw">string</span><span class="punc">;</span>
+  name:  <span class="kw">string</span><span class="punc">;</span>
+  desc:  <span class="kw">string</span><span class="punc">;</span>
+  cards: <span class="fn">WikiCard</span><span class="punc">[];</span>
 <span class="punc">}</span></pre>
   </div>
+</section>
+
+<hr>
+
+<!-- ===== サブページ ===== -->
+<section id="wiki">
+  <h2>部活Wiki — wiki.html</h2>
+  <p>クラブ・同好会の情報を紙芝居スライド方式で閲覧・編集できるページ。</p>
+
+  <h3>設計</h3>
+  <table>
+    <tr><th>項目</th><th>詳細</th></tr>
+    <tr><td>スタイル</td><td>木製フレーム風（<code>--frame:#6b3a1e</code>）、和紙背景（<code>--paper:#fdf6e3</code>）</td></tr>
+    <tr><td>レイアウト</td><td>左サイドバー（クラブ一覧）+ 右エリア（紙芝居ビューア）</td></tr>
+    <tr><td>アニメーション</td><td>CSSクラス <code>enter-right/active/exit-left</code> + <code>requestAnimationFrame</code> でスライドトランジション</td></tr>
+    <tr><td>キーボード</td><td>← → キーでスライド移動</td></tr>
+    <tr><td>データ</td><td><code>nhigh_wiki_v1</code> に <code>{wikis:[WikiClub]}</code> を保存</td></tr>
+  </table>
+
+  <h3>データ構造（JSON）</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="lang-dot json"></span>
+      <span class="file">nhigh_wiki_v1 (localStorage)</span>
+      <span class="pill json" style="font-size:10px">JSON</span>
+    </div>
+<pre><span class="punc">{</span>
+  <span class="prop">"wikis"</span>: [
+    <span class="punc">{</span>
+      <span class="prop">"id"</span>: <span class="str">"server"</span>,
+      <span class="prop">"icon"</span>: <span class="str">"🖥"</span>,
+      <span class="prop">"name"</span>: <span class="str">"サーバー同好会"</span>,
+      <span class="prop">"desc"</span>: <span class="str">"校内サーバーの構築・運用"</span>,
+      <span class="prop">"cards"</span>: [
+        <span class="punc">{</span>
+          <span class="prop">"id"</span>: <span class="str">"intro"</span>,
+          <span class="prop">"title"</span>: <span class="str">"はじめに"</span>,
+          <span class="prop">"image"</span>: <span class="str">""</span>,
+          <span class="prop">"body"</span>: <span class="str">"2024年設立。..."</span>,
+          <span class="prop">"tags"</span>: [<span class="str">"Linux"</span>, <span class="str">"Minecraft"</span>]
+        <span class="punc">}</span>
+      ]
+    <span class="punc">}</span>
+  ]
+<span class="punc">}</span></pre>
+  </div>
+</section>
+
+<section id="trending">
+  <h2>急上昇ワード — trending.html</h2>
+  <p>校内の検索ログ・times投稿・コイン流通量を集計し、紙芝居スライドとSVGスパークラインで可視化するページ。</p>
+
+  <h3>設計</h3>
+  <table>
+    <tr><th>項目</th><th>詳細</th></tr>
+    <tr><td>テーマ</td><td>ダーク（<code>--bg:#0d0d1a</code>）、ランク色：金/銀/銅</td></tr>
+    <tr><td>レイアウト</td><td>左サイドバー（ランキングリスト）+ 右（紙芝居カードビューア）</td></tr>
+    <tr><td>タブ</td><td>検索 / times / 投稿 の3タブで集計対象切替</td></tr>
+    <tr><td>自動再生</td><td>4秒ごとに次のカードへ。スペースキーで一時停止</td></tr>
+    <tr><td>データ取得</td><td><code>nhigh_portal_v2.searchLog</code> を読み集計、なければデモデータ</td></tr>
+    <tr><td>SVGスパークライン</td><td><code>makeSVG(data, color)</code> — polyline + fill polygon、ライブラリなし</td></tr>
+  </table>
+
+  <div class="callout info">
+    <div class="label">データ連携</div>
+    <code>index.html</code> の <code>doSearch()</code> が <code>state.searchLog</code> に最大500件を蓄積。trending.html はそのデータを集計して表示。実際に検索するほどランキングが育つ。
+  </div>
+</section>
+
+<section id="qa">
+  <h2>知恵袋 — qa.html</h2>
+  <p>Yahoo!知恵袋相当。質問投稿・回答・コインバウンティ・ベストアンサー選択を実装。</p>
+
+  <h3>設計</h3>
+  <table>
+    <tr><th>項目</th><th>詳細</th></tr>
+    <tr><td>フィルタ</td><td>全件 / 未解決 / 解決済み / バウンティあり</td></tr>
+    <tr><td>バウンティ</td><td>質問投稿時にコインを設定 → <code>nhigh_portal_v2.coins</code> から即時減算</td></tr>
+    <tr><td>ベストアンサー</td><td>質問者がベスト選択 → バウンティコインを回答者に付与</td></tr>
+    <tr><td>データ</td><td><code>nhigh_qa_v1</code> に <code>{questions:[QAQuestion]}</code> を保存</td></tr>
+  </table>
+
+  <h3>コイン連携フロー</h3>
+  <div class="flow">
+    <div class="flow-step" data-n="1"><div><div class="title">質問投稿</div><div class="desc">バウンティ額（0以上）を設定。<code>nhigh_portal_v2</code> のコインを即時減算。</div></div></div>
+    <div class="flow-step" data-n="2"><div><div class="title">回答が集まる</div><div class="desc">いいね（thanks）でソート。</div></div></div>
+    <div class="flow-step" data-n="3"><div><div class="title">ベストアンサー選択</div><div class="desc">質問者がベストを選ぶとバウンティコインが回答者に付与（<code>nhigh_portal_v2.coins += bounty</code>）。</div></div></div>
+    <div class="flow-step" data-n="4"><div><div class="title">solved フラグ</div><div class="desc">質問に <code>solved:true</code> を付与。ベストアンサーに <code>best:true</code>。</div></div></div>
+  </div>
+</section>
+
+<section id="flea">
+  <h2>フリマ — flea.html</h2>
+  <p>校内フリーマーケット。コインのみ・対面受け渡し限定というルールを強調したUI。</p>
+
+  <h3>設計</h3>
+  <table>
+    <tr><th>項目</th><th>詳細</th></tr>
+    <tr><td>決済</td><td>コインのみ（現金・オンライン決済は禁止）</td></tr>
+    <tr><td>受け渡し</td><td>対面のみ。地域フィルタで7地域から絞り込み</td></tr>
+    <tr><td>出品</td><td>名前・カテゴリ・説明・画像URL・価格・地域を入力</td></tr>
+    <tr><td>購入</td><td><code>nhigh_portal_v2.coins</code> から減算。<code>sold:true</code> で済みオーバーレイ表示</td></tr>
+    <tr><td>データ</td><td><code>nhigh_flea_v1</code> に <code>{items:[FleaItem]}</code> を保存</td></tr>
+  </table>
+
+  <div class="callout warn">
+    <div class="label">ルール表示</div>
+    ページ最上部に赤い警告バナー「現金・オンライン決済禁止、対面のみ」を常時表示。
+  </div>
+</section>
+
+<section id="calendar">
+  <h2>カレンダー — calendar.html</h2>
+  <p>個人用月表示カレンダー。締切・学校行事・部活・個人予定をタイプ別に色分け管理。</p>
+
+  <h3>設計</h3>
+  <table>
+    <tr><th>項目</th><th>詳細</th></tr>
+    <tr><td>ビュー</td><td>月グリッド（7列）+ 右サイドパネル（選択日の予定一覧）</td></tr>
+    <tr><td>イベントタイプ</td><td><code>deadline</code>(赤) / <code>school</code>(青) / <code>club</code>(橙) / <code>personal</code>(青緑) / <code>holiday</code>(灰)</td></tr>
+    <tr><td>index.html連携</td><td>右レールの「今日の予定」と「提出期限」が <code>nhigh_cal_v1</code> を読取</td></tr>
+    <tr><td>操作</td><td>セルクリックで日付選択 → モーダルで追加、× ボタンで削除</td></tr>
+    <tr><td>データ</td><td><code>nhigh_cal_v1</code> に <code>{events:[CalEvent]}</code> を保存</td></tr>
+  </table>
 </section>
 
 <hr>
@@ -828,6 +1043,52 @@ SCHOOL_DOMAIN    = os.environ.<span class="fn">get</span>(<span class="str">"SCH
   created_at <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
 );
 
+<span class="cm">-- 知恵袋</span>
+<span class="kw">CREATE TABLE</span> qa_questions (
+  id         <span class="kw">TEXT PRIMARY KEY</span>,
+  author     <span class="kw">TEXT NOT NULL REFERENCES</span> users(email),
+  title      <span class="kw">TEXT NOT NULL</span>,
+  body       <span class="kw">TEXT NOT NULL</span>,
+  category   <span class="kw">TEXT NOT NULL DEFAULT</span> <span class="str">'general'</span>,
+  bounty     <span class="kw">INTEGER NOT NULL DEFAULT</span> <span class="num">0</span>,
+  solved     <span class="kw">BOOLEAN NOT NULL DEFAULT</span> <span class="num">0</span>,
+  created_at <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+<span class="kw">CREATE TABLE</span> qa_answers (
+  id          <span class="kw">TEXT PRIMARY KEY</span>,
+  question_id <span class="kw">TEXT NOT NULL REFERENCES</span> qa_questions(id),
+  author      <span class="kw">TEXT NOT NULL REFERENCES</span> users(email),
+  body        <span class="kw">TEXT NOT NULL</span>,
+  thanks      <span class="kw">INTEGER NOT NULL DEFAULT</span> <span class="num">0</span>,
+  best        <span class="kw">BOOLEAN NOT NULL DEFAULT</span> <span class="num">0</span>,
+  created_at  <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+
+<span class="cm">-- フリマ</span>
+<span class="kw">CREATE TABLE</span> flea_items (
+  id         <span class="kw">TEXT PRIMARY KEY</span>,
+  seller     <span class="kw">TEXT NOT NULL REFERENCES</span> users(email),
+  name       <span class="kw">TEXT NOT NULL</span>,
+  category   <span class="kw">TEXT NOT NULL</span>,
+  description <span class="kw">TEXT DEFAULT</span> <span class="str">''</span>,
+  image_url  <span class="kw">TEXT DEFAULT</span> <span class="str">''</span>,
+  price      <span class="kw">INTEGER NOT NULL</span>,
+  area       <span class="kw">TEXT NOT NULL</span>,
+  sold       <span class="kw">BOOLEAN NOT NULL DEFAULT</span> <span class="num">0</span>,
+  created_at <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+
+<span class="cm">-- カレンダー</span>
+<span class="kw">CREATE TABLE</span> calendar_events (
+  id         <span class="kw">TEXT PRIMARY KEY</span>,
+  user_email <span class="kw">TEXT NOT NULL REFERENCES</span> users(email),
+  title      <span class="kw">TEXT NOT NULL</span>,
+  date       <span class="kw">TEXT NOT NULL</span>,  <span class="cm">-- "YYYY-MM-DD"</span>
+  type       <span class="kw">TEXT NOT NULL DEFAULT</span> <span class="str">'personal'</span>,
+  note       <span class="kw">TEXT DEFAULT</span> <span class="str">''</span>,
+  created_at <span class="kw">DATETIME DEFAULT</span> (<span class="fn">datetime</span>(<span class="str">'now'</span>))
+);
+
 <span class="cm">-- コイン残高を安全に更新するトランザクション例</span>
 <span class="kw">BEGIN TRANSACTION</span>;
   <span class="kw">UPDATE</span> users <span class="kw">SET</span> coins = coins <span class="op">-</span> <span class="num">500</span>
@@ -844,7 +1105,18 @@ SCHOOL_DOMAIN    = os.environ.<span class="fn">get</span>(<span class="str">"SCH
 <section id="json">
   <h2>JSON — データ形式</h2>
 
-  <h3>localStorage 保存形式</h3>
+  <h3>localStorage キー一覧</h3>
+  <table>
+    <tr><th>キー</th><th>ページ</th><th>内容</th></tr>
+    <tr><td><code>nhigh_portal_v2</code></td><td>index.html</td><td>coins, items, magazines, log, searchLog, name, email, picture</td></tr>
+    <tr><td><code>nhigh_wiki_v1</code></td><td>wiki.html</td><td>wikis（クラブ一覧 + カードスライド）</td></tr>
+    <tr><td><code>nhigh_qa_v1</code></td><td>qa.html</td><td>questions（質問・回答・バウンティ）</td></tr>
+    <tr><td><code>nhigh_flea_v1</code></td><td>flea.html</td><td>items（出品物・地域・sold状態）</td></tr>
+    <tr><td><code>nhigh_cal_v1</code></td><td>calendar.html</td><td>events（日付・タイプ・メモ）</td></tr>
+    <tr><td><code>nhigh_trending_v1</code></td><td>trending.html</td><td>（将来拡張用。現在は nhigh_portal_v2.searchLog を参照）</td></tr>
+  </table>
+
+  <h3>nhigh_portal_v2 — 保存形式</h3>
   <div class="code-wrap">
     <div class="code-header">
       <span class="lang-dot json"></span>
@@ -883,6 +1155,10 @@ SCHOOL_DOMAIN    = os.environ.<span class="fn">get</span>(<span class="str">"SCH
   ],
   <span class="prop">"log"</span>: [
     <span class="punc">{</span> <span class="prop">"t"</span>: <span class="str">"14:22"</span>, <span class="prop">"label"</span>: <span class="str">"記事をトップ固定"</span>, <span class="prop">"amt"</span>: <span class="num">-500</span> <span class="punc">}</span>
+  ],
+  <span class="prop">"searchLog"</span>: [
+    <span class="punc">{</span> <span class="prop">"q"</span>: <span class="str">"磁石祭"</span>, <span class="prop">"t"</span>: <span class="num">1754668800000</span> <span class="punc">}</span>,
+    <span class="punc">{</span> <span class="prop">"q"</span>: <span class="str">"サーバー同好会"</span>, <span class="prop">"t"</span>: <span class="num">1754665200000</span> <span class="punc">}</span>
   ]
 <span class="punc">}</span></pre>
   </div>
@@ -1068,12 +1344,20 @@ print('  portal.db を作成しました')
 <section id="coins">
   <h2>コインシステム — 詳細仕様</h2>
   <table>
-    <tr><th>操作</th><th>金額</th><th>関数</th></tr>
-    <tr><td>チャージ</td><td>+10,000</td><td><code>charge(10000, "コインチャージ")</code></td></tr>
-    <tr><td>記事トップ固定</td><td>-500</td><td><code>pay(500, "記事をトップ固定")</code></td></tr>
-    <tr><td>イベント申込</td><td>-price</td><td><code>pay(price, "イベント：" + name)</code></td></tr>
-    <tr><td>ショップ購入</td><td>-price</td><td><code>pay(price, "ショップ：" + name)</code></td></tr>
+    <tr><th>操作</th><th>金額</th><th>発生ページ</th><th>関数</th></tr>
+    <tr><td>チャージ</td><td>+10,000</td><td>index.html</td><td><code>charge(10000, "コインチャージ")</code></td></tr>
+    <tr><td>記事トップ固定</td><td>-500</td><td>index.html</td><td><code>pay(500, "記事をトップ固定")</code></td></tr>
+    <tr><td>イベント申込</td><td>-price</td><td>index.html</td><td><code>pay(price, "イベント：" + name)</code></td></tr>
+    <tr><td>ショップ購入</td><td>-price</td><td>index.html</td><td><code>pay(price, "ショップ：" + name)</code></td></tr>
+    <tr><td>知恵袋バウンティ設定</td><td>-bounty</td><td>qa.html</td><td>直接 <code>nhigh_portal_v2.coins</code> を操作</td></tr>
+    <tr><td>知恵袋ベストアンサー受取</td><td>+bounty</td><td>qa.html</td><td>同上（回答者に付与）</td></tr>
+    <tr><td>フリマ購入</td><td>-price</td><td>flea.html</td><td>直接 <code>nhigh_portal_v2.coins</code> を操作</td></tr>
   </table>
+
+  <div class="callout info">
+    <div class="label">クロスページ残高管理</div>
+    qa.html・flea.html は直接 <code>localStorage</code> の <code>nhigh_portal_v2</code> キーを読み書きしてコインを操作する。バックエンド導入時はサーバー側でアトミックなトランザクションに移行すること。
+  </div>
 
   <div class="callout tip">
     <div class="label">実装メモ</div>
@@ -1121,7 +1405,7 @@ print('  portal.db を作成しました')
 <hr>
 
 <p style="color:var(--text3);font-size:12px;margin-top:32px">
-  N高ポータル 技術仕様書 v1.0.0 — 2026-08-09<br>
+  N高ポータル 技術仕様書 v2.0.0 — 2026-08-09<br>
   作成：サーバー同好会 × 生徒会
 </p>
 
