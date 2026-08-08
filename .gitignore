@@ -4,3 +4,11 @@
 node_modules/
 dist/
 *.log
+
+# Hardhat / contracts build artifacts
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+
+# Prisma generated client
+backend/prisma/generated/

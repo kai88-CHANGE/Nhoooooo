@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String     @id @default(cuid())
+  provider      String
+  subject       String
+  email         String
+  walletAddress String?    @unique
+  walletNonce   String?
+  bannedAt      DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  grant         Grant?
+  purchases     Purchase[]
+
+  @@unique([provider, subject])
+  @@index([walletAddress])
+}
+
+model Grant {
+  id        String      @id @default(cuid())
+  userId    String      @unique
+  user      User        @relation(fields: [userId], references: [id])
+  status    GrantStatus @default(pending)
+  txHash    String?
+  amount    BigInt
+  blockNum  Int?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+enum GrantStatus {
+  pending
+  submitted
+  confirmed
+  failed
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  title       String
+  description String        @default("")
+  priceWei    BigInt
+  sellerId    String
+  status      ProductStatus @default(active)
+  createdAt   DateTime      @default(now())
+  purchase    Purchase?
+}
+
+enum ProductStatus {
+  active
+  in_transaction
+  sold
+  cancelled
+}
+
+model Purchase {
+  id        String      @id @default(cuid())
+  productId String      @unique
+  product   Product     @relation(fields: [productId], references: [id])
+  buyerId   String
+  buyer     User        @relation(fields: [buyerId], references: [id])
+  txHash    String?
+  status    GrantStatus @default(pending)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}

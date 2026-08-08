@@ -142,3 +142,125 @@ var DEFAULT_ITEMS = [
 ---
 
 > このポータルは生徒が自分の学校向けにカスタマイズして使うことを想定したオープンソースプロジェクトです。
+
+---
+
+## CampusCoin（学内Web3フリマ）
+
+### システム構成
+
+| レイヤー | 技術 |
+|---|---|
+| フロントエンド | N高ポータル（バニラHTML/JS） |
+| バックエンド | Node.js + TypeScript + Express |
+| スマートコントラクト | Solidity 0.8.24 + OpenZeppelin |
+| データベース | PostgreSQL + Prisma ORM |
+| 認証 | Google Workspace OIDC（サーバーサイド） |
+| ブロックチェーン | Ethereum（Sepolia testnet / Hardhat local） |
+
+### 学校SNS認証の設定方法
+
+1. [Google Cloud Console](https://console.cloud.google.com) でプロジェクト作成
+2. 「APIとサービス」→「OAuth 2.0 クライアントID」を作成（Webアプリ）
+3. 「承認済みリダイレクトURI」に以下を追加:
+
+```
+開発: http://localhost:3001/auth/google/callback
+本番: https://your-domain.jp/auth/google/callback
+```
+
+4. `backend/.env` の `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` に設定
+
+### 必要な環境変数
+
+`backend/.env.example` を参照。本番では環境変数管理サービスを使用すること。
+
+### データベースの準備
+
+```bash
+cd backend
+cp .env.example .env  # 値を設定
+npx prisma migrate dev --name init
+```
+
+### 配布用ウォレットの準備
+
+1. 新しいEthereumウォレットを作成（秘密鍵を安全に保管）
+2. コントラクトをデプロイ（配布ウォレットアドレスをコンストラクタ引数に）:
+
+```bash
+cd contracts
+npx hardhat run scripts/deploy.ts --network sepolia
+```
+
+3. `DISTRIBUTION_WALLET_PRIVATE_KEY` と `CAMPUS_COIN_ADDRESS` を `.env` に設定
+4. 本番では **AWS KMS / Google Cloud KMS** などのHSMを使用すること
+
+### 初回ポイント付与の仕組み
+
+1. Google OIDC認証完了 → `User` レコード作成（provider+subject で一意）
+2. MetaMask接続 → サーバーで署名検証 → `walletAddress` 紐付け
+3. `POST /api/grant/claim` → `Grant(pending)` を**DB上で先に作成**（一意制約で競合防止）
+4. 配布ウォレットから `token.transfer(walletAddress, 10_000 * 10^18)` 実行
+5. `CONFIRMATION_BLOCKS` ブロック確認後 `Grant(confirmed)` に更新
+
+### 二重付与防止の仕組み
+
+- DB の `Grant` テーブルに `userId` 一意制約（DB レベルの保証）
+- `Grant` レコードを `pending` で先に INSERT → オンチェーン送金は後
+- 競合リクエスト（P2002エラー）は既存レコードを返す
+- `pending` / `submitted` / `confirmed` / `failed` の状態機械で管理
+
+### ローカル実行方法
+
+```bash
+# 1. Hardhat ローカルノード起動
+cd contracts && npx hardhat node
+
+# 2. コントラクトデプロイ（別ターミナル）
+npx hardhat run scripts/deploy.ts --network localhost
+
+# 3. バックエンド起動（別ターミナル）
+cd backend && npm run dev
+
+# 4. フロントエンド: index.html をブラウザで開く
+```
+
+### テスト方法
+
+```bash
+# コントラクトテスト
+cd contracts && npx hardhat test
+
+# バックエンドテスト
+cd backend && npm test
+```
+
+### セキュリティ注意点
+
+- `DISTRIBUTION_WALLET_PRIVATE_KEY` は本番では KMS/HSM を使用
+- `JWT_SECRET` は 64 文字以上のランダム文字列
+- Google OIDC の `hd` パラメータ + サーバー側メールドメイン検証の二重チェック
+- `state` / `nonce` / PKCE でリプレイ攻撃を防止
+- BigInt で 18 decimals を安全に処理（float 使用禁止）
+
+### 本番公開前チェックリスト
+
+- [ ] `NODE_ENV=production`
+- [ ] HTTPS を強制
+- [ ] `JWT_SECRET` をランダム生成済み
+- [ ] `DISTRIBUTION_WALLET_PRIVATE_KEY` を KMS に移行済み
+- [ ] PostgreSQL に適切なインデックスが存在する
+- [ ] レート制限の閾値を本番向けに調整済み
+- [ ] 監査ログの保存先を設定済み
+- [ ] コントラクトの外部監査を実施済み
+
+### 未実装事項・運用上のリスク
+
+| 項目 | 状況 |
+|---|---|
+| エスクローコントラクト | 未実装（直接transferで代替） |
+| ウォレット署名のリプレイ攻撃 | nonce消費で対策済み（チェーン番号・有効期限は省略） |
+| pending txのタイムアウト処理 | 確認ポーリングジョブは別途実装が必要 |
+| KMS連携 | 開発は秘密鍵直接使用、本番はKMS実装が必要 |
+| stateStore | 現在はメモリ（本番はRedis推奨） |
