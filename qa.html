@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知恵袋 — N高ポータル</title>
+<style>
+:root{
+  --paper:#f0f0f0;--card:#fff;--line:#d3d3d3;
+  --ink:#1a1a1c;--ink2:#5b5f66;--ink3:#999;
+  --brand:#cc0000;--link:#0066cc;
+  --coin:#b8860b;--coin-bg:#fdf3d8;--coin-line:#f0dda6;
+  --green:#0a6b57;--due:#b3002a;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  --mono:ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px}
+button{font:inherit;cursor:pointer}
+.hidden{display:none!important}
+
+/* ===== ヘッダー ===== */
+.hd{background:#fff;border-bottom:2px solid var(--brand);padding:0 12px;height:48px;display:flex;align-items:center;gap:12px}
+.hd-logo{font-size:18px;font-weight:800;color:var(--brand)}
+.hd-logo sub{font-size:11px;font-weight:400;color:var(--ink2);margin-left:4px}
+.hd-back{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:3px;padding:4px 12px;font-size:12px}
+.hd-sp{flex:1}
+.hd-ask{background:var(--brand);border:0;color:#fff;border-radius:3px;padding:7px 18px;font-weight:700}
+
+/* ===== レイアウト ===== */
+.wrap{max-width:1000px;margin:0 auto;padding:16px 12px;display:grid;grid-template-columns:1fr 280px;gap:16px}
+.main-col{}
+.side-col{}
+
+/* ===== 検索バー ===== */
+.search-bar{background:#fff;border:1px solid var(--line);border-radius:4px;padding:12px 14px;margin-bottom:14px;display:flex;gap:8px}
+.search-bar input{flex:1;border:1px solid var(--line);border-radius:3px;padding:7px 10px;font:inherit}
+.search-bar button{background:var(--brand);border:0;color:#fff;border-radius:3px;padding:7px 18px;font-weight:700}
+
+/* ===== タブ ===== */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:12px}
+.t-tab{border:0;background:transparent;padding:9px 18px;font-size:13px;color:var(--ink2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.t-tab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+
+/* ===== 質問カード ===== */
+.q-list{display:flex;flex-direction:column;gap:10px}
+.q-card{background:#fff;border:1px solid var(--line);border-radius:4px;padding:14px 16px;cursor:pointer}
+.q-card:hover{border-color:#aaa;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.q-card.open{border-color:var(--brand)}
+.q-title{font-size:15px;font-weight:700;color:var(--link);margin-bottom:6px;line-height:1.4}
+.q-meta{font-size:11.5px;color:var(--ink3);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.q-meta .coin-badge{background:var(--coin-bg);color:var(--coin);padding:2px 9px;border-radius:3px;font-weight:700;border:1px solid var(--coin-line);font-family:var(--mono)}
+.q-meta .cat{background:#e7edfb;color:#173f9b;padding:2px 8px;border-radius:3px;font-size:10.5px}
+.q-meta .ans-cnt{color:var(--green)}
+.q-body{font-size:13px;color:var(--ink2);margin:10px 0;line-height:1.75;max-height:80px;overflow:hidden;position:relative}
+.q-body::after{content:"";position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(transparent,#fff)}
+
+/* ===== 詳細ビュー ===== */
+.q-detail{background:#fff;border:1px solid var(--line);border-radius:4px;padding:18px 20px;margin-bottom:12px}
+.q-detail .qtitle{font-size:18px;font-weight:700;margin-bottom:10px;color:var(--ink)}
+.q-detail .qbody{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:14px;white-space:pre-wrap}
+.q-detail .qmeta{font-size:11.5px;color:var(--ink3);border-top:1px solid var(--line);padding-top:10px;display:flex;gap:12px;flex-wrap:wrap}
+.q-detail .bounty-box{background:var(--coin-bg);border:1px solid var(--coin-line);border-radius:5px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+.q-detail .bounty-box b{color:var(--coin);font-size:16px}
+
+/* ===== 回答カード ===== */
+.ans-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.ans-card{background:#fff;border:1px solid var(--line);border-radius:4px;padding:14px 16px}
+.ans-card.best{border-color:var(--coin);background:var(--coin-bg)}
+.ans-card .best-badge{font-size:11px;color:var(--coin);font-weight:700;margin-bottom:6px}
+.ans-text{font-size:14px;color:var(--ink2);line-height:1.8;white-space:pre-wrap}
+.ans-meta{font-size:11px;color:var(--ink3);margin-top:8px;display:flex;gap:10px;align-items:center}
+.ans-meta .thank-btn{border:1px solid var(--line);background:#fff;border-radius:3px;padding:2px 10px;font-size:11px;color:var(--ink2)}
+.ans-meta .thank-btn:hover{border-color:var(--coin);color:var(--coin)}
+.ans-meta .best-btn{border:1px solid var(--coin);background:#fff;border-radius:3px;padding:2px 10px;font-size:11px;color:var(--coin);font-weight:700}
+.ans-meta .best-btn:hover{background:var(--coin-bg)}
+
+/* 回答投稿 */
+.post-ans{margin-top:14px;background:#f9f9f9;border:1px solid var(--line);border-radius:4px;padding:14px}
+.post-ans h4{font-size:13px;font-weight:700;margin-bottom:8px}
+.post-ans textarea{width:100%;border:1px solid var(--line);border-radius:4px;padding:8px 10px;font:inherit;resize:vertical;min-height:80px}
+.post-ans button{margin-top:8px;background:var(--brand);border:0;color:#fff;border-radius:3px;padding:7px 20px;font-weight:700}
+
+/* ===== 右サイドバー ===== */
+.side-box{background:#fff;border:1px solid var(--line);border-radius:4px;padding:13px 14px;margin-bottom:12px}
+.side-box h3{font-size:13px;font-weight:700;margin-bottom:10px;border-left:3px solid var(--brand);padding-left:8px}
+.cat-list{list-style:none;font-size:13px}
+.cat-list li{padding:5px 0;border-top:1px dotted var(--line);display:flex;justify-content:space-between;cursor:pointer;color:var(--link)}
+.cat-list li:first-child{border-top:0}
+.cat-list li:hover{text-decoration:underline}
+.cat-list .cnt{color:var(--ink3);font-family:var(--mono);font-size:11px}
+.bounty-note{font-size:12px;color:var(--ink2);line-height:1.7}
+.coin-hl{color:var(--coin);font-weight:700}
+
+/* ===== 質問投稿モーダル ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-start;justify-content:center;padding:40px 12px;z-index:100;overflow:auto}
+.modal-overlay[open]{display:flex}
+.modal-box{background:#fff;border-radius:6px;width:100%;max-width:540px;box-shadow:0 8px 30px rgba(0,0,0,.25);overflow:hidden}
+.modal-head{background:var(--brand);color:#fff;padding:13px 18px;display:flex;align-items:center;gap:8px}
+.modal-head h3{flex:1;font-size:15px;font-weight:700}
+.modal-head .x{background:transparent;border:0;color:rgba(255,255,255,.8);font-size:20px}
+.modal-body{padding:18px}
+.modal-body label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:12px 0 4px}
+.modal-body label:first-child{margin-top:0}
+.modal-body input,.modal-body textarea,.modal-body select{width:100%;border:1px solid var(--line);border-radius:3px;padding:8px 10px;font:inherit;font-size:14px;background:#fafafa}
+.modal-body input:focus,.modal-body textarea:focus{outline:2px solid var(--brand);background:#fff}
+.modal-body textarea{min-height:100px;resize:vertical}
+.modal-foot{padding:10px 18px 16px;display:flex;gap:8px;align-items:center}
+.modal-foot .post-btn{background:var(--brand);border:0;color:#fff;border-radius:3px;padding:9px 24px;font-weight:700}
+.modal-foot .cancel{background:#fff;border:1px solid var(--line);border-radius:3px;padding:9px 16px;color:var(--ink2)}
+.modal-foot .coin-cost{margin-left:auto;font-size:12px;color:var(--coin)}
+
+/* ===== トースト ===== */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:9px 20px;border-radius:5px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+@media(max-width:720px){.wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-logo">💬 知恵袋<sub>N高版</sub></div>
+  <button class="hd-back" onclick="location.href='index.html'">← ポータルへ</button>
+  <span class="hd-sp"></span>
+  <button class="hd-ask" id="openAsk">＋ 質問する</button>
+</header>
+
+<div class="wrap">
+  <!-- メイン -->
+  <div class="main-col">
+    <div class="search-bar">
+      <input id="srch" type="search" placeholder="キーワードで検索…">
+      <button onclick="doSearch()">検索</button>
+    </div>
+    <div class="tab-bar">
+      <button class="t-tab active" data-f="all" onclick="setFilter('all',this)">すべて</button>
+      <button class="t-tab" data-f="open" onclick="setFilter('open',this)">未解決</button>
+      <button class="t-tab" data-f="solved" onclick="setFilter('solved',this)">解決済み</button>
+      <button class="t-tab" data-f="bounty" onclick="setFilter('bounty',this)">懸賞あり</button>
+    </div>
+    <div class="q-list" id="qList"></div>
+  </div>
+
+  <!-- サイドバー -->
+  <aside class="side-col">
+    <div class="side-box">
+      <h3>カテゴリ</h3>
+      <ul class="cat-list" id="catList"></ul>
+    </div>
+    <div class="side-box">
+      <h3>懸賞コインとは</h3>
+      <p class="bounty-note">質問に<span class="coin-hl">懸賞コイン</span>を設定すると、ベストアンサーに選ばれた回答者にコインが贈られます。難しい質問ほど高い懸賞がつく傾向があります。</p>
+    </div>
+  </aside>
+</div>
+
+<!-- 質問投稿モーダル -->
+<div class="modal-overlay" id="askModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>💬 質問を投稿する</h3>
+      <button class="x" id="closeAsk">×</button>
+    </div>
+    <div class="modal-body">
+      <label>タイトル（質問の概要）<span style="color:var(--brand)">*</span></label>
+      <input id="qTitle" type="text" maxlength="50" placeholder="例：レポートの提出方法がわかりません">
+      <label>カテゴリ</label>
+      <select id="qCat">
+        <option>レポート・勉強</option>
+        <option>スクーリング</option>
+        <option>部活・同好会</option>
+        <option>コイン・ウォレット</option>
+        <option>生活・その他</option>
+      </select>
+      <label>詳しい内容</label>
+      <textarea id="qBody" placeholder="背景や詳細を書いてください"></textarea>
+      <label>懸賞コイン（0 = なし）</label>
+      <input id="qBounty" type="number" min="0" max="10000" step="100" value="0" placeholder="0">
+    </div>
+    <div class="modal-foot">
+      <button class="post-btn" id="postAsk">投稿する</button>
+      <button class="cancel" id="cancelAsk">キャンセル</button>
+      <span class="coin-cost" id="coinCost"></span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+var STORE="nhigh_qa_v1";
+var PSTORE="nhigh_portal_v2";
+var CATS=["レポート・勉強","スクーリング","部活・同好会","コイン・ウォレット","生活・その他"];
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+var toastT;
+function toast(m){var el=document.getElementById("toast");el.textContent=m;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove("show");},2000);}
+function getCoins(){try{var s=JSON.parse(localStorage.getItem(PSTORE));return s&&s.coins||0;}catch(e){return 0;}}
+function spendCoins(n,label){
+  try{
+    var s=JSON.parse(localStorage.getItem(PSTORE));
+    if(!s)return true;
+    if(s.coins<n){toast("コインが足りません");return false;}
+    s.coins-=n;
+    s.log=(s.log||[]);
+    s.log.unshift({t:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"}),label:label,amt:-n});
+    localStorage.setItem(PSTORE,JSON.stringify(s));
+    return true;
+  }catch(e){return true;}
+}
+
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(STORE));if(s&&s.questions)return s;}catch(e){}
+  return {questions:[
+    {id:"q0",title:"スクーリングの持ち物リストを教えてください",body:"初めてのスクーリング（沖縄本校）に参加します。\n何を持っていけばいいかわかりません。",cat:"スクーリング",bounty:200,solved:true,author:"田中",date:"08/05",answers:[
+      {id:"a0",body:"制服・教材・学生証は必須です。沖縄なら日焼け止めと水分補給グッズも持っていくといいですよ！",author:"先輩A",date:"08/05",thanks:5,best:true}
+    ]},
+    {id:"q1",title:"レポートはどんな書き方が正しい？",body:"レポート提出が初めてで、体裁がよくわかりません。",cat:"レポート・勉強",bounty:0,solved:false,author:"新入生B",date:"08/09",answers:[]}
+  ]};
+}
+function save(){localStorage.setItem(STORE,JSON.stringify(state));}
+var state=load();
+var filter="all", srchQ="", openId=null;
+
+/* ====================================================
+   描画
+   ==================================================== */
+function renderList(){
+  var qs=state.questions.filter(function(q){
+    if(filter==="open"&&q.solved)return false;
+    if(filter==="solved"&&!q.solved)return false;
+    if(filter==="bounty"&&!q.bounty)return false;
+    if(srchQ&&q.title.indexOf(srchQ)<0&&q.body.indexOf(srchQ)<0)return false;
+    return true;
+  });
+  var el=document.getElementById("qList");
+  if(!qs.length){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--ink3)">質問がありません</div>';return;}
+
+  el.innerHTML=qs.map(function(q){
+    if(q.id===openId)return renderDetail(q);
+    var solved=q.solved?'<span style="color:var(--green);font-weight:700">✔ 解決済み</span>':'<span style="color:var(--due)">⏳ 未解決</span>';
+    var bndy=q.bounty?'<span class="coin-badge">🪙 '+q.bounty+'コイン</span>':'';
+    return '<div class="q-card" onclick="openQ(\''+esc(q.id)+'\')">'
+      +'<div class="q-title">'+esc(q.title)+'</div>'
+      +'<div class="q-body">'+esc(q.body)+'</div>'
+      +'<div class="q-meta">'
+      +'<span class="cat">'+esc(q.cat)+'</span>'
+      +bndy
+      +'<span class="ans-cnt">💬 回答'+q.answers.length+'件</span>'
+      +solved
+      +'<span>投稿者：'+esc(q.author)+'</span>'
+      +'<span>'+esc(q.date)+'</span>'
+      +'</div>'
+      +'</div>';
+  }).join("");
+}
+
+function renderDetail(q){
+  var bndy=q.bounty?'<div class="bounty-box">🪙 懸賞金：<b>'+q.bounty+' コイン</b>　ベストアンサーに贈られます</div>':'';
+  var solved=q.solved?'<span style="color:var(--green);font-weight:700;margin-left:auto">✔ 解決済み</span>':'';
+  var ansList=q.answers.map(function(a){
+    var best=a.best?'<div class="best-badge">🏆 ベストアンサー</div>':'';
+    var bestBtn=(!q.solved&&!a.best)?'<button class="best-btn" onclick="markBest(event,\''+esc(q.id)+'\',\''+esc(a.id)+'\')">ベストに選ぶ</button>':'';
+    return '<div class="ans-card'+(a.best?' best':'')+'">'
+      +best
+      +'<div class="ans-text">'+esc(a.body)+'</div>'
+      +'<div class="ans-meta">'+esc(a.author)+' &nbsp;'+esc(a.date)
+      +'<span style="flex:1"></span>'
+      +bestBtn
+      +'<button class="thank-btn" onclick="thanks(event,\''+esc(q.id)+'\',\''+esc(a.id)+'\')">参考になった ('+a.thanks+')</button>'
+      +'</div></div>';
+  }).join("");
+  var postForm='<div class="post-ans"><h4>💬 回答する</h4>'
+    +'<textarea id="newAns" placeholder="回答を入力…"></textarea>'
+    +'<button onclick="postAns(\''+esc(q.id)+'\')">回答を投稿</button></div>';
+
+  return '<div class="q-card open" onclick="void(0)" style="cursor:default">'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+    +'<button style="border:1px solid var(--line);background:#fff;border-radius:3px;padding:3px 10px;font-size:12px;color:var(--ink2)" onclick="closeQ()">← 一覧へ</button>'
+    +'<span class="cat">'+esc(q.cat)+'</span>'
+    +solved
+    +'</div>'
+    +'<div class="q-detail">'
+    +'<div class="qtitle">'+esc(q.title)+'</div>'
+    +bndy
+    +'<div class="qbody">'+esc(q.body)+'</div>'
+    +'<div class="qmeta"><span>'+esc(q.author)+'</span><span>'+esc(q.date)+'</span></div>'
+    +'</div>'
+    +'<h4 style="margin:4px 0 8px;font-size:13px;color:var(--ink2)">回答 '+q.answers.length+'件</h4>'
+    +(ansList?'<div class="ans-list">'+ansList+'</div>':'<div style="color:var(--ink3);font-size:12px;padding:8px 0">まだ回答がありません</div>')
+    +postForm
+    +'</div>';
+}
+
+function openQ(id){openId=id;renderList();}
+function closeQ(){openId=null;renderList();}
+
+function setFilter(f,btn){
+  filter=f;
+  document.querySelectorAll(".t-tab").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  renderList();
+}
+function doSearch(){srchQ=document.getElementById("srch").value.trim();renderList();}
+document.getElementById("srch").addEventListener("keydown",function(e){if(e.key==="Enter")doSearch();});
+
+/* ====================================================
+   回答
+   ==================================================== */
+function postAns(qid){
+  var body=document.getElementById("newAns").value.trim();
+  if(!body){toast("回答を入力してください");return;}
+  var q=state.questions.find(function(x){return x.id===qid;});
+  if(!q)return;
+  var today=new Date().toLocaleDateString("ja-JP",{month:"2-digit",day:"2-digit"});
+  try{var n=JSON.parse(localStorage.getItem(PSTORE));var nm=n?n.name||"匿名":"匿名";}catch(e){var nm="匿名";}
+  q.answers.push({id:uid(),body:body,author:nm,date:today,thanks:0,best:false});
+  save();
+  toast("回答しました");
+  renderList();
+}
+
+function markBest(e,qid,aid){
+  e.stopPropagation();
+  var q=state.questions.find(function(x){return x.id===qid;});
+  if(!q||q.solved)return;
+  q.answers.forEach(function(a){a.best=a.id===aid;});
+  q.solved=true;
+  if(q.bounty&&!spendCoins(q.bounty,"知恵袋懸賞："+q.title))return;
+  save();
+  toast("ベストアンサーを選びました！"+（q.bounty?"🪙"+q.bounty+"コイン贈呈":""));
+  renderList();
+}
+
+function thanks(e,qid,aid){
+  e.stopPropagation();
+  var q=state.questions.find(function(x){return x.id===qid;});
+  if(!q)return;
+  var a=q.answers.find(function(x){return x.id===aid;});
+  if(a)a.thanks++;
+  save();
+  toast("参考になったを押しました");
+  renderList();
+}
+
+/* ====================================================
+   質問投稿
+   ==================================================== */
+var askModal=document.getElementById("askModal");
+document.getElementById("openAsk").addEventListener("click",function(){
+  document.getElementById("qTitle").value="";document.getElementById("qBody").value="";document.getElementById("qBounty").value="0";
+  askModal.setAttribute("open","");document.getElementById("qTitle").focus();
+});
+document.getElementById("closeAsk").addEventListener("click",function(){askModal.removeAttribute("open");});
+document.getElementById("cancelAsk").addEventListener("click",function(){askModal.removeAttribute("open");});
+askModal.addEventListener("click",function(e){if(e.target===askModal)askModal.removeAttribute("open");});
+document.getElementById("qBounty").addEventListener("input",function(){
+  var v=+this.value;
+  document.getElementById("coinCost").textContent=v>0?"コイン消費："+v+"💰":"";
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")askModal.removeAttribute("open");});
+
+document.getElementById("postAsk").addEventListener("click",function(){
+  var title=document.getElementById("qTitle").value.trim();
+  var body=document.getElementById("qBody").value.trim();
+  var cat=document.getElementById("qCat").value;
+  var bounty=Math.max(0,+document.getElementById("qBounty").value||0);
+  if(!title){toast("タイトルを入力してください");return;}
+  if(bounty>0&&!spendCoins(bounty,"知恵袋懸賞設定："+title))return;
+  var today=new Date().toLocaleDateString("ja-JP",{month:"2-digit",day:"2-digit"});
+  try{var n=JSON.parse(localStorage.getItem(PSTORE));var nm=n?n.name||"匿名":"匿名";}catch(e){var nm="匿名";}
+  state.questions.unshift({id:uid(),title:title,body:body,cat:cat,bounty:bounty,solved:false,author:nm,date:today,answers:[]});
+  save();
+  askModal.removeAttribute("open");
+  toast("質問を投稿しました");
+  renderList();
+});
+
+/* カテゴリ集計 */
+function renderCats(){
+  var map={};
+  state.questions.forEach(function(q){map[q.cat]=(map[q.cat]||0)+1;});
+  var el=document.getElementById("catList");
+  el.innerHTML=CATS.map(function(c){
+    return '<li onclick="srchQ=\''+c+'\';renderList()">'+c+'<span class="cnt">'+(map[c]||0)+'</span></li>';
+  }).join("");
+}
+
+/* ===== 初期化 ===== */
+renderList();
+renderCats();
+</script>
+</body>
+</html>

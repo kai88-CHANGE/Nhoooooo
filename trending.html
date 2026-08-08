@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>急上昇ワード — 紙芝居</title>
+<style>
+:root{
+  --bg:#0d0d1a;--bg2:#16182a;
+  --brand:#cc0000;--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;
+  --text:#eee;--text2:#aab;--line:rgba(255,255,255,.12);
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh}
+button{font:inherit;cursor:pointer}
+.hidden{display:none!important}
+
+/* ===== ヘッダー ===== */
+.hd{background:#0a0a14;border-bottom:1px solid var(--line);padding:0 16px;height:48px;display:flex;align-items:center;gap:14px}
+.hd-logo{font-size:16px;font-weight:800;color:var(--brand);letter-spacing:.04em}
+.hd-logo span{font-size:10px;color:var(--text2);font-weight:400;margin-left:8px;letter-spacing:.12em}
+.hd-back{border:1px solid var(--line);background:transparent;color:var(--text2);border-radius:3px;padding:4px 12px;font-size:12px}
+.hd-back:hover{color:var(--text)}
+.hd-sp{flex:1}
+
+/* ===== レイアウト ===== */
+.layout{max-width:1100px;margin:0 auto;padding:20px 16px;display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+
+/* ===== ランキングサイドバー ===== */
+.rank-sidebar{background:var(--bg2);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.rank-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.rank-head .live-dot{width:7px;height:7px;border-radius:50%;background:#ff4444;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rank-tab-bar{display:flex;border-bottom:1px solid var(--line)}
+.rank-tab{flex:1;background:transparent;border:0;color:var(--text2);font-size:12px;padding:8px 0;font-weight:700}
+.rank-tab.active{color:var(--text);border-bottom:2px solid var(--brand)}
+.rank-list{list-style:none;padding:8px 0;max-height:520px;overflow:auto}
+.rank-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-radius:0}
+.rank-item:hover{background:rgba(255,255,255,.06)}
+.rank-item.active{background:rgba(204,0,0,.15);border-left:3px solid var(--brand)}
+.rank-num{width:24px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:800;flex:none}
+.rank-num.r1{color:var(--gold)}
+.rank-num.r2{color:var(--silver)}
+.rank-num.r3{color:var(--bronze)}
+.rank-num.rn{color:var(--text2)}
+.rank-kw{flex:1;font-size:13px;font-weight:600}
+.rank-cnt{font-size:11px;color:var(--text2);font-family:var(--mono)}
+.rank-arrow{font-size:10px;width:18px;text-align:center}
+.rank-arrow.up{color:#3fb950}
+.rank-arrow.dn{color:#ff6b6b}
+.rank-arrow.flat{color:var(--text2)}
+
+/* ===== 紙芝居エリア ===== */
+.kami-area{display:flex;flex-direction:column;gap:16px}
+
+/* 紙芝居フレーム */
+.kami-frame{
+  background:#0a0a14;border-radius:10px;
+  border:3px solid;overflow:hidden;
+  box-shadow:0 0 40px rgba(0,0,0,.5);
+  position:relative;
+}
+.kami-frame.rank-1{border-color:var(--gold);box-shadow:0 0 40px rgba(255,215,0,.3)}
+.kami-frame.rank-2{border-color:var(--silver);box-shadow:0 0 30px rgba(192,192,192,.2)}
+.kami-frame.rank-3{border-color:var(--bronze);box-shadow:0 0 30px rgba(205,127,50,.2)}
+.kami-frame.rank-n{border-color:rgba(255,255,255,.2)}
+
+.card-stage{position:relative;overflow:hidden;min-height:340px}
+.kcard{position:absolute;inset:0;padding:32px 36px;display:flex;flex-direction:column;justify-content:center;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .3s}
+.kcard.enter-r{transform:translateX(100%);opacity:0}
+.kcard.enter-l{transform:translateX(-100%);opacity:0}
+.kcard.active{transform:translateX(0);opacity:1}
+.kcard.exit-l{transform:translateX(-100%);opacity:0}
+.kcard.exit-r{transform:translateX(100%);opacity:0}
+
+.kcard-rank{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px;letter-spacing:.1em}
+.kcard-rank .num{font-size:48px;font-weight:900;font-family:var(--mono);line-height:1;display:block}
+.kcard-rank.r1 .num{color:var(--gold)}
+.kcard-rank.r2 .num{color:var(--silver)}
+.kcard-rank.r3 .num{color:var(--bronze)}
+.kcard-rank.rn .num{color:var(--text)}
+.kcard-kw{font-size:36px;font-weight:900;color:#fff;margin-bottom:16px;line-height:1.2}
+.kcard-stats{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.kcard-stat{background:rgba(255,255,255,.08);border-radius:5px;padding:6px 14px;font-size:12px;color:var(--text2)}
+.kcard-stat b{display:block;font-size:18px;color:var(--text);font-family:var(--mono);font-weight:800}
+.kcard-rel{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.kcard-rel h4{font-size:11px;color:var(--text2);letter-spacing:.1em;margin-bottom:8px}
+.kcard-rel ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.kcard-rel ul li a{font-size:13px;color:#7ec8ff;display:flex;align-items:center;gap:6px}
+.kcard-rel ul li a::before{content:"▸";color:var(--text2);flex:none}
+.kcard-rel ul li a:hover{color:#fff}
+.trend-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:3px;margin-bottom:8px}
+.trend-badge.new{background:#cc0000;color:#fff}
+.trend-badge.up{background:#0a5c3a;color:#3fb950}
+.trend-badge.down{background:#3a1010;color:#ff6b6b}
+.trend-badge.flat{background:rgba(255,255,255,.1);color:var(--text2)}
+
+/* コントロールバー */
+.kami-ctrl{
+  background:rgba(255,255,255,.06);border-top:1px solid var(--line);
+  padding:12px 16px;display:flex;align-items:center;gap:10px;
+}
+.nav-btn{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);border-radius:4px;padding:6px 20px;font-size:14px;font-weight:700}
+.nav-btn:hover:not(:disabled){background:rgba(255,255,255,.15)}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.auto-btn{border:1px solid var(--line);color:var(--text2);background:transparent;border-radius:4px;padding:5px 12px;font-size:12px}
+.auto-btn.running{color:#3fb950;border-color:#3fb950}
+.auto-btn:hover{color:var(--text)}
+.page-ind{flex:1;text-align:center;font-size:13px;color:var(--text2);font-family:var(--mono)}
+.win-sel{background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--text);border-radius:4px;padding:4px 8px;font-size:12px}
+
+/* グラフ */
+.sparkline-box{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:16px}
+.sparkline-box h3{font-size:13px;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sparkline-box h3 span{font-size:11px;font-family:var(--mono)}
+.charts-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.chart-card{background:#0a0a14;border:1px solid var(--line);border-radius:6px;padding:12px}
+.chart-card .label{font-size:11px;color:var(--text2);margin-bottom:6px}
+.chart-card .val{font-size:22px;font-weight:800;font-family:var(--mono);color:var(--text);margin-bottom:8px}
+.chart-card .diff{font-size:11px}
+.chart-card .diff.up{color:#3fb950}
+.chart-card .diff.dn{color:#ff6b6b}
+svg.spark{width:100%;height:40px;display:block}
+svg.spark polyline{fill:none;stroke-width:1.5;vector-effect:non-scaling-stroke}
+svg.spark .fill-line{fill:rgba(88,166,255,.12);stroke:none}
+
+@media(max-width:760px){.layout{grid-template-columns:1fr}.rank-sidebar{order:2}}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-logo">🔥 急上昇ワード<span>TRENDING SEARCH</span></div>
+  <button class="hd-back" onclick="location.href='index.html'">← ポータルへ</button>
+  <span class="hd-sp"></span>
+  <select class="win-sel" id="windowSel" onchange="changeWindow()">
+    <option value="today">今日</option>
+    <option value="week">今週</option>
+    <option value="all">全期間</option>
+  </select>
+</header>
+
+<div class="layout">
+
+  <!-- ランキングリスト -->
+  <aside class="rank-sidebar">
+    <div class="rank-head">
+      <span class="live-dot"></span> 急上昇ワード
+    </div>
+    <div class="rank-tab-bar">
+      <button class="rank-tab active" data-type="search" onclick="switchTab('search',this)">検索</button>
+      <button class="rank-tab" data-type="times" onclick="switchTab('times',this)">times</button>
+      <button class="rank-tab" data-type="post" onclick="switchTab('post',this)">投稿</button>
+    </div>
+    <ul class="rank-list" id="rankList"></ul>
+  </aside>
+
+  <!-- 紙芝居 -->
+  <div class="kami-area">
+    <div class="kami-frame" id="kamiFrame">
+      <div class="card-stage" id="cardStage"></div>
+      <div class="kami-ctrl">
+        <button class="nav-btn" id="prevBtn">◀</button>
+        <span class="page-ind" id="pageInd">— / —</span>
+        <button class="nav-btn" id="nextBtn">▶</button>
+        <span style="flex:1"></span>
+        <button class="auto-btn running" id="autoBtn" onclick="toggleAuto()">▶ 自動再生</button>
+      </div>
+    </div>
+
+    <!-- スパークラインチャート群 -->
+    <div class="sparkline-box">
+      <h3>📊 アクティビティ推移 <span id="chartRange"></span></h3>
+      <div class="charts-row" id="chartsRow"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+var STORE = "nhigh_portal_v2";
+var WSTORE = "nhigh_trending_v1";
+
+/* ====================================================
+   ダミー / 実データ読み込み
+   ==================================================== */
+var DEMO_SEARCH = [
+  {kw:"受験",cnt:61,trend:"up",rel:["#times-juken が3日で40人増","単位認定テスト時間割を公開"]},
+  {kw:"スクーリング",cnt:48,trend:"up",rel:["スクーリング沖縄第3期申込開始","スクーリングの持ち物は？【知恵袋】"]},
+  {kw:"磁石祭",cnt:44,trend:"new",rel:["磁石祭2026 出展エントリー開始","磁石祭 Tシャツ 1,200コイン"]},
+  {kw:"レポート",cnt:38,trend:"flat",rel:["英語コミュⅠ 提出期限あと1日","レポートの書き方を教えて【知恵袋】"]},
+  {kw:"コイン",cnt:35,trend:"up",rel:["コインショップ 最新情報","コインチャージ方法"]},
+  {kw:"サーバー同好会",cnt:29,trend:"new",rel:["新サーバー公開","同好会メンバー募集"]},
+  {kw:"生徒会",cnt:24,trend:"flat",rel:["第5期生徒会 発足合宿","公募企画エントリー締切"]},
+  {kw:"部活",cnt:21,trend:"up",rel:["部活Wiki 新着更新","東北地区交流会 残席12"]},
+  {kw:"時間割",cnt:18,trend:"dn",rel:["時間割の見かた","数学Ⅱライブ授業"]},
+  {kw:"自習",cnt:12,trend:"dn",rel:["自習おすすめスポット","深夜勉強会 参加者募集"]}
+];
+var DEMO_TIMES = [
+  {kw:"#times-juken",cnt:61,trend:"up",rel:[]},
+  {kw:"#times-server",cnt:42,trend:"up",rel:[]},
+  {kw:"#times-tohoku",cnt:28,trend:"flat",rel:[]},
+  {kw:"#times-illust",cnt:22,trend:"up",rel:[]},
+  {kw:"#times-kai",cnt:18,trend:"flat",rel:[]}
+];
+var DEMO_POST = [
+  {kw:"機関誌・スクーリング体験",cnt:14,trend:"new",rel:[]},
+  {kw:"受験合格体験",cnt:10,trend:"up",rel:[]},
+  {kw:"部活紹介",cnt:8,trend:"flat",rel:[]}
+];
+
+function getPortalSearchLog(){
+  try{
+    var s=JSON.parse(localStorage.getItem(STORE));
+    if(s&&s.searchLog&&s.searchLog.length){
+      /* キーワード集計 */
+      var map={};
+      s.searchLog.forEach(function(l){
+        if(!l.kw)return;
+        map[l.kw]=(map[l.kw]||0)+1;
+      });
+      return Object.keys(map).sort(function(a,b){return map[b]-map[a];}).slice(0,15).map(function(kw,i){
+        return {kw:kw,cnt:map[kw],trend:"flat",rel:[]};
+      });
+    }
+  }catch(e){}
+  return null;
+}
+
+var tabType = "search";
+var curIdx = 0, animating = false, autoTimer = null, autoRunning = true;
+var currentData = [];
+
+function getTabData(){
+  if(tabType==="search"){
+    return getPortalSearchLog()||DEMO_SEARCH;
+  } else if(tabType==="times"){
+    return DEMO_TIMES;
+  }
+  return DEMO_POST;
+}
+
+function switchTab(t, btn){
+  tabType=t;
+  document.querySelectorAll(".rank-tab").forEach(function(b){b.classList.remove("active");});
+  btn.classList.add("active");
+  curIdx=0;
+  buildData();
+}
+
+function changeWindow(){
+  curIdx=0;
+  buildData();
+}
+
+function buildData(){
+  currentData=getTabData();
+  curIdx=Math.max(0,Math.min(curIdx,currentData.length-1));
+  renderRankList();
+  renderFrame();
+}
+
+/* ====================================================
+   ランキングリスト
+   ==================================================== */
+function renderRankList(){
+  var ul=document.getElementById("rankList");
+  if(!currentData.length){ul.innerHTML='<li style="padding:16px;color:var(--text2);font-size:12px">データなし</li>';return;}
+  ul.innerHTML=currentData.map(function(d,i){
+    var nc=i===0?"r1":i===1?"r2":i===2?"r3":"rn";
+    var arr=d.trend==="up"?"↑ up":d.trend==="dn"?"↓ dn":"→";
+    var arrCls=d.trend==="up"?"up":d.trend==="dn"?"dn":"flat";
+    var act=i===curIdx?"active":"";
+    return '<li class="rank-item '+act+'" onclick="jumpTo('+i+')">'
+      +'<span class="rank-num '+nc+'">'+(i+1)+'</span>'
+      +'<span class="rank-kw">'+esc(d.kw)+'</span>'
+      +'<span class="rank-cnt">'+d.cnt+'</span>'
+      +'<span class="rank-arrow '+arrCls+'">'+arr+'</span>'
+      +'</li>';
+  }).join("");
+}
+
+/* ====================================================
+   カード描画
+   ==================================================== */
+var RANK_CLS = ["rank-1","rank-2","rank-3","rank-n"];
+function rankCls(i){return RANK_CLS[Math.min(i,3)];}
+
+function renderFrame(){
+  if(!currentData.length)return;
+  var d = currentData[curIdx];
+  var frame = document.getElementById("kamiFrame");
+  frame.className="kami-frame "+rankCls(curIdx);
+
+  var stage=document.getElementById("cardStage");
+  stage.innerHTML="";
+  var div=document.createElement("div");
+  div.className="kcard active";
+  div.innerHTML=buildCardHTML(d,curIdx,currentData.length);
+  stage.appendChild(div);
+
+  document.getElementById("pageInd").textContent=(curIdx+1)+" / "+currentData.length;
+  document.getElementById("prevBtn").disabled=curIdx<=0;
+  document.getElementById("nextBtn").disabled=curIdx>=currentData.length-1;
+
+  /* ランキングリストのハイライトを更新 */
+  document.querySelectorAll(".rank-item").forEach(function(el,i){
+    el.classList.toggle("active",i===curIdx);
+  });
+}
+
+function buildCardHTML(d,idx,total){
+  var nc=idx===0?"r1":idx===1?"r2":idx===2?"r3":"rn";
+  var trendLabel=d.trend==="new"?"🆕 NEW":d.trend==="up"?"↑ 上昇":d.trend==="dn"?"↓ 下降":"→ 横ばい";
+  var trendCls=d.trend==="new"?"new":d.trend==="up"?"up":d.trend==="dn"?"down":"flat";
+
+  var relHtml="";
+  if(d.rel&&d.rel.length){
+    relHtml='<div class="kcard-rel">'
+      +'<h4>RELATED</h4><ul>'
+      +d.rel.map(function(r){return'<li><a href="#">'+esc(r)+'</a></li>';}).join("")
+      +'</ul></div>';
+  }
+
+  return '<div class="kcard-rank '+nc+'"><span class="num">#'+(idx+1)+'</span>'
+    +'急上昇ワード</div>'
+    +'<div class="trend-badge '+trendCls+'">'+trendLabel+'</div>'
+    +'<div class="kcard-kw">'+esc(d.kw)+'</div>'
+    +'<div class="kcard-stats">'
+    +'<div class="kcard-stat"><b>'+d.cnt+'</b>件</div>'
+    +'<div class="kcard-stat"><b>#'+(idx+1)+'</b>位</div>'
+    +'</div>'
+    +relHtml;
+}
+
+/* ====================================================
+   ナビ
+   ==================================================== */
+function jumpTo(i){
+  if(animating||i===curIdx||i<0||i>=currentData.length)return;
+  animating=true;
+  var dir=i>curIdx?"right":"left";
+  var enterCls=dir==="right"?"enter-r":"enter-l";
+  var exitCls=dir==="right"?"exit-l":"exit-r";
+  var stage=document.getElementById("cardStage");
+  var old=stage.querySelector(".kcard.active");
+  if(old)old.className="kcard "+exitCls;
+  curIdx=i;
+  var div=document.createElement("div");
+  div.className="kcard "+enterCls;
+  div.innerHTML=buildCardHTML(currentData[i],i,currentData.length);
+  stage.appendChild(div);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    div.className="kcard active";
+    setTimeout(function(){
+      var olds=stage.querySelectorAll(".kcard:not(.active)");
+      olds.forEach(function(el){el.remove();});
+      animating=false;
+    },420);
+  });});
+  document.getElementById("pageInd").textContent=(i+1)+" / "+currentData.length;
+  document.getElementById("prevBtn").disabled=i<=0;
+  document.getElementById("nextBtn").disabled=i>=currentData.length-1;
+  document.getElementById("kamiFrame").className="kami-frame "+rankCls(i);
+  document.querySelectorAll(".rank-item").forEach(function(el,j){el.classList.toggle("active",j===i);});
+}
+
+document.getElementById("prevBtn").addEventListener("click",function(){jumpTo(curIdx-1);});
+document.getElementById("nextBtn").addEventListener("click",function(){jumpTo(curIdx+1);});
+
+function toggleAuto(){
+  autoRunning=!autoRunning;
+  var btn=document.getElementById("autoBtn");
+  btn.textContent=autoRunning?"▶ 自動再生":"⏸ 停止中";
+  btn.className="auto-btn"+(autoRunning?" running":"");
+}
+function autoTick(){
+  if(autoRunning){
+    var next=(curIdx+1)%currentData.length;
+    jumpTo(next);
+  }
+  autoTimer=setTimeout(autoTick,4000);
+}
+autoTimer=setTimeout(autoTick,4000);
+
+document.addEventListener("keydown",function(e){
+  if(e.key==="ArrowLeft")jumpTo(curIdx-1);
+  if(e.key==="ArrowRight")jumpTo(curIdx+1);
+  if(e.key===" "){e.preventDefault();toggleAuto();}
+});
+
+/* ====================================================
+   スパークライン
+   ==================================================== */
+function randSeries(len,base,variance){
+  var a=[];
+  for(var i=0;i<len;i++){a.push(Math.max(0,Math.round(base+variance*(Math.random()*2-1))));}
+  return a;
+}
+function makeSVG(data,color){
+  var w=200,h=40,n=data.length;
+  var mn=Math.min.apply(null,data),mx=Math.max.apply(null,data);
+  var rng=mx-mn||1;
+  function x(i){return Math.round(i/(n-1)*w);}
+  function y(v){return Math.round((1-(v-mn)/rng)*(h-4)+2);}
+  var pts=data.map(function(v,i){return x(i)+","+y(v);}).join(" ");
+  var fillPts="0,"+h+" "+pts+" "+w+","+h;
+  return '<svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none">'
+    +'<polygon class="fill-line" points="'+fillPts+'" style="fill:'+color+'22"/>'
+    +'<polyline points="'+pts+'" style="stroke:'+color+'"/>'
+    +'</svg>';
+}
+function renderCharts(){
+  var row=document.getElementById("chartsRow");
+  var charts=[
+    {label:"検索回数（今日）",val:roundStr(getPortalSearchLog()||DEMO_SEARCH),color:"#58a6ff",data:randSeries(14,40,12),diff:"+12%"},
+    {label:"times投稿数（今週）",val:"328",color:"#3fb950",data:randSeries(14,55,20),diff:"+8%"},
+    {label:"コイン流通量",val:"1,240,500",color:"#f0883e",data:randSeries(14,300,80),diff:"-3%"}
+  ];
+  row.innerHTML=charts.map(function(c){
+    var updn=c.diff.startsWith("+")?'<span class="diff up">'+c.diff+'</span>':'<span class="diff dn">'+c.diff+'</span>';
+    return '<div class="chart-card">'
+      +'<div class="label">'+c.label+'</div>'
+      +'<div class="val">'+c.val+'</div>'
+      +updn
+      +makeSVG(c.data,c.color)
+      +'</div>';
+  }).join("");
+  document.getElementById("chartRange").textContent="直近14日";
+}
+function roundStr(data){return data.reduce(function(s,d){return s+d.cnt;},0).toLocaleString("ja-JP");}
+function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+/* ====================================================
+   初期化
+   ==================================================== */
+buildData();
+renderCharts();
+</script>
+</body>
+</html>

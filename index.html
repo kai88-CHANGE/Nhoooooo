@@ -141,6 +141,9 @@ img{max-width:100%;display:block}
 .box h2 .hdr-btn:hover{background:var(--brand-d)}
 
 /* トピックス */
+.area-filter{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:6px}
+.atab{border:1px solid var(--line);background:#fff;border-radius:3px;padding:2px 9px;font-size:11px;color:var(--ink3);cursor:pointer}
+.atab[aria-selected="true"]{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700}
 .topics .tabs{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px}
 .tab{border:1px solid var(--line);background:var(--tint);border-radius:4px;padding:3px 12px;font-size:12px;color:var(--ink2)}
 .tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:700}
@@ -498,15 +501,14 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
   <a href="wiki.html"><i>📚</i>部活Wiki</a>
   <a href="#wire"><i>#</i>times</a>
   <a href="#" id="navUserPost"><i>✎</i>生徒投稿</a>
-  <a href="#"><i>▲</i>生徒会</a>
+  <a href="qa.html"><i>💬</i>知恵袋</a>
+  <a href="flea.html"><i>🛒</i>フリマ</a>
+  <a href="calendar.html"><i>🗓</i>カレンダー</a>
+  <a href="trending.html"><i>🔥</i>急上昇</a>
   <a href="#events"><i>▣</i>イベント</a>
-  <a href="#"><i>✎</i>レポート</a>
-  <a href="#"><i>◈</i>スクーリング</a>
-  <a href="#"><i>◇</i>キャンパス</a>
-  <a href="#"><i>≡</i>時間割</a>
   <a href="#shop"><i>◆</i>ショップ</a>
+  <a href="#"><i>◈</i>スクーリング</a>
   <a href="#"><i>◆</i>コイン</a>
-  <a href="#"><i>⋯</i>すべて</a>
 </div></nav>
 
 <!-- 本体 -->
@@ -522,6 +524,16 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
         <button class="tab" role="tab" aria-selected="false" data-f="club">部活</button>
         <button class="tab" role="tab" aria-selected="false" data-f="times">times</button>
         <button class="tab" role="tab" aria-selected="false" data-f="user">生徒投稿</button>
+      </div>
+      <!-- 地域フィルタ -->
+      <div class="area-filter" id="areaFilter">
+        <button class="atab" data-area="all" aria-selected="true">全国</button>
+        <button class="atab" data-area="okinawa" aria-selected="false">沖縄</button>
+        <button class="atab" data-area="tokyo" aria-selected="false">東京</button>
+        <button class="atab" data-area="osaka" aria-selected="false">大阪</button>
+        <button class="atab" data-area="tokai" aria-selected="false">東海</button>
+        <button class="atab" data-area="tohoku" aria-selected="false">東北</button>
+        <button class="atab" data-area="hokkaido" aria-selected="false">北海道</button>
       </div>
       <!-- 生徒投稿バナー (タブ="user"のときだけ表示) -->
       <div class="user-post-banner hidden" id="userPostBanner">
@@ -559,6 +571,7 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
     <section class="box wallet">
       <h2>114514ウォレット</h2>
       <div class="bal" id="bal2">114,514</div>
+      <svg id="coinSparkline" width="100%" height="32" style="display:block;margin:4px 0"></svg>
       <p>イベント参加費・グッズ・記事のトップ固定に使えます</p>
       <button class="charge" id="charge">＋ 10,000コインをチャージ</button>
     </section>
@@ -566,38 +579,25 @@ footer .wrap{display:flex;gap:16px;flex-wrap:wrap}
       <h2>入出金の履歴</h2>
       <ul class="log" id="logList"><li><span>まだ取引はありません</span></li></ul>
     </section>
+    <!-- 天気：キャンパス別 -->
     <section class="box">
-      <h2>今日の天気</h2>
-      <div class="wx">
-        <span class="ic">☀</span>
-        <div><span class="tp">31°</span> <small>／ 24°</small><small>仙台・くもりのち晴れ</small></div>
-      </div>
+      <h2>スクーリング先の天気<a class="more" href="#">詳細</a></h2>
+      <div id="campusWeather"></div>
     </section>
+    <!-- カレンダー連携：今日の予定 -->
     <section class="box">
-      <h2>今日の予定</h2>
-      <ul class="mini">
-        <li><span class="k">16:00</span><span>生徒会 基礎研修</span></li>
-        <li><span class="k">19:00</span><span>サーバー同好会 定例</span></li>
-        <li><span class="k">21:00</span><span>数学Ⅱ ライブ授業</span></li>
-      </ul>
+      <h2>今日の予定<a class="more" href="calendar.html">カレンダー</a></h2>
+      <ul class="mini" id="todayEvents"></ul>
     </section>
+    <!-- 提出期限 -->
     <section class="box">
-      <h2>提出期限</h2>
-      <ul class="mini">
-        <li><span class="k due">あと1日</span><span>英語コミュⅠ レポート</span></li>
-        <li><span class="k due">あと5日</span><span>公募企画エントリー</span></li>
-        <li><span class="k due">あと9日</span><span>現代の国語 レポート</span></li>
-      </ul>
+      <h2>提出期限<a class="more" href="calendar.html">全件</a></h2>
+      <ul class="mini" id="deadlineList"></ul>
     </section>
+    <!-- 急上昇ワード -->
     <section class="box">
-      <h2>急上昇のtimes</h2>
-      <ul class="rank">
-        <li><span>#times-juken</span><em>+40</em></li>
-        <li><span>#times-server</span><em>+28</em></li>
-        <li><span>#times-kai</span><em>+21</em></li>
-        <li><span>#times-tohoku</span><em>+13</em></li>
-        <li><span>#times-illust</span><em>+9</em></li>
-      </ul>
+      <h2>急上昇ワード<a class="more" href="trending.html">詳しく→</a></h2>
+      <ul class="rank" id="trendingRank"></ul>
     </section>
   </aside>
 </main>
@@ -860,7 +860,16 @@ window.addEventListener("DOMContentLoaded", function() {
   setInterval(tick, 30000);
 });
 
-var scope = "all", tab = "all", q = "";
+var scope = "all", tab = "all", q = "", area = "all";
+
+var AREA_KW = {
+  okinawa:["沖縄","那覇"],
+  tokyo:["東京","渋谷","新宿"],
+  osaka:["大阪","梅田","神戸"],
+  tokai:["愛知","名古屋","静岡"],
+  tohoku:["東北","仙台","宮城"],
+  hokkaido:["北海道","札幌"]
+};
 
 /* ====================================================
    ユーティリティ
@@ -899,7 +908,7 @@ function charge(amount, label) {
   state.log.unshift({t:nowTime(), label:label, amt:amount});
   afterCoin();
 }
-function afterCoin() { save(); renderCoins(); renderLog(); }
+function afterCoin() { save(); renderCoins(); renderLog(); renderSparkline(); }
 
 function renderCoins() {
   document.getElementById("bal").textContent  = money(state.coins);
@@ -915,16 +924,44 @@ function renderLog() {
   }).join("");
 }
 
+function renderSparkline() {
+  var svg = document.getElementById("coinSparkline");
+  if (!svg) return;
+  var log = state.log || [];
+  var pts = [];
+  var running = state.coins;
+  pts.unshift(running);
+  for (var i=0; i<Math.min(log.length,11); i++) {
+    running -= log[i].amt;
+    pts.unshift(running);
+  }
+  if (pts.length < 2) { svg.innerHTML=""; return; }
+  var W=200, H=32, pad=2;
+  var mn=Math.min.apply(null,pts), mx=Math.max.apply(null,pts);
+  var rng = mx-mn || 1;
+  var xs = pts.map(function(_,i){ return pad + i*(W-pad*2)/(pts.length-1); });
+  var ys = pts.map(function(v){ return H-pad-(v-mn)/rng*(H-pad*2); });
+  var line = xs.map(function(x,i){ return (i===0?"M":"L")+x.toFixed(1)+","+ys[i].toFixed(1); }).join(" ");
+  var fill = line+" L"+xs[xs.length-1].toFixed(1)+","+(H-pad)+" L"+pad+","+(H-pad)+" Z";
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("preserveAspectRatio","none");
+  svg.innerHTML = '<path d="'+fill+'" fill="rgba(180,140,0,0.15)"/>'
+    +'<path d="'+line+'" fill="none" stroke="#c8960c" stroke-width="1.5"/>';
+}
+
 /* ====================================================
    トピックス描画
    ==================================================== */
 function renderWire() {
   var scopeOk = (scope === "all" || scope === "news");
+  var areaKws = area==="all" ? null : (AREA_KW[area]||[]);
   var list = state.items.filter(function(x) {
     var okTab   = (tab === "all" || x.c === tab);
     var okScope = scopeOk || (scope === "times" && x.c === "times");
     var okQ     = match(x.h + " " + (x.m||"") + " " + LABEL[x.c][0]);
-    return okTab && okScope && okQ;
+    var text    = (x.h+" "+(x.m||"")).toLowerCase();
+    var okArea  = !areaKws || areaKws.some(function(k){ return text.indexOf(k.toLowerCase())>=0; });
+    return okTab && okScope && okQ && okArea;
   });
   list.sort(function(a,b) { return (b.b?1:0)-(a.b?1:0); });
 
@@ -1025,7 +1062,95 @@ function renderShop() {
   });
 }
 
-function renderAll() { renderCoins(); renderLog(); renderWire(); renderEvents(); renderTimes(); renderShop(); }
+function renderAll() { renderCoins(); renderLog(); renderSparkline(); renderWire(); renderEvents(); renderTimes(); renderShop(); renderRail(); }
+
+/* ====================================================
+   右レール：天気 / 予定 / 期限 / 急上昇
+   ==================================================== */
+var CAMPUS_WX = [
+  {name:"沖縄本校",icon:"☀",hi:33,lo:27,desc:"晴れ"},
+  {name:"東京 渋谷",icon:"🌤",hi:31,lo:25,desc:"晴れ時々曇"},
+  {name:"大阪 梅田",icon:"🌥",hi:29,lo:23,desc:"曇り"},
+  {name:"北海道 札幌",icon:"🌧",hi:23,lo:17,desc:"雨のち曇"},
+  {name:"愛知 名古屋",icon:"☁",hi:30,lo:24,desc:"曇り"},
+];
+var WX_COLORS={"☀":"#f9c200","🌤":"#f9c200","🌥":"#888","☁":"#aaa","🌧":"#5b8fd6","⛈":"#4466cc"};
+
+function renderRail() {
+  /* --- 天気 --- */
+  var wx = document.getElementById("campusWeather");
+  if (wx) {
+    wx.innerHTML = CAMPUS_WX.map(function(c) {
+      return '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)">'
+        +'<span style="font-size:20px;width:24px;text-align:center;color:'+(WX_COLORS[c.icon]||"#888")+'">'+c.icon+'</span>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--fg)">'+esc(c.name)+'</div>'
+        +'<div style="font-size:11px;color:#666">'+esc(c.desc)+'</div></div>'
+        +'<div style="text-align:right;font-size:12px;font-family:var(--mono)">'
+        +'<span style="color:#c33;font-weight:700">'+c.hi+'°</span>'
+        +' <span style="color:#66a">'+c.lo+'°</span></div></div>';
+    }).join("");
+  }
+
+  /* --- 今日の予定（カレンダー連携） --- */
+  var todayEl = document.getElementById("todayEvents");
+  var deadEl  = document.getElementById("deadlineList");
+  if (todayEl || deadEl) {
+    var calKey = "nhigh_cal_v1";
+    var calData = {events:[]};
+    try { var c=JSON.parse(localStorage.getItem(calKey)); if(c&&c.events) calData=c; } catch(e){}
+    var today = new Date();
+    var todayStr = today.getFullYear()+"-"+("0"+(today.getMonth()+1)).slice(-2)+"-"+("0"+today.getDate()).slice(-2);
+    var TYPE_COLOR={deadline:"#e53",school:"#0066cc",club:"#e07000",personal:"#27a",holiday:"#888"};
+
+    if (todayEl) {
+      var todayEvs = calData.events.filter(function(e){ return e.date===todayStr; });
+      if (!todayEvs.length) {
+        todayEl.innerHTML='<li><span style="color:#999">今日の予定はありません</span></li>';
+      } else {
+        todayEl.innerHTML = todayEvs.map(function(e){
+          var c=TYPE_COLOR[e.type]||"#666";
+          return '<li><span class="k" style="color:'+c+'">'+esc(e.type==="deadline"?"期限":"予定")+'</span><span>'+esc(e.title)+'</span></li>';
+        }).join("");
+      }
+    }
+
+    if (deadEl) {
+      var now=today.getTime();
+      var deadlines = calData.events.filter(function(e){
+        if(e.type!=="deadline") return false;
+        var d=new Date(e.date); return d.getTime()>=now;
+      }).sort(function(a,b){ return a.date.localeCompare(b.date); }).slice(0,5);
+      if (!deadlines.length) {
+        deadEl.innerHTML='<li><span style="color:#999">期限のある予定はありません</span></li>';
+      } else {
+        deadEl.innerHTML = deadlines.map(function(e){
+          var d=new Date(e.date); var diff=Math.ceil((d.getTime()-now)/(86400000));
+          var lbl=diff===0?"今日":diff===1?"明日":"あと"+diff+"日";
+          var cls=diff<=2?"due":"";
+          return '<li><span class="k '+cls+'">'+lbl+'</span><span>'+esc(e.title)+'</span></li>';
+        }).join("");
+      }
+    }
+  }
+
+  /* --- 急上昇ワード --- */
+  var trEl = document.getElementById("trendingRank");
+  if (trEl) {
+    var sl = (state.searchLog || []);
+    var counts = {};
+    sl.forEach(function(x){ var k=(x.q||"").trim(); if(k) counts[k]=(counts[k]||0)+1; });
+    var pairs = Object.keys(counts).map(function(k){ return {k:k,n:counts[k]}; });
+    pairs.sort(function(a,b){ return b.n-a.n; });
+    var top5 = pairs.slice(0,5);
+    if (!top5.length) {
+      top5 = [{k:"磁石祭",n:42},{k:"サーバー同好会",n:28},{k:"単位認定テスト",n:21},{k:"times-juken",n:15},{k:"交流会",n:9}];
+    }
+    trEl.innerHTML = top5.map(function(x,i){
+      var medals=["🥇","🥈","🥉","4","5"];
+      return '<li><span style="font-size:13px">'+medals[i]+' '+esc(x.k)+'</span><em>'+x.n+'件</em></li>';
+    }).join("");
+  }
+}
 
 /* ====================================================
    検索 / タブ
@@ -1036,13 +1161,28 @@ document.querySelectorAll(".stabs button").forEach(function(t){
     t.setAttribute("aria-selected","true"); scope=t.dataset.scope; renderAll();
   });
 });
+document.querySelectorAll(".atab").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".atab").forEach(function(x){x.setAttribute("aria-selected","false");});
+    t.setAttribute("aria-selected","true"); area=t.dataset.area; renderWire();
+  });
+});
 document.querySelectorAll(".tab").forEach(function(t){
   t.addEventListener("click",function(){
     document.querySelectorAll(".tab").forEach(function(x){x.setAttribute("aria-selected","false");});
     t.setAttribute("aria-selected","true"); tab=t.dataset.f; renderWire();
   });
 });
-function doSearch(v){ q=(v||"").trim().toLowerCase(); renderAll(); }
+function doSearch(v){
+  q=(v||"").trim().toLowerCase();
+  if(q){
+    if(!state.searchLog) state.searchLog=[];
+    state.searchLog.unshift({q:q,t:Date.now()});
+    if(state.searchLog.length>500) state.searchLog.length=500;
+    save();
+  }
+  renderAll();
+}
 document.getElementById("q").addEventListener("input",function(e){ doSearch(e.target.value); });
 document.getElementById("go").addEventListener("click",function(){ doSearch(document.getElementById("q").value); });
 document.querySelectorAll(".sugg a").forEach(function(a){

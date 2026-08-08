@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>フリマ — N高ポータル</title>
+<style>
+:root{
+  --paper:#f0f0f0;--card:#fff;--line:#d3d3d3;
+  --ink:#1a1a1c;--ink2:#5b5f66;--ink3:#999;
+  --brand:#cc0000;--link:#0066cc;
+  --coin:#b8860b;--coin-bg:#fdf3d8;--coin-line:#f0dda6;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+  --mono:ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px}
+button{font:inherit;cursor:pointer}
+.hidden{display:none!important}
+
+/* ヘッダー */
+.hd{background:#fff;border-bottom:2px solid var(--brand);height:48px;padding:0 12px;display:flex;align-items:center;gap:12px}
+.hd-logo{font-size:18px;font-weight:800;color:var(--brand)}
+.hd-logo sub{font-size:11px;font-weight:400;color:var(--ink2);margin-left:4px}
+.hd-back{border:1px solid var(--line);background:#fff;color:var(--ink2);border-radius:3px;padding:4px 12px;font-size:12px}
+.hd-sp{flex:1}
+.hd-post{background:var(--brand);border:0;color:#fff;border-radius:3px;padding:7px 18px;font-weight:700}
+
+/* 注意バナー */
+.warn-banner{background:#fff8dc;border-bottom:1px solid #e0c060;padding:8px 16px;font-size:12px;color:#7a6010;display:flex;gap:8px;align-items:center}
+.warn-banner a{color:var(--brand)}
+
+/* コントロール */
+.ctrl-bar{background:#fff;border-bottom:1px solid var(--line);padding:10px 12px}
+.ctrl-inner{max-width:1100px;margin:0 auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ctrl-inner input{border:1px solid var(--line);border-radius:3px;padding:7px 10px;font:inherit;font-size:13px;min-width:200px}
+.ctrl-inner select{border:1px solid var(--line);border-radius:3px;padding:7px 8px;font:inherit;font-size:13px;background:#fff}
+.ctrl-inner button{background:var(--brand);border:0;color:#fff;border-radius:3px;padding:7px 16px;font-size:13px;font-weight:700}
+
+/* グリッド */
+.wrap{max-width:1100px;margin:0 auto;padding:16px 12px}
+.item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.item-card{background:#fff;border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:box-shadow .15s}
+.item-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.item-card.sold{opacity:.6}
+.item-img{width:100%;height:150px;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;position:relative}
+.item-img img{width:100%;height:100%;object-fit:cover}
+.sold-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;letter-spacing:.1em}
+.item-body{padding:10px 12px}
+.item-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-desc{font-size:11.5px;color:var(--ink3);margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.item-footer{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.price{font-size:16px;font-weight:800;color:var(--coin);font-family:var(--mono)}
+.area-badge{font-size:10.5px;background:#e7edfb;color:#173f9b;padding:1px 7px;border-radius:3px;border:1px solid #c9d8f5}
+.buy-btn{margin-left:auto;background:var(--coin-bg);border:1px solid var(--coin-line);color:var(--coin);border-radius:3px;padding:4px 12px;font-size:12px;font-weight:700}
+.buy-btn:hover:not(:disabled){background:#fbe9bd}
+.buy-btn:disabled{opacity:.5;cursor:default}
+.seller-name{font-size:11px;color:var(--ink3);margin-top:5px}
+
+/* モーダル */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-start;justify-content:center;padding:40px 12px;z-index:100;overflow:auto}
+.modal-overlay[open]{display:flex}
+.modal-box{background:#fff;border-radius:6px;width:100%;max-width:520px;box-shadow:0 8px 30px rgba(0,0,0,.25);overflow:hidden}
+.modal-head{background:var(--brand);color:#fff;padding:13px 18px;display:flex;align-items:center}
+.modal-head h3{flex:1;font-size:15px;font-weight:700}
+.modal-head .x{background:transparent;border:0;color:rgba(255,255,255,.8);font-size:20px}
+.modal-body{padding:18px}
+.modal-body label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:12px 0 4px}
+.modal-body label:first-child{margin-top:0}
+.modal-body input,.modal-body textarea,.modal-body select{width:100%;border:1px solid var(--line);border-radius:3px;padding:8px 10px;font:inherit;font-size:14px;background:#fafafa}
+.modal-body input:focus,.modal-body textarea:focus{outline:2px solid var(--brand);background:#fff}
+.modal-body textarea{min-height:80px;resize:vertical}
+.modal-body .rule-note{font-size:12px;color:var(--coin);background:var(--coin-bg);border:1px solid var(--coin-line);border-radius:4px;padding:8px 12px;margin-top:10px;line-height:1.7}
+.modal-foot{padding:10px 18px 16px;display:flex;gap:8px}
+.modal-foot .post-btn{background:var(--brand);border:0;color:#fff;border-radius:3px;padding:9px 24px;font-weight:700}
+.modal-foot .cancel{background:#fff;border:1px solid var(--line);border-radius:3px;padding:9px 16px;color:var(--ink2)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:9px 20px;border-radius:5px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+@media(max-width:500px){.item-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-logo">🛒 校内フリマ<sub>コイン取引のみ</sub></div>
+  <button class="hd-back" onclick="location.href='index.html'">← ポータルへ</button>
+  <span class="hd-sp"></span>
+  <button class="hd-post" id="openPost">＋ 出品する</button>
+</header>
+
+<div class="warn-banner">
+  ⚠️ <span>このフリマは<b>コインのみ</b>で取引。現金・ポイント等の現物は取扱不可。受け渡しは<b>対面（手渡し）のみ</b>。問題のある出品は運営が削除します。</span>
+</div>
+
+<div class="ctrl-bar">
+  <div class="ctrl-inner">
+    <input id="srch" type="search" placeholder="商品名・説明で絞り込む">
+    <select id="areaSel">
+      <option value="all">全エリア</option>
+      <option>北海道・東北</option><option>関東</option><option>中部</option>
+      <option>関西</option><option>中国・四国</option><option>九州・沖縄</option><option>海外在住</option>
+    </select>
+    <select id="catSel">
+      <option value="all">全カテゴリ</option>
+      <option>参考書・教材</option><option>グッズ</option><option>食品・飲料</option><option>その他</option>
+    </select>
+    <button onclick="applyFilter()">絞り込む</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="item-grid" id="itemGrid"></div>
+</div>
+
+<!-- 出品モーダル -->
+<div class="modal-overlay" id="postModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>🛒 出品する</h3>
+      <button class="x" id="closePost">×</button>
+    </div>
+    <div class="modal-body">
+      <label>商品名 <span style="color:var(--brand)">*</span></label>
+      <input id="iName" type="text" maxlength="40" placeholder="例：数学Ⅱ 参考書">
+      <label>カテゴリ</label>
+      <select id="iCat"><option>参考書・教材</option><option>グッズ</option><option>食品・飲料</option><option>その他</option></select>
+      <label>説明（状態・サイズ・受渡し場所など）</label>
+      <textarea id="iDesc" placeholder="例：ほぼ未使用です。スクーリング会場での手渡し希望。"></textarea>
+      <label>画像URL（任意）</label>
+      <input id="iImg" type="url" placeholder="https://...">
+      <label>コイン価格</label>
+      <input id="iPrice" type="number" min="0" max="99999" value="500" placeholder="コイン">
+      <label>エリア（受渡し可能な地域）</label>
+      <select id="iArea"><option>北海道・東北</option><option>関東</option><option>中部</option><option>関西</option><option>中国・四国</option><option>九州・沖縄</option><option>海外在住</option></select>
+      <div class="rule-note">🪙 コイン払い専用。現金・現物交換・オンライン決済の強要は禁止です。</div>
+    </div>
+    <div class="modal-foot">
+      <button class="post-btn" id="doPost">出品する</button>
+      <button class="cancel" id="cancelPost">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+var STORE="nhigh_flea_v1";
+var PSTORE="nhigh_portal_v2";
+var ICONS={"参考書・教材":"📚","グッズ":"🎁","食品・飲料":"🍵","その他":"📦"};
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function esc(s){return String(s||"").replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+var toastT;
+function toast(m){var el=document.getElementById("toast");el.textContent=m;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove("show");},2000);}
+
+function getCoins(){try{var s=JSON.parse(localStorage.getItem(PSTORE));return s&&s.coins||0;}catch(e){return 0;}}
+function spendCoins(n,label){
+  try{
+    var s=JSON.parse(localStorage.getItem(PSTORE));if(!s)return true;
+    if(s.coins<n){toast("コインが足りません（残高："+s.coins+"）");return false;}
+    s.coins-=n;
+    (s.log=s.log||[]).unshift({t:now(),label:label,amt:-n});
+    localStorage.setItem(PSTORE,JSON.stringify(s));return true;
+  }catch(e){return true;}
+}
+function now(){var d=new Date();return("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);}
+function getUserName(){try{var s=JSON.parse(localStorage.getItem(PSTORE));return s&&s.name||"匿名";}catch(e){return "匿名";}}
+
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(STORE));if(s&&s.items)return s;}catch(e){}
+  return {items:[
+    {id:"i0",name:"数学Ⅱ 参考書（チャート式）",cat:"参考書・教材",desc:"2年間使用しましたが書き込みなし。スクーリングかオンライン定例で手渡し可。",img:"",price:800,area:"東北",seller:"田中",sold:false},
+    {id:"i1",name:"N高 オリジナルノート（未使用）",cat:"グッズ",desc:"コインショップ購入のノート。未開封です。",img:"",price:250,area:"関東",seller:"鈴木",sold:false},
+    {id:"i2",name:"参考書セット（英語系3冊）",cat:"参考書・教材",desc:"受験が終わったので出品。いずれも良好。",img:"",price:1200,area:"関西",seller:"山田",sold:false}
+  ]};
+}
+function save(){localStorage.setItem(STORE,JSON.stringify(state));}
+var state=load();
+var filterSrch="",filterArea="all",filterCat="all";
+
+function applyFilter(){
+  filterSrch=document.getElementById("srch").value.trim();
+  filterArea=document.getElementById("areaSel").value;
+  filterCat=document.getElementById("catSel").value;
+  renderGrid();
+}
+document.getElementById("srch").addEventListener("keydown",function(e){if(e.key==="Enter")applyFilter();});
+
+function renderGrid(){
+  var items=state.items.filter(function(it){
+    if(filterArea!=="all"&&it.area!==filterArea)return false;
+    if(filterCat!=="all"&&it.cat!==filterCat)return false;
+    if(filterSrch&&it.name.indexOf(filterSrch)<0&&it.desc.indexOf(filterSrch)<0)return false;
+    return true;
+  });
+  var el=document.getElementById("itemGrid");
+  if(!items.length){el.innerHTML='<div style="padding:24px;color:var(--ink3);grid-column:1/-1;text-align:center">商品がありません</div>';return;}
+  el.innerHTML=items.map(function(it){
+    var ico=ICONS[it.cat]||"📦";
+    var imgHtml=it.img
+      ?'<img src="'+esc(it.img)+'" alt="" onerror="this.parentNode.innerHTML=\'<span>'+ico+'</span>\'">'
+      :'<span>'+ico+'</span>';
+    var soldOverlay=it.sold?'<div class="sold-overlay">SOLD</div>':'';
+    var buyBtn=it.sold
+      ?'<button class="buy-btn" disabled>売り切れ</button>'
+      :'<button class="buy-btn" onclick="buyItem(\''+esc(it.id)+'\')">🪙 '+it.price+'</button>';
+    return '<div class="item-card'+(it.sold?' sold':'')+'">'
+      +'<div class="item-img">'+imgHtml+soldOverlay+'</div>'
+      +'<div class="item-body">'
+      +'<div class="item-title">'+esc(it.name)+'</div>'
+      +'<div class="item-desc">'+esc(it.desc)+'</div>'
+      +'<div class="item-footer">'
+      +'<span class="price">'+it.price+'<small style="font-size:10px;font-weight:400"> 🪙</small></span>'
+      +'<span class="area-badge">'+esc(it.area)+'</span>'
+      +buyBtn
+      +'</div>'
+      +'<div class="seller-name">出品：'+esc(it.seller)+'</div>'
+      +'</div></div>';
+  }).join("");
+}
+
+function buyItem(id){
+  var it=state.items.find(function(x){return x.id===id;});
+  if(!it||it.sold){toast("この商品は売り切れです");return;}
+  if(!confirm("「"+it.name+"」を "+it.price+" コインで購入しますか？\n受け渡しは出品者と直接連絡してください。"))return;
+  if(!spendCoins(it.price,"フリマ購入："+it.name))return;
+  it.sold=true;
+  save();
+  toast("購入しました！出品者に連絡して受け渡し日を調整してください");
+  renderGrid();
+}
+
+/* 出品モーダル */
+var postModal=document.getElementById("postModal");
+document.getElementById("openPost").addEventListener("click",function(){
+  document.getElementById("iName").value="";document.getElementById("iDesc").value="";
+  document.getElementById("iImg").value="";document.getElementById("iPrice").value="500";
+  postModal.setAttribute("open","");document.getElementById("iName").focus();
+});
+document.getElementById("closePost").addEventListener("click",function(){postModal.removeAttribute("open");});
+document.getElementById("cancelPost").addEventListener("click",function(){postModal.removeAttribute("open");});
+postModal.addEventListener("click",function(e){if(e.target===postModal)postModal.removeAttribute("open");});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")postModal.removeAttribute("open");});
+
+document.getElementById("doPost").addEventListener("click",function(){
+  var name=document.getElementById("iName").value.trim();
+  var price=Math.max(0,+document.getElementById("iPrice").value||0);
+  if(!name){toast("商品名を入力してください");return;}
+  state.items.unshift({
+    id:uid(),name:name,
+    cat:document.getElementById("iCat").value,
+    desc:document.getElementById("iDesc").value.trim(),
+    img:document.getElementById("iImg").value.trim(),
+    price:price,
+    area:document.getElementById("iArea").value,
+    seller:getUserName(),sold:false
+  });
+  save();
+  postModal.removeAttribute("open");
+  toast("「"+name+"」を出品しました");
+  renderGrid();
+});
+
+renderGrid();
+</script>
+</body>
+</html>
